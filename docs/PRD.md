@@ -1,3 +1,10 @@
+---
+title: "Coda — Product Requirements Document"
+date: 2026-02-13
+status: draft
+tags: [prd, product, requirements]
+---
+
 # Coda — Product Requirements Document
 
 **Version**: 1.0

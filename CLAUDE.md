@@ -21,9 +21,9 @@ Every unit of work follows: **Plan → Work → Review → Compound**.
 Coda is bootstrapping itself. The first milestone is a working compound loop via CLI.
 
 - PRD: `docs/PRD.md`
-- Requirements: `docs/requirements.md`
-- Design perspectives: `docs/perspectives/`
 - Core beliefs: `docs/design-docs/core-beliefs.md`
+- Architecture overview: `docs/design-docs/architecture-overview.md`
+- UX specification: `docs/design-docs/ux-specification.md`
 
 No application code exists yet. The next step is Milestone 1: CLI core + basic agent orchestration.
 
@@ -44,13 +44,14 @@ All project knowledge lives in `docs/`. Search there first.
 | `docs/plans/completed/` | Past plans for reference |
 | `docs/solutions/` | Institutional memory — solved problems and patterns |
 | `docs/brainstorms/` | Captured ideation and exploration |
-| `docs/design-docs/` | Architecture decisions, core beliefs, design rationale |
-| `docs/perspectives/` | Multi-perspective design analysis (harness, compound, UX, architecture) |
+| `docs/design-docs/` | Architecture decisions, core beliefs, ADRs, UX spec, design rationale |
+| `docs/references/` | External source materials and structured inputs |
 
 Source documents:
 
-- `docs/harness-engineering.md` — OpenAI's harness engineering philosophy
-- `docs/compound-engineering.md` — Every.to's compound engineering guide
+- `docs/references/harness-engineering.md` — OpenAI's harness engineering philosophy
+- `docs/references/compound-engineering.md` — Every.to's compound engineering guide
+- `docs/references/requirements.md` — Initial requirements (superseded by PRD)
 
 ## Code Conventions
 
@@ -84,7 +85,7 @@ See `docs/plans/completed/docs-structure-plan.md` Section 6 for full frontmatter
 
 1. Search `docs/solutions/` — someone may have solved this
 2. Check `docs/design-docs/` — there may be a design decision you're missing
-3. Read `docs/perspectives/synthesis.md` — resolved tensions between design approaches
+3. Read `docs/design-docs/design-tensions.md` — resolved tensions between design approaches
 4. If still stuck, escalate with a structured summary of what you tried
 
 ## Patterns

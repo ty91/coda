@@ -27,9 +27,9 @@ Status: Design phase. Zero application code. Milestone 1 targets a working compo
 | `docs/plans/completed/` | Past plans — reference for similar work |
 | `docs/solutions/` | Solved problems — search before implementing |
 | `docs/brainstorms/` | Ideas and exploration |
-| `docs/perspectives/` | Design analysis from multiple viewpoints |
-| `docs/perspectives/synthesis.md` | Resolved tensions between perspectives |
-| `docs/perspectives/technical-architecture.md` | ADRs and architecture decisions |
+| `docs/design-docs/` | Architecture decisions, ADRs, UX spec, design rationale |
+| `docs/design-docs/design-tensions.md` | Resolved tensions between design approaches |
+| `docs/references/` | External source materials and structured inputs |
 
 ## Architecture
 

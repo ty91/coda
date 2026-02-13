@@ -1,3 +1,12 @@
+---
+title: Initial Requirements
+date: 2026-02-14
+type: reference
+status: superseded
+superseded_by: ../PRD.md
+tags: [requirements, source-document]
+---
+
 # Requirements
 
 ## Basic Requirements

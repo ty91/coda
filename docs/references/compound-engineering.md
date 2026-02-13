@@ -1,14 +1,16 @@
 ---
 title: "Compound Engineering: Make Every Unit of Work Compound Into the Next"
+date: 2026-02-14
 source: "https://every.to/guides/compound-engineering"
-created: 2026-02-13
+type: reference
+tags: [compound-engineering, every-to, knowledge-management]
 ---
 
 Compound engineering emerged from building [**Cora**](https://cora.computer/), an AI chief of staff for your inbox, from scratch. As we battle-tested every pattern, agent, and workflow across many pull requests, we developed personal productivity hacks to make the work go faster. This, in turn, evolved into a systematic approach to AI-assisted development. We're sharing the details of this philosophy because we believe compound engineering will become the default way software is built.
 
 ## The philosophy
 
-The core philosophy of compound engineering is that each unit of engineering work should make subsequent units easier—not harder.
+The core philosophy of compound engineering is that each unit of engineering work should make subsequent units easier--not harder.
 
 Most codebases get harder to work with over time because each feature you add injects more complexity. After 10 years, teams spend more time fighting their system than building on it because each new feature is a negotiation with the old ones. Over time, the codebase becomes harder to understand, harder to modify, and harder to trust.
 
@@ -16,11 +18,11 @@ Compound engineering flips this on its head. Instead of features adding complexi
 
 ## The main loop
 
-Every runs five products— [**Cora**](https://cora.computer/), [**Monologue**](https://www.monologue.to/), [**Sparkle**](https://makeitsparkle.co/), [**Spiral**](https://writewithspiral.com/), and our website [**Every.to**](http://every.to/) —with primarily single-person engineering teams. The system that makes this possible is a four-step loop that forms the basis of compound engineering:
+Every runs five products-- [**Cora**](https://cora.computer/), [**Monologue**](https://www.monologue.to/), [**Sparkle**](https://makeitsparkle.co/), [**Spiral**](https://writewithspiral.com/), and our website [**Every.to**](http://every.to/) --with primarily single-person engineering teams. The system that makes this possible is a four-step loop that forms the basis of compound engineering:
 
-Plan → Work → Review → Compound → Repeat
+Plan -> Work -> Review -> Compound -> Repeat
 
-The first three steps—plan, work, and review—should be familiar to any developer. It's the fourth step that separates compound engineering from other engineering. This is where the gains accumulate. Skip it, and you've done traditional engineering with AI assistance.
+The first three steps--plan, work, and review--should be familiar to any developer. It's the fourth step that separates compound engineering from other engineering. This is where the gains accumulate. Skip it, and you've done traditional engineering with AI assistance.
 
 The loop works the same whether you are fixing a bug in five minutes or building a feature over several days. You just spend more or less time on each step.
 
@@ -69,77 +71,6 @@ In this final step, these are the actions you should take:
 - **Update the system.** Add new patterns into CLAUDE.md, the file the agent reads at the start of every session. Create new agents when warranted.
 - **Verify the learning.** Ask yourself: Would the system catch this automatically next time?
 
-## The plugin
-
-The compound engineering workflow ships as a plugin. Install it, and the full system is ready to use.
-
-#### What's in the box
-
-- **[26 specialized agents.](https://github.com/EveryInc/compound-engineering-plugin/tree/main/agents)** Each agent is trained for a specific job.
-- **[23 workflow commands.](https://github.com/EveryInc/compound-engineering-plugin/tree/main/commands)** These include the main loop plus utilities.
-- **[13 skills.](https://github.com/EveryInc/compound-engineering-plugin/tree/main/skills)** These provide domain expertise, such as our agent-native architecture skill and style guide skill, on tap.
-
-### Installation
-
-Below are instructions for adding the plugin to some of the most common AI coding tools. Zero configuration is required.
-
-#### Claude Code
-
-```
-claude /plugin marketplace add https://github.com/EveryInc/every-marketplace
-
-claude /plugin install compound-engineering
-```
-
-#### OpenCode (experimental)
-
-```
-bunx @every-env/compound-plugin install compound-engineering --to opencode
-```
-
-#### Codex (experimental)
-
-```
-bunx @every-env/compound-plugin install compound-engineering --to codex
-```
-
-### Where things live
-
-```
-your-project/
-├── CLAUDE.md              # Agent instructions, preferences, and patterns
-├── docs/
-│   ├── brainstorms/       # /workflows:brainstorm output
-│   ├── solutions/         # /workflows:compound output (categorized)
-│   └── plans/             # /workflows:plan output
-└── todos/                 # /triage and review findings
-    ├── 001-ready-p1-fix-auth.md
-    └── 002-pending-p2-add-tests.md
-```
-
-**CLAUDE.md** is the most important file that the agent reads every session. Put your preferences, patterns, and project context here. When something goes wrong, add a note so the agent learns.
-
-**docs/solutions/** builds your institutional knowledge because each solved problem becomes searchable documentation. Future sessions will find past solutions automatically.
-
-**todos/** tracks work items with priority and status. When the review step turns up issues, use them to decide what's worth fixing, and then use resolution commands to work through them.
-
-### Plugin structure
-
-The plugin itself contains:
-
-```
-agents/
-├── review/      # 14 code review specialists
-├── research/    # Codebase and documents researchers
-├── design/      # User interface and Figma sync agents
-├── workflow/    # Automation agents
-└── docs/        # Documentation agents
-commands/
-├── workflows/   # Core loop commands
-└── *.md         # Utility commands
-skills/          # Domain expertise (14 skills)
-```
-
 ## Core commands
 
 ### /workflows:brainstorm
@@ -162,7 +93,7 @@ Describe what you want and get back a plan for how to build it.
 
 This command spawns three parallel research agents: repo-research-analyst (codebase patterns), framework-docs-researcher (documentation), and best-practices-researcher (industry standards). Then the spec-flow-analyzer agent analyzes user flows and edge cases. Results are merged into a structured plan with affected files and implementation steps.
 
-Enable `ultrathink` mode (extended reasoning with deeper research) to automatically run [/deepen-plan](https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/deepen-plan.md) after plan creation—this spawns over 40 parallel research agents.
+Enable `ultrathink` mode (extended reasoning with deeper research) to automatically run /deepen-plan after plan creation--this spawns over 40 parallel research agents.
 
 ### /workflows:work
 
@@ -172,7 +103,7 @@ This is where the agent actually writes the code.
 /workflows:work
 ```
 
-Runs in four phases: quick start (creates a git worktree—an isolated copy of your repo for parallel work—and sets up branch), execute (implements each task with progress tracking), quality check (optionally spawns over five reviewer agents—Rails, TypeScript, security, performance), and ship it (runs linting, creates PR). Each phase has clear entry and exit criteria.
+Runs in four phases: quick start (creates a git worktree--an isolated copy of your repo for parallel work--and sets up branch), execute (implements each task with progress tracking), quality check (optionally spawns over five reviewer agents--Rails, TypeScript, security, performance), and ship it (runs linting, creates PR). Each phase has clear entry and exit criteria.
 
 ### /workflows:review
 
@@ -266,13 +197,13 @@ This command spawns six parallel subagents: context analyzer (understands the pr
 
 ### /lfg
 
-With this command, you describe the feature, and the agent does the rest—planning, building, reviewing, and handing you a PR ready to merge.
+With this command, you describe the feature, and the agent does the rest--planning, building, reviewing, and handing you a PR ready to merge.
 
 ```
 /lfg Add dark mode toggle to settings page
 ```
 
-This chains the full pipeline: plan → deepen-plan → work → review → resolve findings → browser tests → feature video → compound. It pauses for plan approval, then runs autonomously, and spawns more than 50 agents across all stages. With one command, you have a complete feature.
+This chains the full pipeline: plan -> deepen-plan -> work -> review -> resolve findings -> browser tests -> feature video -> compound. It pauses for plan approval, then runs autonomously, and spawns more than 50 agents across all stages. With one command, you have a complete feature.
 
 ## Beliefs to let go
 
@@ -280,7 +211,7 @@ We have all been trained to believe certain things about software development. W
 
 ### 'The code must be written by hand'
 
-The actual requirement for you to do your job well as a software engineer is simply to write good code, which can be defined as maintainable code that solves the right problem. Who types—a human or an agent—doesn't matter.
+The actual requirement for you to do your job well as a software engineer is simply to write good code, which can be defined as maintainable code that solves the right problem. Who types--a human or an agent--doesn't matter.
 
 ### 'Every line must be manually reviewed'
 
@@ -290,7 +221,7 @@ One reason that developers still find themselves relying on manual review is tha
 
 ### 'Solutions must originate from the engineer'
 
-When AI can research approaches, analyze tradeoffs, and recommend options, the engineer's job becomes to add taste—knowing which solution fits this codebase, this team, and this context.
+When AI can research approaches, analyze tradeoffs, and recommend options, the engineer's job becomes to add taste--knowing which solution fits this codebase, this team, and this context.
 
 ### 'Code is the primary artifact'
 
@@ -298,11 +229,11 @@ A system that produces code is more valuable than any individual piece of code. 
 
 ### 'Writing code is the core job function'
 
-A developer's job is ship value. Code is just one input in that job—planning, reviewing, and teaching the system all count too. Effective compound engineers write less code than before and ship more.
+A developer's job is ship value. Code is just one input in that job--planning, reviewing, and teaching the system all count too. Effective compound engineers write less code than before and ship more.
 
 ### 'First attempts should be good'
 
-In our experience, first attempts have a 95 percent garbage rate. Second attempts are still 50 percent. This isn't failure—it's the process.
+In our experience, first attempts have a 95 percent garbage rate. Second attempts are still 50 percent. This isn't failure--it's the process.
 
 Expecting perfection on attempt one is like expecting a junior developer to nail a complex feature without context. So make it your goal to get it right the first time. Focus on iterating fast enough that your third attempt lands in less time than attempt one.
 
@@ -322,7 +253,7 @@ You learn and build understanding by reviewing, by catching mistakes, and by kno
 
 **Less typing feels like less work.** It isn't. Directing an agent requires more thinking than implementation because you are spending less time on keystrokes and more time thinking about important decisions.
 
-**Letting go feels risky.** Autonomous execution—handing things over to agents—triggers anxiety in many developers. This fades once they recognize they're not ceding control. Instead, they're encoding it into constraints, conventions, and review processes that scale better than manual oversight.
+**Letting go feels risky.** Autonomous execution--handing things over to agents--triggers anxiety in many developers. This fades once they recognize they're not ceding control. Instead, they're encoding it into constraints, conventions, and review processes that scale better than manual oversight.
 
 **Who built this?** Features shipping without directly writing the code can feel like cheating. But planning, reviewing, and ensuring quality standards is the work. You did the thinking. All the AI did was the writing.
 
@@ -340,9 +271,9 @@ Once the AI understands how you like to write code, it'll produce code you actua
 
 ### The 50/50 rule
 
-Previously, I suggested an 80/20 rule for building features: 80 percent of time planning and review, 20 percent on working and compounding. When you look at your broader responsibilities as a developer, you should allocate 50 percent of engineering time to building features, and 50 percent to improving the system—in other words, any work that helps build institutional knowledge rather than shipping something specific.
+Previously, I suggested an 80/20 rule for building features: 80 percent of time planning and review, 20 percent on working and compounding. When you look at your broader responsibilities as a developer, you should allocate 50 percent of engineering time to building features, and 50 percent to improving the system--in other words, any work that helps build institutional knowledge rather than shipping something specific.
 
-In traditional engineering, teams put 90 percent of their time into features and 10 percent into everything else. Work that isn't a feature feels like a distraction—something you do when you have spare time, which you never do. But that \\"everything else\\" is what makes future features easier: things like creating review agents, documenting patterns, and building test generators. When you treat that work as overhead instead of an investment, the codebase accumulates debt.
+In traditional engineering, teams put 90 percent of their time into features and 10 percent into everything else. Work that isn't a feature feels like a distraction--something you do when you have spare time, which you never do. But that "everything else" is what makes future features easier: things like creating review agents, documenting patterns, and building test generators. When you treat that work as overhead instead of an investment, the codebase accumulates debt.
 
 An hour spent creating a review agent saves 10 hours of review over the next year. You can spend time building a test generator that saves weeks of manual test writing. System improvements make work progressively faster and easier, but feature work doesn't.
 
@@ -367,7 +298,7 @@ Anything that you don't let the agent handle, you have to do yourself manually. 
 
 ### Parallelization is your friend
 
-You used to be the bottleneck because human attention only allows one task at a time. The new bottleneck is compute—how many agents you can run at once.
+You used to be the bottleneck because human attention only allows one task at a time. The new bottleneck is compute--how many agents you can run at once.
 
 Run multiple agents and multiple features at the same time. Perform review, testing, and documentation all at once. When you are stuck on one task, start another, and let agents work while planning the next step.
 
@@ -386,15 +317,15 @@ In summary, the beliefs that underpin this new approach to software development 
 - **Teach the system, don't do the work yourself.** Time spent giving agents more context pays exponential dividends, but time spent typing code only solves the task in front of you.
 - **Build safety nets, not review processes.** The way to build trust in building with AI is by building verification infrastructure, not by gatekeeping manually at every step.
 - **Make environments agent-native.** Structure projects so AI agents can navigate and modify them autonomously.
-- **Apply compound thinking everywhere.** Every artifact—code, docs, tests, prompts—should enable the next iteration to move faster.
+- **Apply compound thinking everywhere.** Every artifact--code, docs, tests, prompts--should enable the next iteration to move faster.
 - **Embrace the discomfort of letting go.** When you delegate to AI tools, you have to be okay with imperfect results that scale, rather than perfect results that don't.
 - **Ship more value. Type less code.** Your output should be measured by the number of problems solved, not the number of keystrokes you logged.
 
-The principles extend beyond engineering to design, research, or even writing—any discipline where codifying taste and context help make future work go faster and easier. The steps are the same: Plan, execute, review, compound.
+The principles extend beyond engineering to design, research, or even writing--any discipline where codifying taste and context help make future work go faster and easier. The steps are the same: Plan, execute, review, compound.
 
 ## Getting started
 
-The compound engineering loop—plan, work, review, compound—is the process. But how much of that process you allow the AI to own depends on where you are in your familiarity and aptitude with AI. There are five stages against which developers can plot themselves to understand where they sit.
+The compound engineering loop--plan, work, review, compound--is the process. But how much of that process you allow the AI to own depends on where you are in your familiarity and aptitude with AI. There are five stages against which developers can plot themselves to understand where they sit.
 
 Most developers who struggle with AI-assisted development don't know where they are on this ladder. They hear about multi-agent review systems and parallel cloud execution, feel overwhelmed, and either give up or try to skip ahead. Skipping stages doesn't work because you will feel uncomfortable and distrustful of the tools. Each rung builds the mental models and habits required for the next. So slow down, figure out where you are, and focus on building from there.
 
@@ -410,7 +341,7 @@ At this stage, you are using AI as a smart reference tool, querying ChatGPT, Cla
 
 #### Stage 2: Agentic tools with line-by-line review
 
-At this stage, agentic tools—AI assistants that can read files and make changes directly—enter the workflow: Claude Code, Cursor Composer, and Copilot Chat. You allow the AI to read files and make changes directly in the codebase based on the context you have provided. You are a gatekeeper, approving or rejecting everything that the agent proposes, which is still a painstaking process.
+At this stage, agentic tools--AI assistants that can read files and make changes directly--enter the workflow: Claude Code, Cursor Composer, and Copilot Chat. You allow the AI to read files and make changes directly in the codebase based on the context you have provided. You are a gatekeeper, approving or rejecting everything that the agent proposes, which is still a painstaking process.
 
 Most developers plateau here and don't get to enjoy the upside of handing more over to AI.
 
@@ -426,13 +357,13 @@ You provide an idea, and the agent handles everything: codebase research, planni
 
 #### Stage 5: Parallel cloud execution (multiple devices)
 
-This is the final stage. You move execution to the cloud and run things in parallel. Because you're not tied to a laptop, you can direct your agents from anywhere—a coffee shop, a Panamanian beach, or your phone.
+This is the final stage. You move execution to the cloud and run things in parallel. Because you're not tied to a laptop, you can direct your agents from anywhere--a coffee shop, a Panamanian beach, or your phone.
 
 You kick off three features, three agents work independently, and you review PRs as they finish. If you push it further, you allow agents to start monitoring feedback and proposing fixes without being asked. No longer an individual contributor are you. You're commanding a fleet.
 
 ## How to level up
 
-### 0 → 1: Start collaborating
+### 0 -> 1: Start collaborating
 
 Here are some actions to take to move from level zero to level one:
 
@@ -446,9 +377,9 @@ Here are some actions to take to move from level zero to level one:
 
 **Compounding move:** Keep a running note of prompts that worked well. Good prompts are reusable.
 
-### 1 → 2: Let the agent in
+### 1 -> 2: Let the agent in
 
-**Switch to agentic mode.** This can be done in Claude Code, Cursor Composer, or the equivalent. Give the agent file system access—in other words, the ability to read and write files on your device.
+**Switch to agentic mode.** This can be done in Claude Code, Cursor Composer, or the equivalent. Give the agent file system access--in other words, the ability to read and write files on your device.
 
 **Start with targeted changes.** Start with something narrow: "Add a test for this function." Stick to one file and one purpose until you trust it.
 
@@ -458,7 +389,7 @@ Here are some actions to take to move from level zero to level one:
 
 **Compounding move:** Create a CLAUDE.md file, and document your preferences. When the agent makes a mistake, add a note so that it improves with each correction.
 
-### 2 → 3: Trust the plan (key transition)
+### 2 -> 3: Trust the plan (key transition)
 
 **Invest in planning.** Spell out requirements, the approach, and edge cases.
 
@@ -472,7 +403,7 @@ Here are some actions to take to move from level zero to level one:
 
 **Compounding move:** After each implementation, document what the plan missed so you can build faster the next time.
 
-### 3 → 4: Describe, don't plan
+### 3 -> 4: Describe, don't plan
 
 **Give outcomes, not instructions.** Tell the agent to, "Add email notifications for new comments," for example, and let it determine how to implement.
 
@@ -480,11 +411,11 @@ Here are some actions to take to move from level zero to level one:
 
 **Approve the approach.** Review the plan before implementation, and reject bad directions early.
 
-**Review the PR.** The agent reviews its own work along the way—you just check the final result.
+**Review the PR.** The agent reviews its own work along the way--you just check the final result.
 
 **Compounding move:** Build a library of outcome-focused instructions that worked so you can tell the agent to "Add X like we did Y."
 
-### 4 → 5: Parallelize everything
+### 4 -> 5: Parallelize everything
 
 **Move execution to the cloud.** Agents run on remote infrastructure because local machines are a bottleneck.
 
@@ -492,7 +423,7 @@ Here are some actions to take to move from level zero to level one:
 
 **Build a queue.** Put ideas, bugs, and improvements into the queue, and agents can work on them in order when they have capacity.
 
-**Enable proactive operation.** Agents can monitor user feedback, spot opportunities, and propose features on their own—you don't have to triage every request yourself.
+**Enable proactive operation.** Agents can monitor user feedback, spot opportunities, and propose features on their own--you don't have to triage every request yourself.
 
 **Compounding move:** Document which tasks can be done in parallel well. If you aren't careful, multiple agents can go do similar things, which can confuse them and make it hard to work. Some work is inherently serial, and knowing the difference will save you time on coordination.
 
@@ -503,10 +434,6 @@ Even if you don't have a fancy multi-agent review system at your fingertips, you
 1. **"What was the hardest decision you made here?"** This forces the AI to reveal where the tricky parts are and where it had to make judgment calls.
 2. **"What alternatives did you reject, and why?"** This shows you the options it considered and helps catch if it made a bad choice.
 3. **"What are you least confident about?"** This gets the AI to admit where it might be wrong. LLMs know where their weaknesses are, but you have to ask.
-
-## Best practices
-
-Best practice
 
 ## Agent-native architecture
 
@@ -564,13 +491,11 @@ At this stage, the agents have access to ticket systems, have deployment capabil
 
 Beyond technical setup, agent-native is also a mindset. Keep these questions in mind:
 
-**When building features:**"How will the agent interact with this?"
+**When building features:** "How will the agent interact with this?"
 
-**When debugging:**"What would the agent need to see?"
+**When debugging:** "What would the agent need to see?"
 
-**When documenting:**"Will the agent understand this?"
-
-Best practice
+**When documenting:** "Will the agent understand this?"
 
 ## Skip permissions
 
@@ -598,7 +523,7 @@ I always run with skip permissions:
 alias cc='claude --dangerously-skip-permissions'
 ```
 
-I do this in a specific setup that helps avoid risk. I'm on my laptop, not a production server. I'm working in a branch that's completely separate from the main codebase. I have tests. I can revert anything. Real users will never see this code until I'm ready. The "dangerous" flag isn't actually dangerous here—it just helps me go faster.
+I do this in a specific setup that helps avoid risk. I'm on my laptop, not a production server. I'm working in a branch that's completely separate from the main codebase. I have tests. I can revert anything. Real users will never see this code until I'm ready. The "dangerous" flag isn't actually dangerous here--it just helps me go faster.
 
 ### Safety without prompts
 
@@ -628,19 +553,17 @@ With skip permissions, you can maintain a flow state because you are not being i
 
 > The flag is named `--dangerously-skip-permissions` on purpose. It's meant to make you pause the first time. But once you are more experienced, you can make an informed decision about your risk tolerance and choose to skip it.
 
-Best practice
-
 ## Design workflow
 
-Design is easier to iterate on in code than in mockups—you can click through it and feel the interactions. But you don't want to experiment in your production codebase. This section covers how to prototype designs in throwaway projects, test them with users, and capture your design taste so the AI can replicate it.
+Design is easier to iterate on in code than in mockups--you can click through it and feel the interactions. But you don't want to experiment in your production codebase. This section covers how to prototype designs in throwaway projects, test them with users, and capture your design taste so the AI can replicate it.
 
 ### The baby app approach
 
-Create a throwaway project—a "baby app"—where you can iterate freely without worrying about tests, architecture, or breaking anything. Once the design feels right, extract the patterns and bring them back to the real project.
+Create a throwaway project--a "baby app"--where you can iterate freely without worrying about tests, architecture, or breaking anything. Once the design feels right, extract the patterns and bring them back to the real project.
 
 #### The workflow
 
-1. **Create a prototype repo.**`mkdir baby-myapp && cd baby-myapp`
+1. **Create a prototype repo.** `mkdir baby-myapp && cd baby-myapp`
 2. **Vibe code the design.** "Create a settings page with dark mode toggle. Make it look modern."
 3. **Iterate until it looks right.** "More spacing. Toggle more prominent. Inline, not stacked."
 4. **Capture the design system.** Once you have something you are pleased with, extract colors, spacing, typography, and component patterns.
@@ -648,7 +571,7 @@ Create a throwaway project—a "baby app"—where you can iterate freely without
 
 ### UX discovery loop
 
-When you don't know what to build, vibe coding is great for exploring:
+When you don't know what to build, rapid prototyping is great for exploring:
 
 1. Generate multiple versions. Tell the agent to come up with five different versions of the settings page and see what it comes up with.
 2. Click through each one. Use them and see what feels right.
@@ -660,22 +583,22 @@ When you don't know what to build, vibe coding is great for exploring:
 
 #### Traditional flow
 
-Collaboration between designers and developers usually looks like this: The designer creates a mockup. The developer interprets it and builds something. The designer says, "That's not quite right." Back and forth until it eventually matches—maybe.
+Collaboration between designers and developers usually looks like this: The designer creates a mockup. The developer interprets it and builds something. The designer says, "That's not quite right." Back and forth until it eventually matches--maybe.
 
 #### Compound flow
 
 With compound engineering, the back-and-forth shrinks.
 
 1. The designer creates a mockup in Figma
-2. You run [/plan](https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/plan.md) with Figma link and tell the AI to implement it exactly.
+2. You run /plan with Figma link and tell the AI to implement it exactly.
 3. The AI builds it.
-4. The [figma-design-sync](https://github.com/EveryInc/compound-engineering-plugin/blob/main/agents/design/figma-design-sync.md) agent checks if the implementation matches the mockup.
+4. The figma-design-sync agent checks if the implementation matches the mockup.
 5. The designer reviews the live version, not a screenshot.
 6. Iterate until it's perfect.
 
 ### Codifying design taste
 
-Once you've worked with a designer on a few features, you'll notice patterns such as their preferred colors and how they like forms laid out. Write those down in a skill file. Using this, the AI can now produce designs that match the designer's taste—even when the designer isn't involved.
+Once you've worked with a designer on a few features, you'll notice patterns such as their preferred colors and how they like forms laid out. Write those down in a skill file. Using this, the AI can now produce designs that match the designer's taste--even when the designer isn't involved.
 
 ```
 # skill: our-design-system
@@ -708,97 +631,21 @@ Pulls the design from Figma, compares to what's built, identifies differences, a
 
 Checks that the implementations match the Figma specifications. It catches visual bugs before they reach users.
 
-Best practice
-
-## Vibe coding
-
-Vibe coding is for people who don't care about the code itself—they want results.
-
-Maybe you're a product manager prototyping ideas. Maybe you're a designer testing how an interaction feels. Maybe you're building a personal project, and you'll never look at the code anyway. You just want to make sure the thing works—this is the vibe coder's philosophy.
-
-### The vibe coder's philosophy
-
-This section is about skipping the ladder and going straight to stage four, where you describe what you want and let the agents build it.
-
-### The fast path
-
-Skip the ladder. Go straight to Stage 4.
-
-1. **Describe what you want**
-	```
-	/lfg Create a web app that lets me track my daily habits with checkboxes
-	```
-2. **Wait**
-	The agent figures out what to build, creates the code, runs tests, reviews itself, makes a PR.
-3. **Check if it works**
-	If yes, done. If no, say what's wrong. Let the agent fix it.
-
-### What you don't need to care about
-
-- **Code quality** —The review agents handle it
-- **Architecture** —The agent makes reasonable choices
-- **Testing** —Tests are written automatically
-- **Best practices** —Codified in the agents
-
-You focus on *what* you want. The system handles *how*.
-
-### When to use vibe coding
-
-Perfect for
-
-- Personal projects
-- Prototypes
-- Experiments
-- "Can this even work?" investigations
-- Internal tools
-- UX exploration
-
-Not great for
-
-- Production systems with users
-- Code others will maintain
-- Security-sensitive apps
-- Performance-critical systems
-
-### The vibe coding paradox
-
-Vibe coding can actually make your planning better. When you don't know what you want to build, generate prototypes. Share them with users, and collect feedback. Click through them.
-
-Then delete everything and start over with a proper plan.
-
-The optimal split: Vibe code to discover what you want, then spec to build it properly. The spec always wins for final implementation, but vibe coding accelerates discovery.
-
-### Example session
-
-You:
-
-/lfg I want a website where I can paste a YouTube link and it extracts the transcript
-
-Agent works for five minutes...
-
-You: Works, but the text is hard to read. Make the font bigger.
-
-Agent fixes it...
-
-You: Perfect. Ship it.
-
-Best practice
-
 ## Team collaboration
 
 When the AI handles implementation, the team dynamics shift. You need new agreements: who approves plans, who owns PRs, and what humans should review when agents have done the first pass.
 
 ### The new team dynamics
 
-**Traditional:** In a traditional setting, developers collaborate in the following way: Person A writes code → Person B reviews → Discussion in PR comments → Merge after approval
+**Traditional:** In a traditional setting, developers collaborate in the following way: Person A writes code -> Person B reviews -> Discussion in PR comments -> Merge after approval
 
-**Compound:** In a compound engineering setting, developers collaborate as follows: Person A creates plan → AI implements → AI agents review → Person B reviews the AI review → Merge after human approval
+**Compound:** In a compound engineering setting, developers collaborate as follows: Person A creates plan -> AI implements -> AI agents review -> Person B reviews the AI review -> Merge after human approval
 
 ### Team standards
 
 #### Plan approval
 
-Reading a plan and agreeing with it is a decision. Silence is not approval—it's the absence of a decision.
+Reading a plan and agreeing with it is a decision. Silence is not approval--it's the absence of a decision.
 
 **Standard:** The standard should require explicit sign-off before implementation, whether that's a comment, a tag in the commit message, or some other approval marker.
 
@@ -812,7 +659,7 @@ You're responsible for the quality of the plan, reviewing the work, fixing any i
 
 When AI review agents have already analyzed a PR, human reviewers focus on intent, not implementation.
 
-Ask yourself: Does this match what we agreed to build? Does the approach make sense? Are there business logic issues? Don't bother checking for syntax errors, security vulnerabilities, performance issues, or style—that's what the review agents already did.
+Ask yourself: Does this match what we agreed to build? Does the approach make sense? Are there business logic issues? Don't bother checking for syntax errors, security vulnerabilities, performance issues, or style--that's what the review agents already did.
 
 ### Communication patterns
 
@@ -820,7 +667,7 @@ Ask yourself: Does this match what we agreed to build? Does the approach make se
 
 Compound engineering works well asynchronously. Plans can be created, reviewed, and approved without scheduling a meeting.
 
-Instead of telling your colleague, "Let's meet to discuss the approach," try, "I've created a plan document—please comment by end of day."
+Instead of telling your colleague, "Let's meet to discuss the approach," try, "I've created a plan document--please comment by end of day."
 
 #### Explicit handoffs
 
@@ -828,7 +675,7 @@ When handing off work to someone else, include everything they need: status, wha
 
 ```
 ## Handoff: Email Notifications
-From: Kieran → To: Dan
+From: Kieran -> To: Dan
 Status: Plan approved, implementation 50 percent
 What's left: User preference settings, unsubscribe flow
 How to continue: Run /work in the feature branch
@@ -846,9 +693,7 @@ When everyone ships faster, merge conflicts increase. Ship small pieces, use fea
 
 Compound docs = tribal knowledge
 
-You shouldn't need to ask a colleague for knowledge that could be baked into the system. Instead of saying, "Ask Sarah, she knows how auth works," Sarah runs [/compound](https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/compound.md) after implementing the feature. Now the solution is documented, and anyone can find it.
-
-Best practice
+You shouldn't need to ask a colleague for knowledge that could be baked into the system. Instead of saying, "Ask Sarah, she knows how auth works," Sarah runs /compound after implementing the feature. Now the solution is documented, and anyone can find it.
 
 ## User research
 
@@ -856,9 +701,9 @@ Structure research so AI can use it. Build persona documents, link insights to f
 
 ### The research-development gap
 
-**Traditional:** In traditional software development, user researchers and developer collaboration looks like this: Researcher conducts interviews → Writes report → Report sits in Google Drive → Developer builds feature → Developer never reads report → Feature doesn't match user needs
+**Traditional:** In traditional software development, user researchers and developer collaboration looks like this: Researcher conducts interviews -> Writes report -> Report sits in Google Drive -> Developer builds feature -> Developer never reads report -> Feature doesn't match user needs
 
-**Compound:** In compound engineering, that collaboration looks like this: Research generates structured insights → Insights become planning context → AI references insights when planning → Features are informed by research → Usage data validates insights → Insights compound
+**Compound:** In compound engineering, that collaboration looks like this: Research generates structured insights -> Insights become planning context -> AI references insights when planning -> Features are informed by research -> Usage data validates insights -> Insights compound
 
 ### Structuring research
 
@@ -913,12 +758,6 @@ Research context:
 Design for: Automated weekly exports to email
 ```
 
-More coming soon
-
-Research compound loop, AI-assisted analysis, documentation standards.
-
-Best practice
-
 ## Data pattern extraction
 
 Your users are already telling you what to build through how they use your product. Each click is a clue. You just have to pay attention.
@@ -931,7 +770,7 @@ These are features that are used way more than expected. Another signal could be
 
 Struggle patterns
 
-Look for high dwell time on simple pages or repeated attempts at the same action. Error → retry → error loops.
+Look for high dwell time on simple pages or repeated attempts at the same action. Error -> retry -> error loops.
 
 Workaround patterns
 
@@ -945,132 +784,10 @@ This is where users drop off in flows. Features have been started but not comple
 
 Here is how those user patterns that you noticed turn into product decisions:
 
-You notice users copying data from one table and pasting it into another 50 times a week.  
-**The insight:** They need automation between tables.  
+You notice users copying data from one table and pasting it into another 50 times a week.
+**The insight:** They need automation between tables.
 **The feature:** a "sync to table B" button.
 
-You notice users creating "template" projects and duplicating them for new work.  
-**The insight:** They want project templates but don't have them.  
+You notice users creating "template" projects and duplicating them for new work.
+**The insight:** They want project templates but don't have them.
 **The feature:** first-class template support.
-
-More coming soon
-
-Agent-native data exploration, analytics MCP servers, productizing emergent behavior.
-
-Best practice
-
-## Copywriting
-
-Most teams treat copy as an afterthought—something to fill in after the feature is built. But copy is part of the user experience. It deserves the same attention as the code.
-
-### Copy is part of the plan
-
-Include copy in your plans from the start, codify your voice so the AI can follow it, and review it like you'd review any other output:
-
-```
-## Feature: Password Reset Flow
-
-### User-Facing Copy
-- Email subject: "Reset your password"
-- Success message: "Check your email. We sent a reset link."
-- Error (not found): "We couldn't find an account with that email.
-  Want to create one instead?"
-```
-
-Now when the AI implements, the copy is already there.
-
-### Codify your voice
-
-Create a skill that defines your copy voice, such as the following:
-
-```
-# skill: our-copy-voice
-
-## Principles
-1. Talk to users like humans, not robots
-2. Error messages should help, not blame
-3. Short sentences. Clear words.
-
-## Words to avoid
-- "Invalid" → "didn't work"
-- "Error" → describe what happened
-- "Successfully" → just say what happened
-- "Please" → just ask directly
-
-## Examples
-Bad: "Invalid credentials. Please try again."
-Good: "That password isn't right. Try again or reset it."
-```
-
-### Review copy like code
-
-Add copy review to your [/workflows:review](https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/review.md) process:
-
-copy-reviewer agent
-
-- **Clarity:** Can a non-technical user understand this?
-- **Helpfulness:** Does this help the user succeed?
-- **Tone:** Does this match our voice guide?
-- **Consistency:** Does this match similar text elsewhere?
-
-More coming soon
-
-Working with ghost writers, building copy libraries, and the copy compound loop.
-
-Best practice
-
-## Product marketing
-
-Congratulations, you've shipped something. Now it's time to tell the world. The same system that builds features can announce them. Generate release notes from plans, create social posts, and capture screenshots automatically.
-
-### The compound flow
-
-1. An engineer creates a plan that includes the product value proposition.
-2. The AI implements a feature.
-3. The AI generates release notes from the plan.
-4. The AI generates social posts from the release notes.
-5. The AI generates screenshots using Playwright.
-6. The engineer reviews and ships everything together.
-
-It all flows from one place. No one has to hand anything off, and nothing slips through the cracks.
-
-### Generating release notes
-
-After implementing a feature:
-
-```
-Based on the plan and implementation for [feature], write release notes:
-1. Lead with the user benefit (what can they do now?)
-2. Include one concrete example
-3. Mention any breaking changes
-4. Keep it under 200 words
-```
-
-The AI has the plan, the code changes, and the tests. It knows exactly what was built.
-
-### Generating changelogs
-
-For multiple features, use [/changelog](https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/changelog.md):
-
-```
-/changelog
-```
-
-Looks at recent merges to main, reads the plans/PRs for each, generates an engaging changelog.
-
-### Automated screenshots
-
-Use Playwright to capture screenshots for marketing:
-
-```
-Take screenshots showing the new notification settings:
-1. The settings page with notifications section
-2. An example notification email
-3. The in-app notification badge
-```
-
-No more asking engineering for screenshots, and no more out-of-date screenshots.
-
-More coming soon
-
-Marketing voice skill, feature announcement flow, and metrics that compound.

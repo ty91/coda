@@ -1,1 +1,13 @@
+# Coda runtime state (rebuildable from files)
+.coda/state.db
 
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.local

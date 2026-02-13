@@ -1,0 +1,18 @@
+# Coda project configuration
+# See docs/PRD.md for full project specification
+
+project:
+  name: coda
+  description: "Agentic software engineering system — humans steer, agents execute, every unit of work compounds"
+
+# Agent routing (Milestone 2: Claude + Codex)
+# For now, all tasks route to Claude Code
+agent:
+  default: claude
+
+# Document conventions
+docs:
+  frontmatter:
+    required: [title, date]
+    recommended: [tags, status]
+  claude_md_max_lines: 200

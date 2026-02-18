@@ -15,7 +15,7 @@ body {
 
 .layout {
   margin: 0 auto;
-  max-width: 840px;
+  max-width: 920px;
   padding: 2rem 1rem 3rem;
   display: grid;
   gap: 1rem;
@@ -58,16 +58,28 @@ button:disabled {
   cursor: wait;
 }
 
-.plan-viewer {
+.docs-viewer {
   display: grid;
   gap: 0.9rem;
 }
 
-.plan-viewer-header {
+.docs-viewer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.toggle-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.toggle-row input {
+  margin: 0;
 }
 
 .annotation-note {
@@ -81,13 +93,13 @@ button:disabled {
   color: #b91c1c;
 }
 
-.plan-selector {
+.doc-selector {
   display: grid;
   gap: 0.4rem;
   font-size: 0.9rem;
 }
 
-.plan-selector select {
+.doc-selector select {
   border: 1px solid #94a3b8;
   border-radius: 8px;
   padding: 0.45rem 0.55rem;
@@ -96,39 +108,39 @@ button:disabled {
   color: #0f172a;
 }
 
-.plan-document {
+.doc-document {
   border: 1px solid #dbeafe;
   border-radius: 12px;
   padding: 1rem;
   background: rgba(239, 246, 255, 0.45);
 }
 
-.plan-document h3 {
+.doc-document h3 {
   margin-top: 0;
 }
 
-.plan-metadata {
+.doc-metadata {
   margin: 0 0 0.8rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.5rem;
 }
 
-.plan-metadata div {
+.doc-metadata div {
   border: 1px solid #bfdbfe;
   border-radius: 8px;
   padding: 0.45rem 0.55rem;
   background: rgba(255, 255, 255, 0.7);
 }
 
-.plan-metadata dt {
+.doc-metadata dt {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #1d4ed8;
 }
 
-.plan-metadata dd {
+.doc-metadata dd {
   margin: 0.2rem 0 0;
   color: #0f172a;
   font-size: 0.88rem;

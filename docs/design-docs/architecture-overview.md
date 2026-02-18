@@ -342,7 +342,7 @@ Logs are retained for 30 days locally (configurable). They are not sent to any e
 
 ### Milestone 1: Basic Functionality
 
-**Goal**: Working compound loop (plan -> work -> review -> compound) via Claude Code skills and subagents, with basic Tauri UI for plan annotation.
+**Goal**: Working compound loop (plan -> work -> review -> compound) via Claude Code skills and subagents, with basic Tauri UI for docs viewing and plan annotation.
 
 #### Components Needed
 
@@ -350,7 +350,7 @@ Logs are retained for 30 days locally (configurable). They are not sent to any e
 ┌─────────────────┐     ┌──────────────────────────┐
 │   Coda CLI       │     │   Tauri UI (basic)        │
 │                 │     │                          │
-│  - plan          │     │  - Plan viewer           │
+│  - plan          │     │  - Docs viewer           │
 │  - work          │     │  - Plan annotation       │
 │  - review        │     │  - Status dashboard      │
 │  - compound      │     │                          │
@@ -373,7 +373,7 @@ Logs are retained for 30 days locally (configurable). They are not sent to any e
 - Agent orchestrator routing everything to Claude Code (Codex routing deferred).
 - Plan Manager with file-based state (YAML frontmatter status field).
 - Knowledge base structure (`docs/plans/`, `docs/solutions/`, `docs/brainstorms/`).
-- Basic Tauri UI: display plans, allow text annotations, show agent status.
+- Basic Tauri UI: browse markdown docs, allow text annotations, show agent status.
 - No SQLite yet -- file-based state is sufficient for single-user, single-agent.
 - No Slack alerts -- CLI prompts only.
 - No issue tracker -- plans are the work items.

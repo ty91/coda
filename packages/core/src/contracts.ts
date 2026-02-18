@@ -2,23 +2,32 @@ export type CompoundCommand = 'plan' | 'work' | 'review' | 'compound' | 'status'
 
 export type AgentReadiness = 'ready' | 'degraded';
 
-export type PlanId = string;
+export type DocId = string;
 
-export type PlanMetadata = {
-  id: PlanId;
+export type DocMetadata = {
+  id: DocId;
   fileName: string;
+  docPath: string;
   relativePath: string;
-  title: string;
-  date: string;
-  status: string;
+  section: string;
+  title: string | null;
+  displayTitle: string;
+  date: string | null;
+  status: string | null;
   tags: string[];
   milestone: string | null;
+  isTemplate: boolean;
+  isHidden: boolean;
 };
 
-export type PlanSummary = PlanMetadata;
+export type DocSummary = DocMetadata;
 
-export type PlanDocument = PlanMetadata & {
+export type DocDocument = DocMetadata & {
   markdownBody: string;
+};
+
+export type ListDocsOptions = {
+  includeHidden: boolean;
 };
 
 export type StatusSnapshot = {

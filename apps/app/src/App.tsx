@@ -1,8 +1,8 @@
 import {
   SCAFFOLD_STATUS,
-  type PlanDocument,
-  type PlanId,
-  type PlanSummary,
+  type DocDocument,
+  type DocId,
+  type DocSummary,
 } from '@coda/core/contracts';
 import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
@@ -17,13 +17,33 @@ const APP_TITLE = 'Coda Mission Control';
 const ANNOTATION_TODO_NOTE =
   'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
 
+const metadataValue = (value: string | null): string => value ?? '';
+
+const metadataRows = (doc: DocDocument): Array<{ label: string; value: string }> => {
+  const rows = [
+    { label: 'Section', value: doc.section },
+    { label: 'Path', value: doc.relativePath },
+    { label: 'Status', value: metadataValue(doc.status) },
+    { label: 'Date', value: metadataValue(doc.date) },
+    { label: 'Milestone', value: metadataValue(doc.milestone) },
+    { label: 'Tags', value: doc.tags.join(', ') },
+  ];
+
+  return rows.filter((row) => row.value.trim().length > 0);
+};
+
+const optionLabel = (summary: DocSummary): string => {
+  return `${summary.displayTitle} (${summary.docPath})`;
+};
+
 export const App = (): ReactElement => {
   const [healthMessage, setHealthMessage] = useState<string>('Idle');
   const [healthLoading, setHealthLoading] = useState<boolean>(false);
 
-  const [planSummaries, setPlanSummaries] = useState<PlanSummary[]>([]);
-  const [selectedPlanId, setSelectedPlanId] = useState<PlanId | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PlanDocument | null>(null);
+  const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
+  const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<DocDocument | null>(null);
+  const [includeHidden, setIncludeHidden] = useState<boolean>(false);
 
   const [listLoading, setListLoading] = useState<boolean>(true);
   const [listError, setListError] = useState<string | null>(null);
@@ -42,15 +62,17 @@ export const App = (): ReactElement => {
     }
   };
 
-  const loadPlanSummaries = useCallback(async (): Promise<void> => {
+  const loadDocSummaries = useCallback(async (): Promise<void> => {
     setListLoading(true);
     setListError(null);
 
     try {
-      const summaries = await invoke<PlanSummary[]>('list_plan_summaries');
-      setPlanSummaries(summaries);
+      const summaries = await invoke<DocSummary[]>('list_doc_summaries', {
+        includeHidden,
+      });
+      setDocSummaries(summaries);
 
-      setSelectedPlanId((currentId) => {
+      setSelectedDocId((currentId) => {
         if (currentId && summaries.some((summary) => summary.id === currentId)) {
           return currentId;
         }
@@ -59,48 +81,48 @@ export const App = (): ReactElement => {
       });
 
       if (summaries.length === 0) {
-        setSelectedPlan(null);
+        setSelectedDoc(null);
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      setPlanSummaries([]);
-      setSelectedPlanId(null);
-      setSelectedPlan(null);
-      setListError(`Unable to load plans: ${message}`);
+      setDocSummaries([]);
+      setSelectedDocId(null);
+      setSelectedDoc(null);
+      setListError(`Unable to load docs: ${message}`);
     } finally {
       setListLoading(false);
     }
-  }, []);
+  }, [includeHidden]);
 
-  const loadPlanDocument = useCallback(async (planId: PlanId): Promise<void> => {
+  const loadDocDocument = useCallback(async (docId: DocId): Promise<void> => {
     setDocumentLoading(true);
     setDocumentError(null);
 
     try {
-      const document = await invoke<PlanDocument>('get_plan_document', { planId });
-      setSelectedPlan(document);
+      const document = await invoke<DocDocument>('get_doc_document', { docId });
+      setSelectedDoc(document);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      setSelectedPlan(null);
-      setDocumentError(`Unable to load selected plan: ${message}`);
+      setSelectedDoc(null);
+      setDocumentError(`Unable to load selected document: ${message}`);
     } finally {
       setDocumentLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void loadPlanSummaries();
-  }, [loadPlanSummaries]);
+    void loadDocSummaries();
+  }, [loadDocSummaries]);
 
   useEffect(() => {
-    if (!selectedPlanId) {
-      setSelectedPlan(null);
+    if (!selectedDocId) {
+      setSelectedDoc(null);
       setDocumentError(null);
       return;
     }
 
-    void loadPlanDocument(selectedPlanId);
-  }, [loadPlanDocument, selectedPlanId]);
+    void loadDocDocument(selectedDocId);
+  }, [loadDocDocument, selectedDocId]);
 
   return (
     <main className="layout">
@@ -118,74 +140,76 @@ export const App = (): ReactElement => {
         </button>
       </section>
 
-      <section className="panel plan-viewer">
-        <div className="plan-viewer-header">
-          <h2>Plan Viewer</h2>
-          <button type="button" onClick={() => void loadPlanSummaries()} disabled={listLoading}>
-            {listLoading ? 'Refreshing...' : 'Refresh Plans'}
+      <section className="panel docs-viewer">
+        <div className="docs-viewer-header">
+          <h2>Docs Viewer</h2>
+          <button type="button" onClick={() => void loadDocSummaries()} disabled={listLoading}>
+            {listLoading ? 'Refreshing...' : 'Refresh Docs'}
           </button>
         </div>
         <p className="annotation-note">{ANNOTATION_TODO_NOTE}</p>
 
-        {listLoading ? <p>Loading plans from `docs/plans/active`...</p> : null}
+        <label className="toggle-row" htmlFor="include-hidden-toggle">
+          <input
+            id="include-hidden-toggle"
+            type="checkbox"
+            checked={includeHidden}
+            onChange={(event) => setIncludeHidden(event.target.checked)}
+          />
+          <span>Show hidden/template docs</span>
+        </label>
+
+        {listLoading ? <p>Loading markdown docs from `docs/`...</p> : null}
         {listError ? <p className="error-text">{listError}</p> : null}
 
-        {!listLoading && !listError && planSummaries.length === 0 ? (
-          <p>No plan files found in `docs/plans/active`.</p>
+        {!listLoading && !listError && docSummaries.length === 0 ? (
+          <p>
+            {includeHidden
+              ? 'No markdown docs found in `docs/`.'
+              : 'No visible markdown docs found in `docs/`. Enable hidden/template filter to include `.template.md` files.'}
+          </p>
         ) : null}
 
-        {!listLoading && !listError && planSummaries.length > 0 ? (
+        {!listLoading && !listError && docSummaries.length > 0 ? (
           <>
-            <label className="plan-selector" htmlFor="plan-select">
-              <span>Plan file</span>
+            <label className="doc-selector" htmlFor="doc-select">
+              <span>Document</span>
               <select
-                id="plan-select"
-                value={selectedPlanId ?? ''}
-                onChange={(event) => setSelectedPlanId(event.target.value)}
+                id="doc-select"
+                value={selectedDocId ?? ''}
+                onChange={(event) => setSelectedDocId(event.target.value)}
               >
-                {planSummaries.map((summary) => (
+                {docSummaries.map((summary) => (
                   <option key={summary.id} value={summary.id}>
-                    {summary.fileName}
+                    {optionLabel(summary)}
                   </option>
                 ))}
               </select>
             </label>
 
-            {documentLoading ? <p>Loading selected plan...</p> : null}
+            {documentLoading ? <p>Loading selected document...</p> : null}
             {documentError ? <p className="error-text">{documentError}</p> : null}
 
-            {!documentLoading && !documentError && selectedPlan ? (
-              <article className="plan-document">
+            {!documentLoading && !documentError && selectedDoc ? (
+              <article className="doc-document">
                 <header>
-                  <h3>{selectedPlan.title}</h3>
-                  <dl className="plan-metadata">
-                    <div>
-                      <dt>Status</dt>
-                      <dd>{selectedPlan.status}</dd>
-                    </div>
-                    <div>
-                      <dt>Date</dt>
-                      <dd>{selectedPlan.date}</dd>
-                    </div>
-                    <div>
-                      <dt>Milestone</dt>
-                      <dd>{selectedPlan.milestone ?? 'Unspecified'}</dd>
-                    </div>
-                    <div>
-                      <dt>Tags</dt>
-                      <dd>{selectedPlan.tags.length > 0 ? selectedPlan.tags.join(', ') : 'None'}</dd>
-                    </div>
-                    <div>
-                      <dt>Path</dt>
-                      <dd>
-                        <code>{selectedPlan.relativePath}</code>
-                      </dd>
-                    </div>
-                  </dl>
+                  <h3>{selectedDoc.displayTitle}</h3>
+                  {metadataRows(selectedDoc).length > 0 ? (
+                    <dl className="doc-metadata">
+                      {metadataRows(selectedDoc).map((row) => (
+                        <div key={row.label}>
+                          <dt>{row.label}</dt>
+                          <dd>
+                            {row.label === 'Path' ? <code>{row.value}</code> : row.value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
                 </header>
 
                 <div className="markdown-content">
-                  <Markdown remarkPlugins={[remarkGfm]}>{selectedPlan.markdownBody}</Markdown>
+                  <Markdown remarkPlugins={[remarkGfm]}>{selectedDoc.markdownBody}</Markdown>
                 </div>
               </article>
             ) : null}

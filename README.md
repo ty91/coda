@@ -6,12 +6,12 @@ date: 2026-02-18
 # Coda
 
 Coda is an agentic software engineering system.  
-Current state: Milestone 1 scaffold (CLI + desktop shell + shared core package).
+Current state: Milestone 1 scaffold (CLI + app shell + shared core package).
 
 ## What Exists Today
 
 - A TypeScript CLI scaffold at `apps/cli`.
-- A Tauri + React desktop scaffold at `apps/desktop`.
+- A Tauri + React app scaffold at `apps/app`.
 - A shared package for contracts and validation at `packages/core`.
 - A full validation gate: lint, typecheck, test, and build.
 
@@ -37,16 +37,16 @@ pnpm --filter @coda/cli exec node dist/main.js --help
 pnpm --filter @coda/cli exec node dist/main.js status
 ```
 
-Run desktop app:
+Run app:
 
 ```bash
-pnpm --filter @coda/desktop tauri dev
+pnpm --filter @coda/app tauri dev
 ```
 
-Build desktop bundle (`.app` on macOS in current config):
+Build app bundle (`.app` on macOS in current config):
 
 ```bash
-pnpm --filter @coda/desktop tauri build
+pnpm --filter @coda/app tauri build
 ```
 
 ## Project Layout
@@ -54,7 +54,7 @@ pnpm --filter @coda/desktop tauri build
 ```text
 apps/
   cli/        # Commander-based CLI scaffold
-  desktop/    # Tauri backend + React frontend scaffold
+  app/        # Tauri backend + React frontend scaffold
 packages/
   core/       # Shared contracts and validation helpers
 docs/

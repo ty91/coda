@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "packageManager": "pnpm@10.27.0",
   "scripts": {
+    "app:dev": "pnpm --filter @coda/app tauri dev",
+    "app:build": "pnpm --filter @coda/app tauri build",
+    "cli:dev": "pnpm --filter @coda/cli exec node dist/main.js --help",
+    "cli:build": "pnpm --filter @coda/cli build",
     "lint": "pnpm -r lint && pnpm lint:boundaries",
     "lint:boundaries": "node ./tools/validate-boundaries.mjs",
     "typecheck": "pnpm -r typecheck",
@@ -12,8 +16,8 @@
     "validate": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "smoke:cli:help": "pnpm --filter @coda/cli exec coda --help",
     "smoke:cli:status": "pnpm --filter @coda/cli exec coda status",
-    "smoke:desktop:dev": "pnpm --filter @coda/desktop tauri dev",
-    "smoke:desktop:build": "pnpm --filter @coda/desktop tauri build"
+    "smoke:app:dev": "pnpm --filter @coda/app tauri dev",
+    "smoke:app:build": "pnpm --filter @coda/app tauri build"
   },
   "devDependencies": {
     "@types/node": "^24.3.3",

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Coda Desktop",
+  "productName": "Coda App",
   "version": "0.1.0",
-  "identifier": "com.coda.desktop",
+  "identifier": "com.coda.client",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",

@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-  coda_desktop_lib::run();
+  coda_app_lib::run();
 }

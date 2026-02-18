@@ -8,11 +8,11 @@ const RULES = [
   {
     scope: '@coda/cli',
     root: path.join(ROOT, 'apps/cli/src'),
-    forbidden: ['@coda/desktop', 'apps/desktop/'],
+    forbidden: ['@coda/app', 'apps/app/'],
   },
   {
-    scope: '@coda/desktop',
-    root: path.join(ROOT, 'apps/desktop/src'),
+    scope: '@coda/app',
+    root: path.join(ROOT, 'apps/app/src'),
     forbidden: ['@coda/cli', 'apps/cli/'],
   },
 ];

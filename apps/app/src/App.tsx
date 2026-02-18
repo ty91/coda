@@ -29,7 +29,7 @@ export const App = (): ReactElement => {
       <header className="panel">
         <p className="kicker">Milestone 1 Scaffold</p>
         <h1>{APP_TITLE}</h1>
-        <p>Roundtrip status for desktop shell + Rust command bridge.</p>
+        <p>Roundtrip status for app shell + Rust command bridge.</p>
       </header>
 
       <section className="panel">

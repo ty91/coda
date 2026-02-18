@@ -45,7 +45,21 @@ const executionPlanSummary: DocSummary = {
   isHidden: false,
 };
 
-const visibleSummaries: DocSummary[] = [coreBeliefsSummary, executionPlanSummary];
+const slackReferenceSummary: DocSummary = {
+  id: 'references/api/slack.md',
+  fileName: 'slack.md',
+  docPath: 'references/api/slack.md',
+  relativePath: 'docs/references/api/slack.md',
+  section: 'references',
+  title: 'Slack API Reference',
+  displayTitle: 'Slack API Reference',
+  date: '2026-02-17',
+  status: null,
+  tags: ['api'],
+  milestone: null,
+  isTemplate: false,
+  isHidden: false,
+};
 
 const hiddenTemplateSummary: DocSummary = {
   id: 'plans/.template.md',
@@ -63,6 +77,8 @@ const hiddenTemplateSummary: DocSummary = {
   isHidden: true,
 };
 
+const visibleSummaries: DocSummary[] = [coreBeliefsSummary, executionPlanSummary, slackReferenceSummary];
+
 const documents: Record<string, DocDocument> = {
   'design-docs/core-beliefs.md': {
     ...coreBeliefsSummary,
@@ -71,6 +87,10 @@ const documents: Record<string, DocDocument> = {
   'plans/active/2026-02-18-exec.md': {
     ...executionPlanSummary,
     markdownBody: '## Plan\n\nExecution body',
+  },
+  'references/api/slack.md': {
+    ...slackReferenceSummary,
+    markdownBody: '## Slack\n\nSlack reference body',
   },
   'plans/.template.md': {
     ...hiddenTemplateSummary,
@@ -110,7 +130,7 @@ afterEach(() => {
 });
 
 describe('App docs viewer', () => {
-  it('loads docs and allows selecting another document', async () => {
+  it('loads docs and allows selecting another document from the sidebar', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
@@ -118,8 +138,9 @@ describe('App docs viewer', () => {
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
     expect(screen.getByText('Beliefs body')).toBeTruthy();
 
-    const selector = screen.getByLabelText('Document');
-    fireEvent.change(selector, { target: { value: 'plans/active/2026-02-18-exec.md' } });
+    fireEvent.click(screen.getByRole('button', { name: /active$/ }));
+    await screen.findByRole('button', { name: /Execution Plan/ });
+    fireEvent.click(screen.getByRole('button', { name: /Execution Plan/ }));
 
     await screen.findByRole('heading', { name: 'Execution Plan', level: 3 });
     expect(screen.getByText('Execution body')).toBeTruthy();
@@ -146,18 +167,31 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
-    await screen.findByRole('option', {
-      name: 'Core Beliefs (design-docs/core-beliefs.md)',
-    });
-    expect(screen.queryByRole('option', { name: 'template (plans/.template.md)' })).toBeNull();
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(screen.queryByText('template')).toBeNull();
 
     fireEvent.click(screen.getByLabelText('Show hidden/template docs'));
 
     await waitFor(() => {
       expect(mockInvoke).toHaveBeenCalledWith('list_doc_summaries', { includeHidden: true });
     });
-    await screen.findByRole('option', {
-      name: 'template (plans/.template.md)',
-    });
+    await screen.findByText('template');
+  });
+
+  it('expands nested folders and loads nested documents from the tree', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(screen.queryByText('Slack API Reference')).toBeNull();
+
+    fireEvent.click(screen.getByText('api'));
+
+    await screen.findByText('Slack API Reference');
+    fireEvent.click(screen.getByText('Slack API Reference'));
+
+    await screen.findByRole('heading', { name: 'Slack API Reference', level: 3 });
+    expect(screen.getByText('Slack reference body')).toBeTruthy();
   });
 });

@@ -1,7 +1,7 @@
 ---
 title: "Tauri docs viewer UI refactor: modern monochrome + real docs tree sidebar"
 date: 2026-02-18
-status: draft
+status: completed
 tags: [tauri, ui, docs-viewer, ux, refactor]
 milestone: M1
 ---

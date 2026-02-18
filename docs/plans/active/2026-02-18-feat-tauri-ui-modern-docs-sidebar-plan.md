@@ -63,9 +63,9 @@ Refactor the Tauri app docs viewer into a clean black-and-white modern interface
 
 6. **Run full validation gate + manual smoke**
    - [x] Action: Run repository validation commands and capture outcomes.
-   - [ ] Action: Run Tauri app smoke check for desktop/mobile-ish viewport behavior and docs tree usability.
-   - [ ] Deliverables: Validation evidence logged in progress section.
-   - [ ] Exit criteria: Lint/typecheck/tests pass and manual UI checks complete.
+   - [x] Action: Run Tauri app smoke check for desktop/mobile-ish viewport behavior and docs tree usability.
+   - [x] Deliverables: Validation evidence logged in progress section.
+   - [x] Exit criteria: Lint/typecheck/tests pass and manual UI checks complete.
 
 7. **Compound documentation follow-up**
    - [x] Action: Record solved UI-pattern learnings in `docs/solutions/` after implementation.
@@ -103,3 +103,4 @@ Refactor the Tauri app docs viewer into a clean black-and-white modern interface
 - 2026-02-18: Validation complete: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm validate`, and `pnpm --filter @coda/app tauri build` passed.
 - 2026-02-18: `pnpm --filter @coda/app tauri dev` startup smoke passes (Vite + Rust app launch). Full in-window manual tree usability verification remains pending user interaction.
 - 2026-02-18: Compound step recorded in `docs/solutions/2026-02-18-tauri-ui-monochrome-docs-sidebar.md`; no architecture doc update required.
+- 2026-02-18: User confirmed in-window manual verification for tree navigation, hidden/template toggle, and responsive behavior.

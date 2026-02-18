@@ -1,0 +1,30 @@
+{
+  "name": "@coda/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @coda/core build && vite --host 0.0.0.0 --port 1420",
+    "build": "pnpm --filter @coda/core build && tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint src",
+    "typecheck": "pnpm --filter @coda/core build && tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@coda/core": "workspace:*",
+    "@tauri-apps/api": "^2.10.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.10.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "vite": "^7.1.3"
+  }
+}

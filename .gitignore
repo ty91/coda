@@ -4,6 +4,8 @@
 # Node
 node_modules/
 dist/
+target/
+apps/desktop/src-tauri/target/
 
 # OS
 .DS_Store

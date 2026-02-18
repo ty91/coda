@@ -1,0 +1,19 @@
+{
+  "name": "@coda/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "coda": "dist/main.js"
+  },
+  "scripts": {
+    "lint": "oxlint src",
+    "typecheck": "pnpm --filter @coda/core build && tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "build": "pnpm --filter @coda/core build && tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@coda/core": "workspace:*",
+    "commander": "^14.0.1"
+  }
+}

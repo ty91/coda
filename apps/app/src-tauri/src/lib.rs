@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+mod plan_viewer;
+
 #[derive(Serialize)]
 struct HealthMessage {
   message: String,
@@ -15,7 +17,11 @@ fn get_health_message(project_name: String) -> HealthMessage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![get_health_message])
+    .invoke_handler(tauri::generate_handler![
+      get_health_message,
+      plan_viewer::list_plan_summaries,
+      plan_viewer::get_plan_document
+    ])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(

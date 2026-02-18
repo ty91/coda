@@ -6,6 +6,7 @@ node_modules/
 dist/
 target/
 apps/app/src-tauri/target/
+*.tsbuildinfo
 
 # OS
 .DS_Store

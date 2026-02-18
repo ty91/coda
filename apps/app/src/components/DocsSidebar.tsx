@@ -2,6 +2,14 @@ import type { DocId, DocSummary } from '@coda/core/contracts';
 import type { CSSProperties, ReactElement } from 'react';
 
 import type { TreeFolderNode, TreeNode, TreeSectionNode } from '../docs-tree';
+import {
+  eyebrowClass,
+  ghostButtonClass,
+  headerRowClass,
+  messageTextClass,
+  panelSurfaceClass,
+  treeRowClass,
+} from '../ui-classes';
 
 type DocsSidebarProps = {
   summaries: DocSummary[];
@@ -26,22 +34,23 @@ const renderFolderNode = (
   onSelectDoc: (docId: DocId) => void
 ): ReactElement => {
   const isExpanded = expandedNodeKeys.has(node.key);
+  const folderToggleClass = `${treeRowClass} rounded-none hover:bg-[#f2f2ef]`;
 
   return (
-    <li className="tree-item" key={node.key}>
+    <li key={node.key}>
       <button
         type="button"
-        className="tree-toggle"
+        className={folderToggleClass}
         style={{ '--depth': depth } as CSSProperties}
         aria-expanded={isExpanded}
         onClick={() => onToggleNode(node.key)}
       >
-        <span className="caret">{isExpanded ? 'v' : '>'}</span>
+        <span className="min-w-3 text-[0.82rem] text-coda-text-secondary">{isExpanded ? 'v' : '>'}</span>
         <span>{node.name}</span>
       </button>
 
       {isExpanded ? (
-        <ul className="tree-branch" role="group">
+        <ul className="m-0 list-none divide-y divide-[#ecece9] p-0" role="group">
           {node.children.map((childNode) =>
             renderTreeNode(
               childNode,
@@ -78,18 +87,24 @@ const renderTreeNode = (
   }
 
   const isActive = node.summary.id === selectedDocId;
+  const docButtonClass = isActive
+    ? `${treeRowClass} grid gap-[0.08rem] rounded-none bg-[#111111] text-[#fafafa] hover:bg-[#111111]`
+    : `${treeRowClass} grid gap-[0.08rem] rounded-none hover:bg-[#f2f2ef]`;
+  const docPathClass = isActive
+    ? 'font-mono text-[0.72rem] leading-[1.25] text-[#d4d4d4]'
+    : 'font-mono text-[0.72rem] leading-[1.25] text-coda-text-muted';
 
   return (
-    <li className="tree-item" key={node.key}>
+    <li key={node.key}>
       <button
         type="button"
-        className={isActive ? 'tree-doc is-active' : 'tree-doc'}
+        className={docButtonClass}
         style={{ '--depth': depth } as CSSProperties}
         aria-current={isActive ? 'page' : undefined}
         onClick={() => onSelectDoc(node.summary.id)}
       >
-        <span className="tree-doc-title">{node.summary.displayTitle}</span>
-        <span className="tree-doc-path">{node.summary.docPath}</span>
+        <span className="text-[0.9rem] leading-[1.3]">{node.summary.displayTitle}</span>
+        <span className={docPathClass}>{node.summary.docPath}</span>
       </button>
     </li>
   );
@@ -109,7 +124,7 @@ const sectionContent = (
   }
 
   return (
-    <ul className="tree-root" role="tree">
+    <ul className="m-0 list-none divide-y divide-[#ecece9] p-0" role="tree">
       {section.children.map((node) =>
         renderTreeNode(node, 1, selectedDocId, expandedNodeKeys, onToggleNode, onSelectDoc)
       )}
@@ -131,32 +146,36 @@ export const DocsSidebar = ({
   onSelectDoc,
 }: DocsSidebarProps): ReactElement => {
   return (
-    <aside className="sidebar panel-surface" aria-label="Documentation sidebar">
-      <header className="sidebar-header">
+    <aside
+      className={`${panelSurfaceClass} sticky top-4 grid max-h-[calc(100vh-2rem)] gap-3 overflow-auto p-4 max-[980px]:static max-[980px]:max-h-none`}
+      aria-label="Documentation sidebar"
+    >
+      <header className={headerRowClass}>
         <div>
-          <p className="eyebrow">Knowledge</p>
-          <h2>Docs Tree</h2>
+          <p className={eyebrowClass}>Knowledge</p>
+          <h2 className="mt-1 text-[1.02rem] font-semibold tracking-[-0.01em]">Docs Tree</h2>
         </div>
-        <button type="button" className="ghost-button" onClick={() => void onRefresh()} disabled={listLoading}>
+        <button type="button" className={ghostButtonClass} onClick={() => void onRefresh()} disabled={listLoading}>
           {listLoading ? 'Refreshing...' : 'Refresh'}
         </button>
       </header>
 
-      <label className="toggle-row" htmlFor="include-hidden-toggle">
+      <label className="inline-flex items-center gap-2 text-[0.86rem] text-coda-text-secondary" htmlFor="include-hidden-toggle">
         <input
           id="include-hidden-toggle"
           type="checkbox"
+          className="m-0 accent-[#111111]"
           checked={includeHidden}
           onChange={(event) => onToggleHidden(event.target.checked)}
         />
         <span>Show hidden/template docs</span>
       </label>
 
-      {listLoading ? <p className="sidebar-message">Loading markdown docs from `docs/`...</p> : null}
-      {listError ? <p className="error-text">{listError}</p> : null}
+      {listLoading ? <p className={messageTextClass}>Loading markdown docs from `docs/`...</p> : null}
+      {listError ? <p className="text-[0.92rem] text-coda-error">{listError}</p> : null}
 
       {!listLoading && !listError && summaries.length === 0 ? (
-        <p className="sidebar-message">
+        <p className={messageTextClass}>
           {includeHidden
             ? 'No markdown docs found in `docs/`.'
             : 'No visible markdown docs found in `docs/`. Enable hidden/template docs to include templates.'}
@@ -164,19 +183,19 @@ export const DocsSidebar = ({
       ) : null}
 
       {!listLoading && !listError && summaries.length > 0 ? (
-        <nav className="docs-tree" aria-label="Docs navigation tree">
+        <nav className="grid gap-[0.55rem]" aria-label="Docs navigation tree">
           {treeSections.map((section) => {
             const sectionExpanded = expandedNodeKeys.has(section.key);
 
             return (
-              <section className="tree-section" key={section.key}>
+              <section className="overflow-hidden rounded-coda-md border border-coda-line-soft bg-[#fdfdfc]" key={section.key}>
                 <button
                   type="button"
-                  className="tree-section-toggle"
+                  className="flex min-h-[2.15rem] w-full items-center gap-2 rounded-none border-0 bg-transparent px-[0.65rem] py-[0.55rem] text-left font-semibold tracking-[0.01em] hover:bg-[#f2f2ef]"
                   aria-expanded={sectionExpanded}
                   onClick={() => onToggleNode(section.key)}
                 >
-                  <span className="caret">{sectionExpanded ? 'v' : '>'}</span>
+                  <span className="min-w-3 text-[0.82rem] text-coda-text-secondary">{sectionExpanded ? 'v' : '>'}</span>
                   <span>{section.label}</span>
                 </button>
                 {sectionContent(

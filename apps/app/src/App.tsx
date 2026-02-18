@@ -10,6 +10,7 @@ import {
   buildTreeSections,
   defaultExpandedSectionKeys,
 } from './docs-tree';
+import { eyebrowClass, ghostButtonClass, headerRowClass, panelSurfaceClass, subtleTextClass } from './ui-classes';
 
 type HealthResponse = {
   message: string;
@@ -184,7 +185,7 @@ export const App = (): ReactElement => {
   }, []);
 
   return (
-    <main className="app-shell">
+    <main className="grid min-h-screen grid-cols-[minmax(280px,340px)_minmax(0,1fr)] items-start gap-4 p-4 animate-[shell-enter_200ms_ease-out] max-[980px]:grid-cols-1 max-[980px]:p-3">
       <DocsSidebar
         summaries={docSummaries}
         treeSections={treeSections}
@@ -199,20 +200,27 @@ export const App = (): ReactElement => {
         onSelectDoc={setSelectedDocId}
       />
 
-      <section className="main-column">
-        <header className="app-header panel-surface">
+      <section className="grid min-w-0 gap-4">
+        <header
+          className={`${panelSurfaceClass} ${headerRowClass} p-4 max-[980px]:flex-col max-[980px]:items-stretch`}
+        >
           <div>
-            <p className="eyebrow">Milestone 1</p>
-            <h1>{APP_TITLE}</h1>
-            <p className="subtle-text">Monochrome docs command center with a structured navigation tree.</p>
+            <p className={eyebrowClass}>Milestone 1</p>
+            <h1 className="mt-1 text-[clamp(1.3rem,1.8vw,1.85rem)] font-semibold tracking-[-0.02em]">{APP_TITLE}</h1>
+            <p className={subtleTextClass}>Monochrome docs command center with a structured navigation tree.</p>
           </div>
 
-          <div className="health-check-card" aria-live="polite">
-            <p className="health-label">Bridge Status</p>
-            <p className="health-value">{healthMessage}</p>
+          <div
+            className="grid min-w-[220px] gap-2 rounded-coda-md border border-coda-line-soft bg-[#fafaf8] p-3 max-[980px]:min-w-0 max-[980px]:w-full"
+            aria-live="polite"
+          >
+            <p className="text-[0.66rem] font-semibold tracking-[0.11em] text-coda-text-muted uppercase">
+              Bridge Status
+            </p>
+            <p className="font-semibold">{healthMessage}</p>
             <button
               type="button"
-              className="ghost-button"
+              className={ghostButtonClass}
               onClick={() => void runHealthCheck()}
               disabled={healthLoading}
             >

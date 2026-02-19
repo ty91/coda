@@ -413,9 +413,15 @@ describe('App docs viewer', () => {
 
     const findInput = await screen.findByTestId('viewer-find-input');
     const findOverlay = screen.getByTestId('viewer-find-overlay');
+    const nextButton = screen.getByRole('button', { name: 'Next match' });
+    const previousButton = screen.getByRole('button', { name: 'Previous match' });
+    const closeButton = screen.getByRole('button', { name: 'Close find' });
     expect(document.activeElement).toBe(findInput);
     expect(findOverlay.className).toContain('fixed');
     expect(findOverlay.className).toContain('right-4');
+    expect(nextButton.className).toContain('cursor-pointer');
+    expect(previousButton.className).toContain('cursor-pointer');
+    expect(closeButton.className).toContain('cursor-pointer');
 
     fireEvent.change(findInput, { target: { value: 'core' } });
 
@@ -429,13 +435,13 @@ describe('App docs viewer', () => {
     });
 
     const beforeNext = findCounter.textContent;
-    fireEvent.click(screen.getByRole('button', { name: 'Next match' }));
+    fireEvent.click(nextButton);
     await waitFor(() => {
       expect(findCounter.textContent).not.toBe(beforeNext);
     });
 
     const beforePrevious = findCounter.textContent;
-    fireEvent.click(screen.getByRole('button', { name: 'Previous match' }));
+    fireEvent.click(previousButton);
     await waitFor(() => {
       expect(findCounter.textContent).not.toBe(beforePrevious);
     });

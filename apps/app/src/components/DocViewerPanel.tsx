@@ -297,10 +297,10 @@ export const DocViewerPanel = ({
 
   return (
     <section
-      className={`${panelSurfaceClass} relative grid h-full min-h-0 min-w-0 gap-4 overflow-y-auto px-4 pb-4 pt-11 max-[980px]:pt-4`}
+      className={`${panelSurfaceClass} relative grid h-full min-h-0 min-w-0 gap-4 overflow-y-auto px-4 pb-4 pt-11`}
     >
       <div
-        className="absolute inset-x-0 top-0 h-11 max-[980px]:hidden"
+        className="absolute inset-x-0 top-0 h-11"
         data-tauri-drag-region
         data-testid="viewer-drag-region"
         aria-hidden
@@ -308,7 +308,7 @@ export const DocViewerPanel = ({
 
       {selectedDoc && findOpen ? (
         <div
-          className="fixed top-12 right-[var(--viewer-find-right-offset)] left-auto z-30 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)] max-[980px]:top-2 max-[980px]:right-2 max-[980px]:left-2 max-[980px]:w-auto"
+          className="fixed top-12 right-[var(--viewer-find-right-offset)] left-auto z-30 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)]"
           style={findOverlayStyle}
           data-testid="viewer-find-overlay"
         >

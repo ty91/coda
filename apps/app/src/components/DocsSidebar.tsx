@@ -140,11 +140,11 @@ export const DocsSidebar = ({
 }: DocsSidebarProps): ReactElement => {
   return (
     <aside
-      className={`${sidebarSurfaceClass} sticky top-0 relative grid max-h-[100vh] gap-3 overflow-auto px-3 pb-3 pt-11 max-[980px]:static max-[980px]:max-h-none max-[980px]:p-3`}
+      className={`${sidebarSurfaceClass} sticky top-0 relative grid max-h-[100vh] gap-3 overflow-auto px-3 pb-3 pt-11`}
       aria-label="Documentation sidebar"
     >
       <div
-        className="absolute inset-x-0 top-0 h-11 max-[980px]:hidden"
+        className="absolute inset-x-0 top-0 h-11"
         data-tauri-drag-region
         data-testid="sidebar-drag-region"
         aria-hidden

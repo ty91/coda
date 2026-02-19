@@ -26,6 +26,17 @@ export type DocDocument = DocMetadata & {
   markdownBody: string;
 };
 
+export const DOCS_CHANGED_EVENT = 'docs_changed';
+
+export type DocsChangeKind = 'modified' | 'created' | 'removed' | 'renamed' | 'other';
+
+export type DocsChangedEventPayload = {
+  changedDocIds: DocId[];
+  removedDocIds: DocId[];
+  kinds: DocsChangeKind[];
+  emittedAtIso: string;
+};
+
 export type ListDocsOptions = {
   includeHidden: boolean;
 };

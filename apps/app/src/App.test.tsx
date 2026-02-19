@@ -299,15 +299,23 @@ describe('App docs viewer', () => {
     await screen.findByRole('button', { name: 'Design Docs' });
     const askPanelToggle = screen.getByTestId('ask-panel-toggle-button');
     expect(askPanelToggle.getAttribute('aria-label')).toBe('Open ask panel');
+    expect(askPanelToggle.getAttribute('aria-controls')).toBe('app-ask-sidebar-panel');
+    expect(askPanelToggle.getAttribute('aria-expanded')).toBe('false');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
     expect(askPanelToggle.hasAttribute('disabled')).toBe(false);
     expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+    expect(screen.queryByRole('dialog')).toBeNull();
 
     fireEvent.click(askPanelToggle);
     expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
+    expect(askPanelToggle.getAttribute('aria-expanded')).toBe('true');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByTestId('ask-inbox-panel')).toBeTruthy();
+    expect(screen.getByRole('complementary', { name: 'Ask sidebar' }).id).toBe(
+      'app-ask-sidebar-panel'
+    );
     expect(screen.getByText('No pending asks.')).toBeTruthy();
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('expands nested folders and loads nested documents from the tree', async () => {
@@ -535,6 +543,7 @@ describe('App docs viewer', () => {
     expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
     expect(askPanelToggle.hasAttribute('disabled')).toBe(false);
+    expect(screen.queryByRole('dialog')).toBeNull();
 
     await screen.findByRole('button', { name: 'Design Docs' });
     fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
@@ -550,15 +559,19 @@ describe('App docs viewer', () => {
 
     expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
     expect(askPanelToggle.getAttribute('aria-label')).toBe('Open ask panel');
+    expect(askPanelToggle.getAttribute('aria-expanded')).toBe('false');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
     expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('16px');
+    expect(screen.queryByRole('dialog')).toBeNull();
 
     fireEvent.click(askPanelToggle);
 
     await screen.findByTestId('ask-inbox-panel');
     expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
+    expect(askPanelToggle.getAttribute('aria-expanded')).toBe('true');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
     expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('392px');
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('debounces find matching until 150ms after typing', async () => {

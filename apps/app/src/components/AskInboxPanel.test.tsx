@@ -162,6 +162,22 @@ describe('AskInboxPanel', () => {
     }
   });
 
+  it('keeps panel hidden when isOpen is false while still reporting pending count', async () => {
+    mockIsTauri.mockReturnValue(true);
+    setupInvokeWithSessions([buildSession()]);
+    const onPendingCountChange = vi.fn();
+
+    render(<AskInboxPanel isOpen={false} onPendingCountChange={onPendingCountChange} />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+    });
+
+    await waitFor(() => {
+      expect(onPendingCountChange).toHaveBeenCalledWith(1);
+    });
+  });
+
   it('submits answered payload with option and other selections plus note', async () => {
     const session = buildSession({
       request: {

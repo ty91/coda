@@ -47,10 +47,10 @@ milestone: M1
    - [x] Exit criteria: 신규/기존 ask 세션에서 질문 표시 및 응답 제출이 기존과 동일하게 동작한다.
 
 4. **회귀 테스트 확장**
-   - [ ] Action: `App.test.tsx`에 ask 아이콘 클릭 후 "사이드바 렌더됨 + 모달 미존재"를 동시에 검증하는 케이스를 추가한다.
-   - [ ] Action: 필요한 경우 `AskInboxPanel.test.tsx`에 사이드바 렌더링 조건(빈 큐/유입/토글) 회귀 케이스를 보강한다.
-   - [ ] Deliverables: modal 회귀 차단 + sidebar 계약 보장 테스트.
-   - [ ] Exit criteria: 모달이 다시 연결되면 테스트가 실패한다.
+   - [x] Action: `App.test.tsx`에 ask 아이콘 클릭 후 "사이드바 렌더됨 + 모달 미존재"를 동시에 검증하는 케이스를 추가한다.
+   - [x] Action: 필요한 경우 `AskInboxPanel.test.tsx`에 사이드바 렌더링 조건(빈 큐/유입/토글) 회귀 케이스를 보강한다.
+   - [x] Deliverables: modal 회귀 차단 + sidebar 계약 보장 테스트.
+   - [x] Exit criteria: 모달이 다시 연결되면 테스트가 실패한다.
 
 5. **게이트 검증 + 컴파운드 기록**
    - [ ] Action: lint/typecheck/tests/build/validate 전체 게이트를 실행하고, `tauri dev` 수동 스모크로 ask 아이콘 -> 우측 사이드바 질문 리스트 플로우를 확인한다.
@@ -79,6 +79,7 @@ milestone: M1
 - 2026-02-19: Step 1 완료. `docs/design-docs/ask-sidebar-interaction-contract.md`에 모달 금지/사이드바 토글 계약, 시나리오 표, 테스트 문장을 기록했다.
 - 2026-02-19: Step 2 완료. `App.tsx` ask 토글 버튼에 `aria-controls`/`aria-expanded`를 연결하고 패널 고정 레이아웃 상수를 명시했으며, `AskInboxPanel`은 `role="complementary"` + 패널 id/라벨 계약을 받도록 정리했다.
 - 2026-02-19: Step 3 완료. `App.tsx`에서 ask 리스트 렌더 경로가 `AskInboxPanel` 1회 사용으로 유지됨을 확인했고, `pnpm --filter @coda/app test -- AskInboxPanel.test.tsx`로 polling/pending count/submit/cancel 계약 회귀가 없음을 재검증했다.
+- 2026-02-19: Step 4 완료. `App.test.tsx`에 ask 토글의 sidebar DOM + dialog 부재(`queryByRole('dialog')`) 검증을 추가했고, `AskInboxPanel.test.tsx`에 `isOpen=false` 상태에서도 pending count 콜백이 유지되는 회귀 케이스를 추가했다.
 
 ## Assumptions / Open Questions
 

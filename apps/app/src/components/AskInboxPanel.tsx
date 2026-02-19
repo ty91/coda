@@ -145,8 +145,6 @@ const formatExpiryText = (expiresAtIso: string | null): string => {
 
 export const AskInboxPanel = (): ReactElement | null => {
   const [sessions, setSessions] = useState<PendingAskSession[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [draftsByAsk, setDraftsByAsk] = useState<AskDraftsState>({});
   const [notesByAsk, setNotesByAsk] = useState<AskNotesState>({});
   const [submitErrorByAsk, setSubmitErrorByAsk] = useState<AskErrorsState>({});
@@ -156,20 +154,17 @@ export const AskInboxPanel = (): ReactElement | null => {
     try {
       const pending = await invoke<PendingAskSession[]>('list_pending_ask_sessions');
       setSessions(pending);
-      setLoadError(null);
       setDraftsByAsk((current) => syncDraftState(current, pending));
       setNotesByAsk((current) => syncNoteState(current, pending));
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      setLoadError(`Unable to load ask queue: ${message}`);
-    } finally {
-      setLoading(false);
+      // Keep UI hidden when queue fetch fails; details remain in developer console.
+      setSessions([]);
+      console.warn('Unable to load ask queue', error);
     }
   }, []);
 
   useEffect(() => {
     if (!isTauri()) {
-      setLoading(false);
       return;
     }
 
@@ -310,22 +305,16 @@ export const AskInboxPanel = (): ReactElement | null => {
     return null;
   }
 
+  if (sessions.length === 0) {
+    return null;
+  }
+
   return (
     <section className="rounded-coda-xl border border-coda-line-soft bg-white/84 p-4 shadow-sm">
       <header className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-sm font-semibold tracking-[-0.01em] text-coda-text-primary">Ask Queue</h2>
         <span className="text-xs text-coda-text-secondary">{sessions.length} pending</span>
       </header>
-
-      {loading && sessions.length === 0 && (
-        <p className="text-xs text-coda-text-secondary">Checking pending asks...</p>
-      )}
-
-      {loadError && <p className="text-xs text-red-700">{loadError}</p>}
-
-      {!loading && sessions.length === 0 && !loadError && (
-        <p className="text-xs text-coda-text-secondary">No pending asks.</p>
-      )}
 
       <div className="space-y-3">
         {sessions.map((session) => {

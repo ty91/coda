@@ -1,7 +1,7 @@
 ---
 title: "Auto-refresh docs viewer when files under docs/ change"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, docs-viewer, file-watch, auto-refresh, milestone-1]
 milestone: M1
 ---
@@ -85,10 +85,10 @@ When a user is reading a document in the app, changes under `docs/` should refre
    - [x] Exit criteria: End-to-end auto-refresh works with no regression in docs navigation and rendering.
 
 6. **Complete compound documentation**
-   - [ ] Action: Record watcher-driven docs refresh pattern and failure-prevention notes in `docs/solutions/`.
-   - [ ] Action: Update design documentation only if the watcher/event contract changes architectural assumptions.
-   - [ ] Deliverables: New solution document with related links.
-   - [ ] Exit criteria: Compound step completed with reusable guidance.
+   - [x] Action: Record watcher-driven docs refresh pattern and failure-prevention notes in `docs/solutions/`.
+   - [x] Action: Update design documentation only if the watcher/event contract changes architectural assumptions.
+   - [x] Deliverables: New solution document with related links.
+   - [x] Exit criteria: Compound step completed with reusable guidance.
 
 ## Validation
 
@@ -127,3 +127,5 @@ When a user is reading a document in the app, changes under `docs/` should refre
 - 2026-02-19: `pnpm --filter @coda/app tauri dev` startup confirmed (Vite + Rust app launch). In-window manual auto-refresh check is still pending user interaction.
 - 2026-02-19: Manual smoke passed by user confirmation. Auto-refresh updates now keep current reader view mounted to avoid scroll reset while content refreshes.
 - 2026-02-19: Step 5 complete.
+- 2026-02-19: Step 6 complete. Added solution note for watcher-driven auto-refresh and scroll-preserve behavior.
+- 2026-02-19: Architecture docs review result: no additional design-doc update required; watcher/event approach stays within existing Tauri sidecar guidance.

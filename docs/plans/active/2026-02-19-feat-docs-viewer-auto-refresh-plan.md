@@ -65,11 +65,11 @@ When a user is reading a document in the app, changes under `docs/` should refre
    - [x] Exit criteria: Editing, creating, renaming, or deleting markdown under `docs/` produces stable `docs_changed` events.
 
 3. **Wire frontend event subscription and reload flow**
-   - [ ] Action: Subscribe to the backend `docs_changed` event in `apps/app/src/App.tsx` using Tauri `listen`, and clean up with `unlisten`.
-   - [ ] Action: On event, refresh summaries; if the selected doc changed, refetch the document; if deleted, clear selection and show empty-state guidance.
-   - [ ] Action: Guard against duplicate concurrent reloads so autosync and manual refresh do not race into unstable UI state.
-   - [ ] Deliverables: Event-driven docs list + viewer refresh behavior in React state flow.
-   - [ ] Exit criteria: The visible reader stays in sync with file changes without user click.
+   - [x] Action: Subscribe to the backend `docs_changed` event in `apps/app/src/App.tsx` using Tauri `listen`, and clean up with `unlisten`.
+   - [x] Action: On event, refresh summaries; if the selected doc changed, refetch the document; if deleted, clear selection and show empty-state guidance.
+   - [x] Action: Guard against duplicate concurrent reloads so autosync and manual refresh do not race into unstable UI state.
+   - [x] Deliverables: Event-driven docs list + viewer refresh behavior in React state flow.
+   - [x] Exit criteria: The visible reader stays in sync with file changes without user click.
 
 4. **Add regression coverage**
    - [ ] Action: Add Rust tests for watcher event filtering/path mapping/coalescing logic in deterministic unit tests (avoid flaky OS timing dependence where possible).
@@ -121,3 +121,4 @@ When a user is reading a document in the app, changes under `docs/` should refre
 - 2026-02-19: Chosen direction for this plan: Rust-side watcher + Tauri event emission + frontend subscription refresh flow.
 - 2026-02-19: Step 1 complete. Locked `docs_changed` contract and added shared payload type (`DOCS_CHANGED_EVENT`, `DocsChangeKind`, `DocsChangedEventPayload`) in `packages/core/src/contracts.ts`.
 - 2026-02-19: Step 2 complete. Added `apps/app/src-tauri/src/docs_watcher.rs` with recursive `docs/` watcher, markdown-only filtering, debounce coalescing, and `docs_changed` event emission; wired startup in `apps/app/src-tauri/src/lib.rs`.
+- 2026-02-19: Step 3 complete. Subscribed to `docs_changed` in `apps/app/src/App.tsx`, added queued list refresh guard, and reloaded/cleared selected document based on payload + refreshed summaries.

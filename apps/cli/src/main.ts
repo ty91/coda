@@ -90,25 +90,10 @@ Request payload (stdin JSON only):
     "note": { "label": "Reason", "required": false }
   }
 
-Validation rules:
-  - questions: at least 1
-  - options per question: at least 2
-  - id: snake_case and unique per question
-  - header: 1..12 chars
-  - label/description/question/note.label: 1..240 chars
-  - if option label includes "Recommended", it must end with "(Recommended)"
-
 Examples:
   echo '{"questions":[{"header":"Scope","id":"scope_choice","question":"Pick one?","options":[{"label":"Ship now (Recommended)","description":"Fast path."},{"label":"Expand","description":"Broader path."}]}]}' | coda ask --json
   cat /tmp/ask-request.json | coda ask --json
-  cat /tmp/ask-request.json | coda ask --timeout-ms 30000
-
-Exit codes:
-  0 success
-  1 runtime/socket error
-  2 validation error
-  3 timeout/expired
-  4 cancelled`
+  cat /tmp/ask-request.json | coda ask --timeout-ms 30000`
     )
     .action(async (rawOptions: { timeoutMs?: string; json?: boolean }) => {
       await runAskCommand(rawOptions, { stdin: process.stdin, stdout: writeStdout });

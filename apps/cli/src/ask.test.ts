@@ -152,4 +152,92 @@ describe('runAskCommand', () => {
       rmSync(tempHome, { recursive: true, force: true });
     }
   });
+
+  it('returns exit code 4 when response status is cancelled', async () => {
+    const tempHome = mkdtempSync(join(tmpdir(), 'coda-ask-home-'));
+    const runtimeDir = join(tempHome, '.coda', 'runtime');
+    const socketPath = join(runtimeDir, 'ask.sock');
+    const originalHome = process.env.HOME;
+
+    mkdirSync(runtimeDir, { recursive: true });
+    process.env.HOME = tempHome;
+
+    const server = await listenSocketServer(socketPath, (payload, writeLine) => {
+      const request = payload as { ask_id: string };
+      writeLine(
+        JSON.stringify({
+          ask_id: request.ask_id,
+          answers: [],
+          note: null,
+          status: 'cancelled',
+          answered_at_iso: '2026-02-19T13:00:00.000Z',
+          source: 'tauri-ui',
+        })
+      );
+    });
+
+    try {
+      await expect(
+        runAskCommand(
+          {},
+          {
+            stdin: createPipedStdin(REQUEST_JSON),
+            stdout: () => {},
+          }
+        )
+      ).rejects.toMatchObject({
+        exitCode: 4,
+      } satisfies Partial<CliExit>);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+      process.env.HOME = originalHome;
+      rmSync(tempHome, { recursive: true, force: true });
+    }
+  });
+
+  it('returns exit code 1 when socket sends malformed JSON', async () => {
+    const tempHome = mkdtempSync(join(tmpdir(), 'coda-ask-home-'));
+    const runtimeDir = join(tempHome, '.coda', 'runtime');
+    const socketPath = join(runtimeDir, 'ask.sock');
+    const originalHome = process.env.HOME;
+
+    mkdirSync(runtimeDir, { recursive: true });
+    process.env.HOME = tempHome;
+
+    const server = await listenSocketServer(socketPath, (_payload, writeLine) => {
+      writeLine('{"ask_id":');
+    });
+
+    try {
+      await expect(
+        runAskCommand(
+          {},
+          {
+            stdin: createPipedStdin(REQUEST_JSON),
+            stdout: () => {},
+          }
+        )
+      ).rejects.toMatchObject({
+        exitCode: 1,
+      } satisfies Partial<CliExit>);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+      process.env.HOME = originalHome;
+      rmSync(tempHome, { recursive: true, force: true });
+    }
+  });
+
+  it('returns exit code 2 for empty stdin payload', async () => {
+    await expect(
+      runAskCommand(
+        {},
+        {
+          stdin: createPipedStdin(''),
+          stdout: () => {},
+        }
+      )
+    ).rejects.toMatchObject({
+      exitCode: 2,
+    } satisfies Partial<CliExit>);
+  });
 });

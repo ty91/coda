@@ -351,6 +351,12 @@ export const AskInboxPanel = (): ReactElement | null => {
                 </p>
               )}
 
+              {session.request.questions.length > 4 && (
+                <p className="mb-2 rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-700">
+                  Soft cap notice: this ask contains more than 4 questions.
+                </p>
+              )}
+
               <div className="space-y-4">
                 {session.request.questions.map((question) => {
                   const draft = askDrafts[question.id] ?? createEmptyAnswerDraft();

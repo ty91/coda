@@ -198,11 +198,11 @@ milestone: M1
    - [x] Exit criteria: CLI에서 생성된 질문 묶음이 앱에 나타나고 제출 시 CLI가 해제된다.
 
 5. **회귀 및 통합 검증 강화**
-   - [ ] Action: core/cli에 다중 질문 제약, 빈 stdin/손상 JSON, timeout, cancel, 소켓 단절/손상 페이로드 테스트를 추가한다.
-   - [ ] Action: app 테스트에 질문 렌더링, 권장안(선택)/Other/노트 검증, 질문 4개 소프트캡 경고 및 5개 이상 수용 검증, submit/cancel invoke 검증을 추가한다.
-   - [ ] Action: `blocked coda ask -> app submit -> CLI unblock` 통합 테스트 스크립트를 추가한다.
-   - [ ] Deliverables: core/cli/app/tauri 테스트 세트 갱신.
-   - [ ] Exit criteria: 다중 질문/교차 서피스 회귀를 자동으로 탐지한다.
+   - [x] Action: core/cli에 다중 질문 제약, 빈 stdin/손상 JSON, timeout, cancel, 소켓 단절/손상 페이로드 테스트를 추가한다.
+   - [x] Action: app 테스트에 질문 렌더링, 권장안(선택)/Other/노트 검증, 질문 4개 소프트캡 경고 및 5개 이상 수용 검증, submit/cancel invoke 검증을 추가한다.
+   - [x] Action: `blocked coda ask -> app submit -> CLI unblock` 통합 테스트 스크립트를 추가한다.
+   - [x] Deliverables: core/cli/app/tauri 테스트 세트 갱신.
+   - [x] Exit criteria: 다중 질문/교차 서피스 회귀를 자동으로 탐지한다.
 
 6. **전체 게이트 및 수동 스모크**
    - [ ] Action: 레포 전체 게이트(`lint/typecheck/test/build/validate`)를 실행한다.
@@ -259,3 +259,4 @@ milestone: M1
 - 2026-02-19: Step 2 완료. `packages/core/src/contracts.ts`, `packages/core/src/validation.ts`, `packages/core/src/validation.test.ts`에 ask 타입/검증/회귀 테스트를 추가했고 `pnpm --filter @coda/core test/typecheck/build`를 통과했다.
 - 2026-02-19: Step 3 완료. `apps/cli/src/main.ts`, `apps/cli/src/ask.ts`, `apps/cli/src/ask.test.ts`에 stdin 기반 `ask` 명령/Unix socket 블로킹 런타임/JSON-텍스트 출력을 구현했고 `pnpm --filter @coda/cli lint/test/typecheck/build`를 통과했다.
 - 2026-02-19: Step 4 완료. `apps/app/src-tauri/src/ask_runtime.rs` 기반 Unix socket 서버와 pending 조회/응답 제출 명령을 추가하고, `apps/app/src/components/AskInboxPanel.tsx` 다중 질문 UI(자동 Other/노트/submit/cancel/소프트 stale 표시)를 연결했다. `pnpm --filter @coda/app lint/test/typecheck` 및 `apps/app/src-tauri cargo test`를 통과했다.
+- 2026-02-19: Step 5 완료. `apps/cli/src/ask.test.ts`에 cancel/손상 소켓/빈 stdin 회귀를 추가하고, `apps/app/src/components/AskInboxPanel.test.tsx`에 질문 렌더링/Other/노트/소프트캡 경고/submit-cancel invoke 검증을 추가했다. 또한 `tools/ask-roundtrip-smoke.mjs` 통합 스모크 스크립트를 추가해 `node tools/ask-roundtrip-smoke.mjs`로 CLI unblock 흐름을 재현했다.

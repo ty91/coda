@@ -99,3 +99,6 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
 - 2026-02-19: Targeted regression suite passed with new drag-strip checks: `pnpm --filter @coda/app test -- App.test.tsx`.
 - 2026-02-19: Full gate re-run passed after direct-hit strip changes: `pnpm validate`.
 - 2026-02-19: Manual Tauri smoke currently blocked by dev-server conflict while starting `pnpm --filter @coda/app tauri dev`: `Error: Port 1420 is already in use`.
+- 2026-02-19: Additional root cause found in Tauri capability ACL: app used `core:default` only, but `start_dragging` is not included in `core:window:default`; drag-region behavior requires `core:window:allow-start-dragging`.
+- 2026-02-19: Added `core:window:allow-start-dragging` to `apps/app/src-tauri/capabilities/default.json` and added regression test `apps/app/src/tauri-capabilities.test.ts`.
+- 2026-02-19: Validation re-run after ACL fix passed: `pnpm validate`; Tauri dev app relaunched for manual drag verification.

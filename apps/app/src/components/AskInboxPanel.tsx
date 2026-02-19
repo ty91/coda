@@ -45,6 +45,8 @@ type AskSubmittingState = Record<string, boolean>;
 
 type AskInboxPanelProps = {
   className?: string;
+  panelId?: string;
+  panelAriaLabel?: string;
   isOpen?: boolean;
   showWhenEmpty?: boolean;
   onPendingCountChange?: (count: number) => void;
@@ -152,6 +154,8 @@ const formatExpiryText = (expiresAtIso: string | null): string => {
 
 export const AskInboxPanel = ({
   className,
+  panelId,
+  panelAriaLabel = 'Ask sidebar',
   isOpen = true,
   showWhenEmpty = false,
   onPendingCountChange,
@@ -337,7 +341,13 @@ export const AskInboxPanel = ({
     .join(' ');
 
   return (
-    <section className={panelClassName} data-testid="ask-inbox-panel">
+    <section
+      id={panelId}
+      role="complementary"
+      aria-label={panelAriaLabel}
+      className={panelClassName}
+      data-testid="ask-inbox-panel"
+    >
       <header className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-sm font-semibold tracking-[-0.01em] text-coda-text-primary">Ask Queue</h2>
         <span className="text-xs text-coda-text-secondary">{sessions.length} pending</span>

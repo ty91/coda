@@ -35,10 +35,10 @@ milestone: M1
    - [x] Exit criteria: 팀이 "ask 아이콘 클릭 시 모달은 절대 열리지 않는다"를 테스트 가능한 문장으로 합의한다.
 
 2. **헤더 ask 트리거와 우측 사이드바 렌더 경로 정리**
-   - [ ] Action: 앱 헤더 ask 아이콘 이벤트를 기존 `isAskPanelOpen` 기반 사이드바 상태와 직접 연결하고, 모달 상태/컴포넌트 의존이 있다면 제거한다.
-   - [ ] Action: 사이드바 위치/폭/z-index 계약을 유지해 문서 본문 흐름을 밀지 않도록 보장한다.
-   - [ ] Deliverables: 모달 경로 없는 ask 헤더 토글 + 우측 사이드바 렌더링 경로.
-   - [ ] Exit criteria: ask 아이콘 클릭 시 우측 사이드바만 열리고 닫히며, 모달 DOM이 생성되지 않는다.
+   - [x] Action: 앱 헤더 ask 아이콘 이벤트를 기존 `isAskPanelOpen` 기반 사이드바 상태와 직접 연결하고, 모달 상태/컴포넌트 의존이 있다면 제거한다.
+   - [x] Action: 사이드바 위치/폭/z-index 계약을 유지해 문서 본문 흐름을 밀지 않도록 보장한다.
+   - [x] Deliverables: 모달 경로 없는 ask 헤더 토글 + 우측 사이드바 렌더링 경로.
+   - [x] Exit criteria: ask 아이콘 클릭 시 우측 사이드바만 열리고 닫히며, 모달 DOM이 생성되지 않는다.
 
 3. **질문 리스트 컴포넌트 연결 일원화**
    - [ ] Action: 질문 리스트 UI는 `AskInboxPanel`(또는 추출된 동등 컴포넌트) 한 경로로만 렌더링되게 정리한다.
@@ -77,6 +77,7 @@ milestone: M1
 - 2026-02-19: 외부 리서치는 생략했다. 로컬 코드와 기존 문서 컨텍스트만으로 구현 경로와 검증 전략이 충분히 명확하다고 판단했다.
 - 2026-02-19: `coda ask --json`으로 사용자 확인 완료. 질문 리스트는 기존 `AskInboxPanel` 재사용, 대상 앱 헤더는 `App.tsx` 중앙 헤더로 확정했다.
 - 2026-02-19: Step 1 완료. `docs/design-docs/ask-sidebar-interaction-contract.md`에 모달 금지/사이드바 토글 계약, 시나리오 표, 테스트 문장을 기록했다.
+- 2026-02-19: Step 2 완료. `App.tsx` ask 토글 버튼에 `aria-controls`/`aria-expanded`를 연결하고 패널 고정 레이아웃 상수를 명시했으며, `AskInboxPanel`은 `role="complementary"` + 패널 id/라벨 계약을 받도록 정리했다.
 
 ## Assumptions / Open Questions
 

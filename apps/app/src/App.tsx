@@ -24,6 +24,9 @@ const DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX = 16;
 const ASK_FLOATING_PANEL_WIDTH_PX = 360;
 const ASK_FLOATING_PANEL_RIGHT_OFFSET_PX = 16;
 const FIND_OVERLAY_PANEL_GAP_PX = 16;
+const ASK_SIDEBAR_PANEL_ID = 'app-ask-sidebar-panel';
+const ASK_SIDEBAR_PANEL_CLASS_NAME =
+  'fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto';
 
 const isEditableEventTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) {
@@ -473,6 +476,8 @@ export const App = (): ReactElement => {
             type="button"
             className="relative z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
             aria-label={askPanelToggleLabel}
+            aria-controls={ASK_SIDEBAR_PANEL_ID}
+            aria-expanded={isAskPanelOpen}
             aria-pressed={isAskPanelOpen}
             title={askPanelToggleLabel}
             onClick={() => {
@@ -507,9 +512,11 @@ export const App = (): ReactElement => {
       </section>
 
       <AskInboxPanel
+        panelId={ASK_SIDEBAR_PANEL_ID}
+        panelAriaLabel="Ask sidebar"
         isOpen={isAskPanelOpen}
         showWhenEmpty
-        className="fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto"
+        className={ASK_SIDEBAR_PANEL_CLASS_NAME}
         onPendingCountChange={setPendingAskCount}
       />
     </main>

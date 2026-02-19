@@ -140,7 +140,7 @@ export const DocsSidebar = ({
 }: DocsSidebarProps): ReactElement => {
   return (
     <aside
-      className={`${sidebarSurfaceClass} sticky top-0 relative grid max-h-[100vh] gap-3 overflow-auto px-3 pb-3 pt-11`}
+      className={`${sidebarSurfaceClass} relative grid h-full min-h-0 gap-3 overflow-y-auto px-3 pb-3 pt-11`}
       aria-label="Documentation sidebar"
     >
       <div

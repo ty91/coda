@@ -181,6 +181,32 @@ describe('App docs viewer', () => {
     expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(2);
   });
 
+  it('uses fixed 100vh shell and internal pane scrolling containers', async () => {
+    setupSuccessfulInvokeMock();
+
+    const view = render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+
+    const shell = view.container.querySelector('main');
+    expect(shell).toBeTruthy();
+    expect(shell?.className).toContain('h-screen');
+    expect(shell?.className).toContain('overflow-hidden');
+    expect(shell?.className).not.toContain('min-h-screen');
+
+    const sidebar = screen.getByLabelText('Documentation sidebar');
+    expect(sidebar.className).toContain('h-full');
+    expect(sidebar.className).toContain('min-h-0');
+    expect(sidebar.className).toContain('overflow-y-auto');
+    expect(sidebar.className).not.toContain('max-h-[100vh]');
+
+    const viewerSurface = screen.getByTestId('viewer-drag-region').closest('section');
+    expect(viewerSurface).toBeTruthy();
+    expect(viewerSurface?.className).toContain('h-full');
+    expect(viewerSurface?.className).toContain('min-h-0');
+    expect(viewerSurface?.className).toContain('overflow-y-auto');
+  });
+
   it('loads docs and allows selecting another document from the sidebar', async () => {
     setupSuccessfulInvokeMock();
 

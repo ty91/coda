@@ -155,6 +155,7 @@ export const DocsSidebar = ({
     <aside
       className={`${sidebarSurfaceClass} sticky top-0 grid max-h-[100vh] gap-3 overflow-auto px-3 pb-3 pt-11 max-[980px]:static max-[980px]:max-h-none max-[980px]:p-3`}
       aria-label="Documentation sidebar"
+      data-tauri-drag-region
     >
       <header className="grid gap-[0.15rem] px-1">
         <p className={eyebrowClass}>Workspace</p>

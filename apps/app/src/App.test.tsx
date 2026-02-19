@@ -130,7 +130,7 @@ afterEach(() => {
 });
 
 describe('App docs viewer', () => {
-  it('does not render an extra title overlay strip layer', async () => {
+  it('marks sidebar and reader surfaces as tauri drag regions', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
@@ -144,7 +144,16 @@ describe('App docs viewer', () => {
     expect(referencesButton.getAttribute('aria-expanded')).toBe('false');
     expect(screen.queryByRole('heading', { level: 3 })).toBeNull();
     expect(screen.queryByText('Select a document from the sidebar to start reading.')).toBeNull();
-    expect(document.querySelector('[data-tauri-drag-region]')).toBeNull();
+
+    const sidebar = screen.getByLabelText('Documentation sidebar');
+    const readerHeading = screen.getByRole('heading', { name: 'Reader', level: 2 });
+    const readerSurface = readerHeading.closest('section');
+    const refreshButton = screen.getByRole('button', { name: 'Refresh docs list' });
+
+    expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(refreshButton.hasAttribute('data-tauri-drag-region')).toBe(false);
+    expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(2);
   });
 
   it('loads docs and allows selecting another document from the sidebar', async () => {

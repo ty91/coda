@@ -52,10 +52,10 @@ milestone: M1
    - [x] Exit criteria: 신규 ask 1건 유입 시 이벤트 1건만 발행되고, 동일 ask 중복 insert는 실패하며 이벤트가 발생하지 않는다.
 
 3. **Notification plugin 및 권한 구성 추가**
-   - [ ] Action: Tauri notification plugin을 Rust/TS 양쪽에 추가하고 앱 부팅 시 plugin을 등록한다 (`apps/app/src-tauri/Cargo.toml:19`, `apps/app/src-tauri/src/lib.rs:23`, `apps/app/package.json:17`).
-   - [ ] Action: capability 파일에 notification 기본 권한을 추가해 런타임 권한 오류를 사전에 차단한다 (`apps/app/src-tauri/capabilities/default.json:8`).
-   - [ ] Deliverables: plugin 의존성/등록/권한 구성이 반영된 최소 동작 가능한 notification 기반.
-   - [ ] Exit criteria: dev 빌드에서 notification API 호출 시 권한 스코프 오류 없이 실행된다.
+   - [x] Action: Tauri notification plugin을 Rust/TS 양쪽에 추가하고 앱 부팅 시 plugin을 등록한다 (`apps/app/src-tauri/Cargo.toml:19`, `apps/app/src-tauri/src/lib.rs:23`, `apps/app/package.json:17`).
+   - [x] Action: capability 파일에 notification 기본 권한을 추가해 런타임 권한 오류를 사전에 차단한다 (`apps/app/src-tauri/capabilities/default.json:8`).
+   - [x] Deliverables: plugin 의존성/등록/권한 구성이 반영된 최소 동작 가능한 notification 기반.
+   - [x] Exit criteria: dev 빌드에서 notification API 호출 시 권한 스코프 오류 없이 실행된다.
 
 4. **프론트엔드 알림 오케스트레이션 연결**
    - [ ] Action: App 계층에서 ask 생성 이벤트를 구독하고 macOS에서만 알림 함수를 호출한다. 알림 본문에는 첫 질문 텍스트 일부를 ellipsis(`...`)와 함께 노출한다.
@@ -90,6 +90,7 @@ milestone: M1
 
 ## Progress Log
 
+- 2026-02-19: Approach step 3 완료. notification plugin을 Rust/TS에 추가하고 `default` capability에 `notification:default`를 반영했다. `cargo check`로 plugin 등록/권한 구성 빌드 경로를 확인했다.
 - 2026-02-19: Approach step 2 완료. `ask_session_created` 이벤트 payload를 추가하고, insert 성공 경로에서만 emit되도록 연결했다. `cargo test ask_runtime`으로 중복 insert 미발행 계약을 검증했다.
 - 2026-02-19: Approach step 1 완료. 신규 ask insert 성공 시점 트리거 + `ask_id` dedupe + macOS 전용 + 권한 거부 시 no-op 계약을 확정했다.
 - 2026-02-19: planning target 확정. "Tauri 앱에서 ask 도착 시 macOS 시스템 알림" 요구를 확인했다.

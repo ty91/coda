@@ -21,6 +21,7 @@ pub fn run() {
     let ask_runtime_state = ask_runtime::AskRuntimeState::new();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .manage(ask_runtime_state.clone())
         .invoke_handler(tauri::generate_handler![
             get_health_message,

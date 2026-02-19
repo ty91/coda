@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 
 import type { DocDocument, DocSummary } from '@coda/core/contracts';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, isTauri } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,9 +10,15 @@ import { App } from './App';
 
 vi.mock('@tauri-apps/api/core', () => ({
   invoke: vi.fn(),
+  isTauri: vi.fn(() => false),
+}));
+vi.mock('@tauri-apps/api/event', () => ({
+  listen: vi.fn(),
 }));
 
 const mockInvoke = vi.mocked(invoke);
+const mockIsTauri = vi.mocked(isTauri);
+const mockListen = vi.mocked(listen);
 
 const coreBeliefsSummary: DocSummary = {
   id: 'design-docs/core-beliefs.md',
@@ -79,6 +86,9 @@ const documents: Record<string, DocDocument> = {
 };
 
 const setupSuccessfulInvokeMock = (): void => {
+  mockIsTauri.mockReturnValue(false);
+  mockListen.mockResolvedValue(() => {});
+
   mockInvoke.mockImplementation(async (command, args) => {
     if (command === 'list_doc_summaries') {
       expect(args).toBeUndefined();
@@ -103,6 +113,8 @@ const setupSuccessfulInvokeMock = (): void => {
 
 afterEach(() => {
   mockInvoke.mockReset();
+  mockIsTauri.mockReset();
+  mockListen.mockReset();
   cleanup();
 });
 
@@ -219,5 +231,60 @@ describe('App docs viewer', () => {
 
     await screen.findByRole('heading', { name: 'Slack API Reference', level: 3 });
     expect(screen.getByText('Slack reference body')).toBeTruthy();
+  });
+
+  it('auto-refreshes selected doc after docs_changed event', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    const docsChangedHandler = mockListen.mock.calls.find(
+      ([eventName]) => eventName === 'docs_changed'
+    )?.[1];
+    expect(docsChangedHandler).toBeTruthy();
+
+    const getDocDocumentCallCount = (): number =>
+      mockInvoke.mock.calls.filter(([command]) => command === 'get_doc_document').length;
+    const listDocSummariesCallCount = (): number =>
+      mockInvoke.mock.calls.filter(([command]) => command === 'list_doc_summaries').length;
+
+    const initialDocCalls = getDocDocumentCallCount();
+    const initialListCalls = listDocSummariesCallCount();
+
+    docsChangedHandler?.({
+      event: 'docs_changed',
+      id: 1,
+      payload: {
+        changedDocIds: ['design-docs/core-beliefs.md'],
+        removedDocIds: [],
+        kinds: ['modified'],
+        emittedAtIso: '2026-02-19T00:00:00Z',
+      },
+    });
+
+    await waitFor(() => {
+      expect(listDocSummariesCallCount()).toBeGreaterThan(initialListCalls);
+      expect(getDocDocumentCallCount()).toBeGreaterThan(initialDocCalls);
+    });
+  });
+
+  it('cleans up docs_changed listener on unmount', async () => {
+    setupSuccessfulInvokeMock();
+    const unlisten = vi.fn();
+    mockListen.mockResolvedValue(unlisten);
+
+    const view = render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    expect(mockListen).toHaveBeenCalled();
+
+    view.unmount();
+
+    expect(unlisten).toHaveBeenCalledTimes(1);
   });
 });

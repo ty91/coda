@@ -217,3 +217,114 @@ fn workspace_root_path() -> Result<PathBuf, Error> {
         .map(Path::to_path_buf)
         .ok_or_else(|| Error::other("failed to resolve workspace root"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{build_docs_changed_payload, DocsChangeKind};
+    use notify::event::{CreateKind, DataChange, ModifyKind, RemoveKind, RenameMode};
+    use notify::{Event, EventKind};
+    use std::path::PathBuf;
+
+    fn docs_root() -> PathBuf {
+        PathBuf::from("/tmp/coda/docs")
+    }
+
+    fn doc(path: &str) -> PathBuf {
+        docs_root().join(path)
+    }
+
+    #[test]
+    fn includes_modify_and_create_events_for_markdown_paths() {
+        let payload = build_docs_changed_payload(
+            &docs_root(),
+            &[
+                Ok(Event::new(EventKind::Modify(ModifyKind::Data(
+                    DataChange::Content,
+                )))
+                .add_path(doc("design-docs/core-beliefs.md"))),
+                Ok(Event::new(EventKind::Create(CreateKind::File))
+                    .add_path(doc("solutions/2026-02-19-test.md"))),
+            ],
+        )
+        .expect("markdown events should emit payload");
+
+        assert_eq!(
+            payload.changed_doc_ids,
+            vec![
+                "design-docs/core-beliefs.md".to_string(),
+                "solutions/2026-02-19-test.md".to_string()
+            ]
+        );
+        assert!(payload.removed_doc_ids.is_empty());
+        assert_eq!(
+            payload.kinds,
+            vec![DocsChangeKind::Modified, DocsChangeKind::Created]
+        );
+    }
+
+    #[test]
+    fn maps_rename_into_removed_and_changed_doc_ids() {
+        let payload = build_docs_changed_payload(
+            &docs_root(),
+            &[Ok(
+                Event::new(EventKind::Modify(ModifyKind::Name(RenameMode::Both)))
+                    .add_path(doc("plans/active/old-plan.md"))
+                    .add_path(doc("plans/active/new-plan.md")),
+            )],
+        )
+        .expect("rename event should emit payload");
+
+        assert_eq!(
+            payload.changed_doc_ids,
+            vec!["plans/active/new-plan.md".to_string()]
+        );
+        assert_eq!(
+            payload.removed_doc_ids,
+            vec!["plans/active/old-plan.md".to_string()]
+        );
+        assert_eq!(payload.kinds, vec![DocsChangeKind::Renamed]);
+    }
+
+    #[test]
+    fn ignores_non_markdown_and_outside_paths() {
+        let payload = build_docs_changed_payload(
+            &docs_root(),
+            &[
+                Ok(Event::new(EventKind::Modify(ModifyKind::Data(
+                    DataChange::Content,
+                )))
+                .add_path(doc("notes/todo.txt"))),
+                Ok(Event::new(EventKind::Remove(RemoveKind::File))
+                    .add_path(PathBuf::from("/tmp/other/workspace/docs/PRD.md"))),
+            ],
+        );
+
+        assert!(payload.is_none());
+    }
+
+    #[test]
+    fn keeps_doc_id_in_changed_when_remove_and_create_happen_together() {
+        let payload = build_docs_changed_payload(
+            &docs_root(),
+            &[
+                Ok(
+                    Event::new(EventKind::Remove(RemoveKind::File))
+                        .add_path(doc("design-docs/architecture-overview.md")),
+                ),
+                Ok(Event::new(EventKind::Create(CreateKind::File))
+                    .add_path(doc("design-docs/architecture-overview.md"))),
+            ],
+        )
+        .expect("remove+create should emit payload");
+
+        assert_eq!(
+            payload.changed_doc_ids,
+            vec!["design-docs/architecture-overview.md".to_string()]
+        );
+        assert!(payload.removed_doc_ids.is_empty());
+        assert_eq!(
+            payload.kinds,
+            vec![DocsChangeKind::Created, DocsChangeKind::Removed]
+        );
+    }
+}

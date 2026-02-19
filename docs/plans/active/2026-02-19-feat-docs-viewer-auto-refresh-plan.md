@@ -72,11 +72,11 @@ When a user is reading a document in the app, changes under `docs/` should refre
    - [x] Exit criteria: The visible reader stays in sync with file changes without user click.
 
 4. **Add regression coverage**
-   - [ ] Action: Add Rust tests for watcher event filtering/path mapping/coalescing logic in deterministic unit tests (avoid flaky OS timing dependence where possible).
-   - [ ] Action: Add frontend tests mocking Tauri event subscription to verify automatic list/document reload and unlisten cleanup on unmount.
-   - [ ] Action: Extend existing refresh-focused tests so auto-refresh behavior does not regress while preserving manual refresh semantics.
-   - [ ] Deliverables: Updated tests in `apps/app/src-tauri/src/` and `apps/app/src/App.test.tsx`.
-   - [ ] Exit criteria: Tests fail when watcher event handling or auto-refresh state transitions break.
+   - [x] Action: Add Rust tests for watcher event filtering/path mapping/coalescing logic in deterministic unit tests (avoid flaky OS timing dependence where possible).
+   - [x] Action: Add frontend tests mocking Tauri event subscription to verify automatic list/document reload and unlisten cleanup on unmount.
+   - [x] Action: Extend existing refresh-focused tests so auto-refresh behavior does not regress while preserving manual refresh semantics.
+   - [x] Deliverables: Updated tests in `apps/app/src-tauri/src/` and `apps/app/src/App.test.tsx`.
+   - [x] Exit criteria: Tests fail when watcher event handling or auto-refresh state transitions break.
 
 5. **Run full validation and manual smoke**
    - [ ] Action: Run repository gate (`lint`, `typecheck`, `test`, `build`, `validate`) after implementation.
@@ -122,3 +122,4 @@ When a user is reading a document in the app, changes under `docs/` should refre
 - 2026-02-19: Step 1 complete. Locked `docs_changed` contract and added shared payload type (`DOCS_CHANGED_EVENT`, `DocsChangeKind`, `DocsChangedEventPayload`) in `packages/core/src/contracts.ts`.
 - 2026-02-19: Step 2 complete. Added `apps/app/src-tauri/src/docs_watcher.rs` with recursive `docs/` watcher, markdown-only filtering, debounce coalescing, and `docs_changed` event emission; wired startup in `apps/app/src-tauri/src/lib.rs`.
 - 2026-02-19: Step 3 complete. Subscribed to `docs_changed` in `apps/app/src/App.tsx`, added queued list refresh guard, and reloaded/cleared selected document based on payload + refreshed summaries.
+- 2026-02-19: Step 4 complete. Added deterministic Rust watcher tests and frontend listener tests; verified with `cargo test` and `pnpm --filter @coda/app test`.

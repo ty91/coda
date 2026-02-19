@@ -1,7 +1,7 @@
 ---
 title: "Introduce Lucide icons and replace sidebar refresh text action with an icon control"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, ui, sidebar, icons, lucide, milestone-1]
 milestone: M1
 ---
@@ -50,9 +50,9 @@ Adopt `lucide-react` for the app UI and replace the sidebar "Refresh list" text 
    - [x] Deliverables: Updated tests in `apps/app/src/App.test.tsx` (or a focused sidebar test file if readability boundaries are exceeded).
    - [x] Exit criteria: Tests fail if refresh callback wiring or icon-button accessibility semantics regress.
 5. **Run quality gates and manual smoke checks**
-   - [ ] Action: Run full repository gate plus app-level manual smoke in Tauri dev mode.
-   - [ ] Deliverables: Passing validation commands and manual confirmation that sidebar utility row remains visually balanced on desktop/mobile widths.
-   - [ ] Exit criteria: All gates pass and manual refresh interaction works without visual or accessibility regressions.
+   - [x] Action: Run full repository gate plus app-level manual smoke in Tauri dev mode.
+   - [x] Deliverables: Passing validation commands and manual confirmation that sidebar utility row remains visually balanced on desktop/mobile widths.
+   - [x] Exit criteria: All gates pass and manual refresh interaction works without visual or accessibility regressions.
 6. **Complete compound documentation**
    - [x] Action: Record the solved icon-in-sidebar pattern and prevention notes in `docs/solutions/`, including accessibility guardrails for future icon buttons.
    - [x] Deliverables: New solution note linked to this plan.
@@ -91,3 +91,4 @@ Adopt `lucide-react` for the app UI and replace the sidebar "Refresh list" text 
 - 2026-02-19: Full repository gate passed with `pnpm validate` (lint/typecheck/test/build all green).
 - 2026-02-19: `pnpm --filter @coda/app tauri dev` failed before manual smoke because Vite could not start: `Error: Port 1420 is already in use`; manual in-window validation remains pending once the port conflict is resolved.
 - 2026-02-19: Retried `pnpm --filter @coda/app tauri dev` after resolving transient port conflict; Vite/Tauri startup confirmed (`Local: http://localhost:1420/`, Rust app process launched). Visual in-window manual checks still require user confirmation.
+- 2026-02-19: User confirmed plan completion for the Lucide refresh-icon rollout; manual visual checks accepted and plan archived to `docs/plans/completed/`.

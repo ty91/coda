@@ -3,7 +3,7 @@ title: "Lucide icon-only refresh control for docs sidebar"
 date: 2026-02-19
 tags: [tauri, ui, sidebar, lucide, accessibility]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-lucide-sidebar-refresh-icon-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-lucide-sidebar-refresh-icon-plan.md"
 ---
 
 ## Problem
@@ -33,7 +33,7 @@ The sidebar refresh action used visible text (`Refresh list`, `Run/Busy`) that d
 
 ## Related
 
-- `docs/plans/active/2026-02-19-feat-lucide-sidebar-refresh-icon-plan.md`
+- `docs/plans/completed/2026-02-19-feat-lucide-sidebar-refresh-icon-plan.md`
 - `apps/app/src/components/DocsSidebar.tsx`
 - `apps/app/src/ui-classes.ts`
 - `apps/app/src/App.test.tsx`

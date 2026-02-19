@@ -312,7 +312,7 @@ export const DocViewerPanel = ({
           style={findOverlayStyle}
           data-testid="viewer-find-overlay"
         >
-          <label className="text-[0.7rem] font-semibold tracking-[0.02em] text-coda-text-muted" htmlFor="reader-find-input">
+          <label className="text-[0.625rem] font-semibold tracking-[0.02em] text-coda-text-muted" htmlFor="reader-find-input">
             Find In Document
           </label>
 
@@ -320,7 +320,7 @@ export const DocViewerPanel = ({
             <input
               id="reader-find-input"
               ref={findInputRef}
-              className="min-w-[10.5rem] flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.88rem] text-coda-text-primary"
+              className="min-w-[10.5rem] flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.75rem] text-coda-text-primary"
               type="text"
               value={findInputQuery}
               onChange={(event) => onFindQueryChange(event.target.value)}
@@ -345,7 +345,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.6875rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
               onClick={onFindRequestPrevious}
               disabled={findNavigationDisabled}
               aria-label="Previous match"
@@ -356,7 +356,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.6875rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
               onClick={onFindRequestNext}
               disabled={findNavigationDisabled}
               aria-label="Next match"
@@ -366,7 +366,7 @@ export const DocViewerPanel = ({
             </button>
 
             <span
-              className="min-w-[3rem] text-right font-mono text-[0.74rem] text-coda-text-muted"
+              className="min-w-[3rem] text-right font-mono text-[0.6875rem] text-coda-text-muted"
               aria-live="polite"
               data-testid="viewer-find-counter"
             >
@@ -375,7 +375,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.6875rem] font-medium text-coda-text-secondary"
               onClick={onFindClose}
               aria-label="Close find"
               title="Close find"
@@ -400,16 +400,16 @@ export const DocViewerPanel = ({
             className="mx-auto w-full max-w-[832px] rounded-coda-lg border border-[#d6d6d1] bg-[#fcfcfbf2] px-5 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10"
           >
             <header>
-              <h3 className="mb-4 text-[1.55rem] font-semibold tracking-[-0.02em]">{selectedDoc.displayTitle}</h3>
+              <h3 className="mb-4 text-[1.125rem] font-semibold tracking-[-0.02em]">{selectedDoc.displayTitle}</h3>
               {docMetadataRows.length > 0 ? (
-                <dl className="mb-6 grid gap-2 rounded-coda-md border border-coda-line-soft bg-[#f5f5f3] p-4 text-[0.88rem]">
+                <dl className="mb-6 grid gap-2 rounded-coda-md border border-coda-line-soft bg-[#f5f5f3] p-4 text-[0.75rem]">
                   {docMetadataRows.map((row) => (
                     <div key={row.label} className="grid grid-cols-[78px_1fr] items-baseline gap-2">
-                      <dt className="text-[0.66rem] font-semibold tracking-[0.02em] text-coda-text-muted">
+                      <dt className="text-[0.625rem] font-semibold tracking-[0.02em] text-coda-text-muted">
                         {row.label}
                       </dt>
-                      <dd className="text-[0.88rem] leading-[1.5] text-coda-text-primary">
-                        {row.label === 'Path' ? <code className="font-mono text-[0.82rem]">{row.value}</code> : row.value}
+                      <dd className="text-[0.75rem] leading-[1.5] text-coda-text-primary">
+                        {row.label === 'Path' ? <code className="font-mono text-[0.75rem]">{row.value}</code> : row.value}
                       </dd>
                     </div>
                   ))}

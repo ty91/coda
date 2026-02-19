@@ -198,6 +198,9 @@ describe('App docs viewer', () => {
     expect(sidebar.className).toContain('h-full');
     expect(sidebar.className).toContain('min-h-0');
     expect(sidebar.className).toContain('overflow-y-auto');
+    expect(sidebar.className).toContain('border-[var(--color-coda-sidebar-line)]');
+    expect(sidebar.className).toContain('bg-[var(--color-coda-sidebar-rail)]');
+    expect(sidebar.className).not.toContain('bg-transparent');
     expect(sidebar.className).not.toContain('max-h-[100vh]');
 
     const viewerSurface = screen.getByTestId('viewer-drag-region').closest('section');
@@ -281,6 +284,10 @@ describe('App docs viewer', () => {
     render(<App />);
 
     await screen.findByRole('button', { name: 'Design Docs' });
+    const askPanelToggle = screen.getByTestId('ask-panel-toggle-button');
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('No pending asks');
+    expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
+    expect(askPanelToggle.hasAttribute('disabled')).toBe(true);
     expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
   });
 
@@ -501,10 +508,14 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
+    const askPanelToggle = await screen.findByTestId('ask-panel-toggle-button');
     const askPanel = await screen.findByTestId('ask-inbox-panel');
     expect(askPanel.className).toContain('fixed');
     expect(askPanel.className).toContain('right-4');
     expect(askPanel.className).toContain('w-[22.5rem]');
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
+    expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
+    expect(askPanelToggle.hasAttribute('disabled')).toBe(false);
 
     await screen.findByRole('button', { name: 'Design Docs' });
     fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
@@ -514,6 +525,20 @@ describe('App docs viewer', () => {
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
 
     const findOverlay = await screen.findByTestId('viewer-find-overlay');
+    expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('392px');
+
+    fireEvent.click(askPanelToggle);
+
+    expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('Open ask panel');
+    expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
+    expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('16px');
+
+    fireEvent.click(askPanelToggle);
+
+    await screen.findByTestId('ask-inbox-panel');
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
+    expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
     expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('392px');
   });
 

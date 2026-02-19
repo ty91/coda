@@ -45,7 +45,7 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
    - [x] Action: Replace container-level drag attributes with explicit top drag strips that users directly click/drag.
    - [x] Action: Keep interactive controls outside drag strip hit areas to avoid accidental drag on clicks.
    - [x] Deliverables: Dedicated sidebar/reader drag-strip markup with clear boundaries.
-   - [ ] Exit criteria: Drag starts reliably from strip areas while controls remain fully interactive.
+   - [x] Exit criteria: Drag starts reliably from strip areas while controls remain fully interactive.
 
 4. **Update regression coverage for direct-hit drag placement**
    - [x] Action: Replace current drag-region assertions with tests that target dedicated drag strips.
@@ -55,10 +55,10 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
 
 5. **Run full gate + manual verification and compound docs**
    - [x] Action: Run full repo gate (`pnpm validate`) and app checks.
-   - [ ] Action: Run Tauri manual smoke to confirm real window dragging in dev app.
+   - [x] Action: Run Tauri manual smoke to confirm real window dragging in dev app.
    - [x] Action: Update solution/pattern/prevention doc with final direct-hit fix path.
    - [x] Deliverables: Validation evidence + refreshed solution note.
-   - [ ] Exit criteria: Gate green, manual drag confirmed, compounding docs complete.
+   - [x] Exit criteria: Gate green, manual drag confirmed, compounding docs complete.
 
 ## Validation
 
@@ -102,3 +102,4 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
 - 2026-02-19: Additional root cause found in Tauri capability ACL: app used `core:default` only, but `start_dragging` is not included in `core:window:default`; drag-region behavior requires `core:window:allow-start-dragging`.
 - 2026-02-19: Added `core:window:allow-start-dragging` to `apps/app/src-tauri/capabilities/default.json` and added regression test `apps/app/src/tauri-capabilities.test.ts`.
 - 2026-02-19: Validation re-run after ACL fix passed: `pnpm validate`; Tauri dev app relaunched for manual drag verification.
+- 2026-02-19: User manual verification confirmed: drag-to-move now works as expected in the Tauri app window.

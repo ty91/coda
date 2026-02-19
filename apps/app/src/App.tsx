@@ -459,10 +459,16 @@ export const App = (): ReactElement => {
       />
 
       <section className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] gap-2">
-        <header className="flex items-center justify-end px-1 pt-3">
+        <header className="relative flex items-center justify-end px-1 pt-3">
+          <div
+            className="absolute inset-x-0 top-0 h-11"
+            data-tauri-drag-region
+            data-testid="center-header-drag-region"
+            aria-hidden
+          />
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
+            className="relative z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
             aria-label={askPanelToggleLabel}
             aria-pressed={isAskPanelOpen}
             title={askPanelToggleLabel}

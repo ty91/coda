@@ -152,7 +152,7 @@ afterEach(() => {
 });
 
 describe('App docs viewer', () => {
-  it('marks sidebar and reader surfaces as tauri drag regions', async () => {
+  it('marks sidebar and center header strips as tauri drag regions', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
@@ -171,10 +171,12 @@ describe('App docs viewer', () => {
     const sidebar = screen.getByLabelText('Documentation sidebar');
     const readerSurface = screen.getByTestId('viewer-drag-region').closest('section');
     const sidebarDragRegion = screen.getByTestId('sidebar-drag-region');
+    const centerHeaderDragRegion = screen.getByTestId('center-header-drag-region');
     const viewerDragRegion = screen.getByTestId('viewer-drag-region');
 
     expect(sidebarDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
-    expect(viewerDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(centerHeaderDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(viewerDragRegion.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();

@@ -301,7 +301,6 @@ export const DocViewerPanel = ({
     >
       <div
         className="absolute inset-x-0 top-0 h-11"
-        data-tauri-drag-region
         data-testid="viewer-drag-region"
         aria-hidden
       />

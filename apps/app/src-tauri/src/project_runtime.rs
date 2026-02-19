@@ -1,4 +1,7 @@
 use crate::docs_watcher::DocsWatcherState;
+use crate::project_registration::{
+    build_project_registration_candidate, persist_registered_project,
+};
 use crate::project_registry::{
     load_project_registry_from_paths, validate_project_selection, workspace_root_path,
     ProjectContext, ProjectRegistry, ProjectSummary,
@@ -16,6 +19,9 @@ const ACTIVE_PROJECT_STATE_PATH_SEGMENTS: [&str; 2] = [".coda", "app-state.toml"
 struct ProjectRuntimeInner {
     registry: ProjectRegistry,
     active_project_id: String,
+    current_workspace_root: PathBuf,
+    global_config_path: PathBuf,
+    local_config_path: PathBuf,
     active_state_path: PathBuf,
 }
 
@@ -85,6 +91,9 @@ impl ProjectRegistryState {
             inner: Arc::new(Mutex::new(ProjectRuntimeInner {
                 registry,
                 active_project_id,
+                current_workspace_root: current_workspace_root.to_path_buf(),
+                global_config_path: global_config_path.to_path_buf(),
+                local_config_path: local_config_path.to_path_buf(),
                 active_state_path: active_state_path.to_path_buf(),
             })),
         })
@@ -132,6 +141,30 @@ impl ProjectRegistryState {
         write_active_project_id(&active_state_path, &next_project.project_id)?;
         Ok(next_project.to_summary())
     }
+
+    pub fn register_project_by_root_path(&self, root_path: &str) -> Result<ProjectSummary, String> {
+        let mut inner = self
+            .inner
+            .lock()
+            .map_err(|_| "project runtime state lock poisoned".to_string())?;
+
+        let next_project = build_project_registration_candidate(&inner.registry, root_path)?;
+        persist_registered_project(&inner.global_config_path, &next_project)?;
+
+        let active_project_id = inner.active_project_id.clone();
+        let reloaded_registry = load_project_registry_from_paths(
+            &inner.current_workspace_root,
+            &inner.global_config_path,
+            &inner.local_config_path,
+        )?;
+
+        inner.registry = reloaded_registry;
+        inner.active_project_id =
+            resolve_initial_active_project_id(&inner.registry, Some(active_project_id));
+
+        validate_project_selection(&inner.registry, &next_project.project_id)
+            .map(|project| project.to_summary())
+    }
 }
 
 #[tauri::command]
@@ -159,6 +192,14 @@ pub fn set_active_project(
     let active_project = state.active_project_context()?;
     watcher_state.switch_to_project(app_handle, &active_project)?;
     Ok(selected_project)
+}
+
+#[tauri::command]
+pub fn register_project(
+    root_path: String,
+    state: State<'_, ProjectRegistryState>,
+) -> Result<ProjectSummary, String> {
+    state.register_project_by_root_path(&root_path)
 }
 
 fn resolve_initial_active_project_id(

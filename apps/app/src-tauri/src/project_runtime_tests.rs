@@ -186,3 +186,139 @@ path = "{}"
 
     teardown(&temp_root);
 }
+
+#[test]
+fn registers_project_persists_to_global_config_and_survives_reload() {
+    let temp_root = create_temp_root("register-project");
+    let home_root = temp_root.join("home");
+    let global_config = home_root.join(".coda/config.toml");
+    let active_state = home_root.join(".coda/app-state.toml");
+
+    let workspace_a = create_workspace_with_doc(&temp_root, "workspace-a", "a.md");
+    let workspace_b = create_workspace_with_doc(&temp_root, "workspace-b", "b.md");
+    let local_config = workspace_a.join(".coda/config.toml");
+
+    write_file(
+        &global_config,
+        &format!(
+            r#"
+[projects.alpha]
+path = "{}"
+"#,
+            workspace_a.display()
+        ),
+    );
+    write_file(&local_config, "");
+
+    let state = ProjectRegistryState::from_paths(
+        &workspace_a,
+        &global_config,
+        &local_config,
+        &active_state,
+    )
+    .expect("runtime state should load");
+
+    let registered = state
+        .register_project_by_root_path(&workspace_b.to_string_lossy())
+        .expect("project registration should succeed");
+    assert_eq!(registered.project_id, "workspace-b");
+
+    let summaries = state
+        .list_project_summaries()
+        .expect("summaries should be available");
+    assert_eq!(summaries.len(), 2);
+    assert!(summaries
+        .iter()
+        .any(|project| project.project_id == "workspace-b"));
+
+    let config_contents =
+        fs::read_to_string(&global_config).expect("global config should include new project");
+    assert!(config_contents.contains("[projects.workspace-b]"));
+    assert!(config_contents.contains(&format!("path = \"{}\"", workspace_b.display())));
+
+    let reloaded = ProjectRegistryState::from_paths(
+        &workspace_a,
+        &global_config,
+        &local_config,
+        &active_state,
+    )
+    .expect("reloaded state should load");
+    let reloaded_summaries = reloaded
+        .list_project_summaries()
+        .expect("reloaded summaries should be available");
+    assert!(reloaded_summaries
+        .iter()
+        .any(|project| project.project_id == "workspace-b"));
+
+    teardown(&temp_root);
+}
+
+#[test]
+fn rejects_registration_for_duplicate_root_path() {
+    let temp_root = create_temp_root("duplicate-root");
+    let home_root = temp_root.join("home");
+    let global_config = home_root.join(".coda/config.toml");
+    let active_state = home_root.join(".coda/app-state.toml");
+
+    let workspace = create_workspace_with_doc(&temp_root, "workspace-a", "a.md");
+    let local_config = workspace.join(".coda/config.toml");
+
+    write_file(
+        &global_config,
+        &format!(
+            r#"
+[projects.alpha]
+path = "{}"
+"#,
+            workspace.display()
+        ),
+    );
+    write_file(&local_config, "");
+
+    let state =
+        ProjectRegistryState::from_paths(&workspace, &global_config, &local_config, &active_state)
+            .expect("runtime state should load");
+
+    let error = state
+        .register_project_by_root_path(&workspace.to_string_lossy())
+        .expect_err("duplicate root path should fail");
+    assert!(error.contains("duplicate root path"));
+
+    teardown(&temp_root);
+}
+
+#[test]
+fn rejects_registration_when_docs_directory_is_missing() {
+    let temp_root = create_temp_root("register-missing-docs");
+    let home_root = temp_root.join("home");
+    let global_config = home_root.join(".coda/config.toml");
+    let active_state = home_root.join(".coda/app-state.toml");
+
+    let workspace = create_workspace_with_doc(&temp_root, "workspace-a", "a.md");
+    let missing_docs_workspace = temp_root.join("workspace-no-docs");
+    fs::create_dir_all(&missing_docs_workspace).expect("workspace without docs should exist");
+    let local_config = workspace.join(".coda/config.toml");
+
+    write_file(
+        &global_config,
+        &format!(
+            r#"
+[projects.alpha]
+path = "{}"
+"#,
+            workspace.display()
+        ),
+    );
+    write_file(&local_config, "");
+
+    let state =
+        ProjectRegistryState::from_paths(&workspace, &global_config, &local_config, &active_state)
+            .expect("runtime state should load");
+
+    let error = state
+        .register_project_by_root_path(&missing_docs_workspace.to_string_lossy())
+        .expect_err("workspace without docs should fail");
+    assert!(error.contains("docs directory does not exist under root path"));
+
+    teardown(&temp_root);
+}

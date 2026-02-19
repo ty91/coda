@@ -3,6 +3,7 @@ use serde::Serialize;
 mod ask_runtime;
 mod docs_watcher;
 mod plan_viewer;
+mod project_registration;
 mod project_registry;
 mod project_runtime;
 
@@ -37,6 +38,7 @@ pub fn run() {
             project_runtime::list_projects,
             project_runtime::get_active_project,
             project_runtime::set_active_project,
+            project_runtime::register_project,
             plan_viewer::list_doc_summaries,
             plan_viewer::get_doc_document,
             ask_runtime::list_pending_ask_sessions,

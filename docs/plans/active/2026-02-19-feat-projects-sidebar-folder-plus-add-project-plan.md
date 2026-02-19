@@ -31,11 +31,11 @@ Projects 사이드바의 `Projects` 텍스트 오른쪽 끝에 `lucide-react`의
    - [x] Exit criteria: 디자인/동작 계약만으로 QA가 버튼 위치와 동작 결과를 재현할 수 있다.
 
 2. **Rust backend 등록 경로 추가 (Config/Runtime 경계)**
-   - [ ] Action: `ProjectRegistryState`에 프로젝트 등록 API를 추가하고, `register_project`(가칭) IPC를 `apps/app/src-tauri/src/lib.rs`에 노출한다.
-   - [ ] Action: 선택 경로 canonicalize, `docs/` 존재 검증, 중복 `project_id`/경로 충돌 검증, 오류 메시지 규약을 기존 registry 에러 톤에 맞춰 통일한다.
-   - [ ] Action: `~/.coda/config.toml`의 `[projects.<id>]` 업데이트 정책(신규 append, deterministic sort)을 정의하고 원자적 write를 적용한다.
-   - [ ] Deliverables: 런타임 등록 + 파일 영속화 + registry 재로딩(또는 in-memory 갱신) 코드.
-   - [ ] Exit criteria: 앱 재시작 후에도 새 프로젝트가 유지되고, invalid path/duplicate 입력이 명시 오류로 거절된다.
+   - [x] Action: `ProjectRegistryState`에 프로젝트 등록 API를 추가하고, `register_project`(가칭) IPC를 `apps/app/src-tauri/src/lib.rs`에 노출한다.
+   - [x] Action: 선택 경로 canonicalize, `docs/` 존재 검증, 중복 `project_id`/경로 충돌 검증, 오류 메시지 규약을 기존 registry 에러 톤에 맞춰 통일한다.
+   - [x] Action: `~/.coda/config.toml`의 `[projects.<id>]` 업데이트 정책(신규 append, deterministic sort)을 정의하고 원자적 write를 적용한다.
+   - [x] Deliverables: 런타임 등록 + 파일 영속화 + registry 재로딩(또는 in-memory 갱신) 코드.
+   - [x] Exit criteria: 앱 재시작 후에도 새 프로젝트가 유지되고, invalid path/duplicate 입력이 명시 오류로 거절된다.
 
 3. **Tauri UI 플로우 연결 (Folder picker + 상태 동기화)**
    - [ ] Action: `FolderPlus` 클릭 시 폴더 선택기를 여는 경로를 추가하고(필요 시 Tauri dialog plugin 추가), 선택 결과를 IPC 입력으로 전달한다.
@@ -92,3 +92,4 @@ UI state transition table:
 - 2026-02-19: 코드 플로우 확인. `ProjectsSidebar` 헤더에는 액션 버튼이 없고, App/Rust 양쪽 모두 프로젝트 등록 IPC 경로가 없음을 확인.
 - 2026-02-19: 외부 리서치 필요성 평가. 고위험 주제가 아니고 로컬 문맥이 충분해 계획 단계 외부 리서치는 생략.
 - 2026-02-19: step 1 완료. `ProjectsSidebar`에 FolderPlus 액션 버튼 + `addActionState/onRequestAddProject` 계약을 추가하고, 취소 포함 상태 전이 표를 plan 문서에 고정.
+- 2026-02-19: step 2 완료. `project_registration.rs` + `ProjectRegistryState::register_project_by_root_path` + `register_project` IPC를 추가해 canonicalize/`docs` 검증/중복 충돌 검사/원자적 global config write/BTree 정렬 기반 deterministic 저장/registry 재로딩을 구현.

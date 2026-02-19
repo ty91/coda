@@ -10,11 +10,11 @@ export const sidebarIconButtonClass =
 export const sidebarSectionClass = 'grid gap-[0.2rem]';
 
 export const sidebarSectionHeaderClass =
-  'flex min-h-[1.9rem] w-full items-center gap-2 rounded-[0.55rem] border-0 bg-transparent px-[0.62rem] py-[0.32rem] text-left text-[0.72rem] font-semibold tracking-[0.09em] text-[var(--color-coda-sidebar-label)] uppercase transition-colors hover:bg-[var(--color-coda-sidebar-row-hover)]';
+  'flex min-h-[1.9rem] w-full items-center gap-2 rounded-[0.55rem] border-0 bg-transparent px-[0.62rem] py-[0.32rem] text-left text-[0.72rem] font-semibold tracking-[0.02em] text-[var(--color-coda-sidebar-label)] transition-colors hover:bg-[var(--color-coda-sidebar-row-hover)]';
 
 export const headerRowClass = 'flex items-start justify-between gap-3';
 
-export const eyebrowClass = 'text-coda-text-muted text-[0.72rem] font-semibold tracking-[0.13em] uppercase';
+export const eyebrowClass = 'text-coda-text-muted text-[0.72rem] font-semibold tracking-[0.02em]';
 
 export const subtleTextClass = 'text-coda-text-secondary text-[0.92rem] leading-[1.5]';
 

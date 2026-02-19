@@ -154,10 +154,7 @@ export const DocsSidebar = ({
       />
       <header className="grid gap-[0.15rem] px-1">
         <p className={eyebrowClass}>Workspace</p>
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="text-[0.98rem] font-semibold tracking-[-0.01em] text-[var(--color-coda-sidebar-text)]">
-            Docs Tree
-          </h2>
+        <div className="flex items-center justify-end gap-2">
           <button
             type="button"
             className={sidebarIconButtonClass}

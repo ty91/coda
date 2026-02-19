@@ -314,7 +314,7 @@ export const DocViewerPanel = ({
           className="absolute top-12 right-4 left-auto z-20 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)] max-[980px]:top-2 max-[980px]:right-2 max-[980px]:left-2 max-[980px]:w-auto"
           data-testid="viewer-find-overlay"
         >
-          <label className="text-[0.7rem] font-semibold tracking-[0.1em] text-coda-text-muted uppercase" htmlFor="reader-find-input">
+          <label className="text-[0.7rem] font-semibold tracking-[0.02em] text-coda-text-muted" htmlFor="reader-find-input">
             Find In Document
           </label>
 
@@ -413,7 +413,7 @@ export const DocViewerPanel = ({
                 <dl className="mb-6 grid gap-2 rounded-coda-md border border-coda-line-soft bg-[#f5f5f3] p-4 text-[0.88rem]">
                   {docMetadataRows.map((row) => (
                     <div key={row.label} className="grid grid-cols-[78px_1fr] items-baseline gap-2">
-                      <dt className="text-[0.66rem] font-semibold tracking-[0.11em] text-coda-text-muted uppercase">
+                      <dt className="text-[0.66rem] font-semibold tracking-[0.02em] text-coda-text-muted">
                         {row.label}
                       </dt>
                       <dd className="text-[0.88rem] leading-[1.5] text-coda-text-primary">

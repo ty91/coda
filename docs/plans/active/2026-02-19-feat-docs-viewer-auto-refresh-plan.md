@@ -79,10 +79,10 @@ When a user is reading a document in the app, changes under `docs/` should refre
    - [x] Exit criteria: Tests fail when watcher event handling or auto-refresh state transitions break.
 
 5. **Run full validation and manual smoke**
-   - [ ] Action: Run repository gate (`lint`, `typecheck`, `test`, `build`, `validate`) after implementation.
-   - [ ] Action: Execute manual Tauri smoke by opening one docs file in the viewer, editing the file on disk, and confirming viewer content updates without refresh click.
-   - [ ] Deliverables: Passing gate outputs + manual verification note.
-   - [ ] Exit criteria: End-to-end auto-refresh works with no regression in docs navigation and rendering.
+   - [x] Action: Run repository gate (`lint`, `typecheck`, `test`, `build`, `validate`) after implementation.
+   - [x] Action: Execute manual Tauri smoke by opening one docs file in the viewer, editing the file on disk, and confirming viewer content updates without refresh click.
+   - [x] Deliverables: Passing gate outputs + manual verification note.
+   - [x] Exit criteria: End-to-end auto-refresh works with no regression in docs navigation and rendering.
 
 6. **Complete compound documentation**
    - [ ] Action: Record watcher-driven docs refresh pattern and failure-prevention notes in `docs/solutions/`.
@@ -123,3 +123,7 @@ When a user is reading a document in the app, changes under `docs/` should refre
 - 2026-02-19: Step 2 complete. Added `apps/app/src-tauri/src/docs_watcher.rs` with recursive `docs/` watcher, markdown-only filtering, debounce coalescing, and `docs_changed` event emission; wired startup in `apps/app/src-tauri/src/lib.rs`.
 - 2026-02-19: Step 3 complete. Subscribed to `docs_changed` in `apps/app/src/App.tsx`, added queued list refresh guard, and reloaded/cleared selected document based on payload + refreshed summaries.
 - 2026-02-19: Step 4 complete. Added deterministic Rust watcher tests and frontend listener tests; verified with `cargo test` and `pnpm --filter @coda/app test`.
+- 2026-02-19: Step 5 partial. Full gate passed with `pnpm validate` (lint/typecheck/test/build all green).
+- 2026-02-19: `pnpm --filter @coda/app tauri dev` startup confirmed (Vite + Rust app launch). In-window manual auto-refresh check is still pending user interaction.
+- 2026-02-19: Manual smoke passed by user confirmation. Auto-refresh updates now keep current reader view mounted to avoid scroll reset while content refreshes.
+- 2026-02-19: Step 5 complete.

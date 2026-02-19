@@ -54,6 +54,10 @@ const areSameSet = (left: Set<string>, right: Set<string>): boolean => {
   return true;
 };
 
+type LoadDocDocumentOptions = {
+  preserveView: boolean;
+};
+
 export const App = (): ReactElement => {
   const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
@@ -139,21 +143,34 @@ export const App = (): ReactElement => {
     }
   }, [loadDocSummaries]);
 
-  const loadDocDocument = useCallback(async (docId: DocId): Promise<void> => {
-    setDocumentLoading(true);
-    setDocumentError(null);
+  const loadDocDocument = useCallback(
+    async (
+      docId: DocId,
+      options: LoadDocDocumentOptions = { preserveView: false }
+    ): Promise<void> => {
+      if (!options.preserveView) {
+        setDocumentLoading(true);
+      }
 
-    try {
-      const document = await invoke<DocDocument>('get_doc_document', { docId });
-      setSelectedDoc(document);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      setSelectedDoc(null);
-      setDocumentError(`Unable to load selected document: ${message}`);
-    } finally {
-      setDocumentLoading(false);
-    }
-  }, []);
+      setDocumentError(null);
+
+      try {
+        const document = await invoke<DocDocument>('get_doc_document', { docId });
+        setSelectedDoc(document);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!options.preserveView) {
+          setSelectedDoc(null);
+        }
+        setDocumentError(`Unable to load selected document: ${message}`);
+      } finally {
+        if (!options.preserveView) {
+          setDocumentLoading(false);
+        }
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     void loadDocSummariesQueued();
@@ -183,7 +200,7 @@ export const App = (): ReactElement => {
       }
 
       if (selectedStillExists && payload.changedDocIds.includes(selectedBeforeRefresh)) {
-        await loadDocDocument(selectedBeforeRefresh);
+        await loadDocDocument(selectedBeforeRefresh, { preserveView: true });
       }
     },
     [loadDocDocument, loadDocSummariesQueued]

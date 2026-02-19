@@ -69,18 +69,48 @@ const registerAskCommand = (program: Command): void => {
   program
     .command('ask')
     .description('request structured user input from Tauri UI')
-    .option('--id <value>', 'correlation id (max 64 chars, [A-Za-z0-9._:-]+)')
     .option('--timeout-ms <value>', 'timeout in milliseconds (default: 0 means wait forever)', '0')
     .option('--json', 'emit JSON output')
     .addHelpText(
       'after',
       `
+Request payload (stdin JSON only):
+  {
+    "questions": [
+      {
+        "header": "Scope",
+        "id": "scope_choice",
+        "question": "Pick one?",
+        "options": [
+          { "label": "Ship now (Recommended)", "description": "Fast path." },
+          { "label": "Expand", "description": "Broader path." }
+        ]
+      }
+    ],
+    "note": { "label": "Reason", "required": false }
+  }
+
+Validation rules:
+  - questions: at least 1
+  - options per question: at least 2
+  - id: snake_case and unique per question
+  - header: 1..12 chars
+  - label/description/question/note.label: 1..240 chars
+  - if option label includes "Recommended", it must end with "(Recommended)"
+
 Examples:
-  echo '{"questions":[...]}' | coda ask
-  cat ./fixtures/ask/multi-question.json | coda ask --json
-  cat ./fixtures/ask/multi-question-timeout.json | coda ask --timeout-ms 30000`
+  echo '{"questions":[{"header":"Scope","id":"scope_choice","question":"Pick one?","options":[{"label":"Ship now (Recommended)","description":"Fast path."},{"label":"Expand","description":"Broader path."}]}]}' | coda ask --json
+  cat /tmp/ask-request.json | coda ask --json
+  cat /tmp/ask-request.json | coda ask --timeout-ms 30000
+
+Exit codes:
+  0 success
+  1 runtime/socket error
+  2 validation error
+  3 timeout/expired
+  4 cancelled`
     )
-    .action(async (rawOptions: { id?: string; timeoutMs?: string; json?: boolean }) => {
+    .action(async (rawOptions: { timeoutMs?: string; json?: boolean }) => {
       await runAskCommand(rawOptions, { stdin: process.stdin, stdout: writeStdout });
     });
 };

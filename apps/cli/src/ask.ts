@@ -6,8 +6,6 @@ import { join } from 'node:path';
 import type { AskRequestBatch, AskResponseBatch } from '@coda/core/contracts';
 import { parseAskRequestBatchJson, parseAskResponseBatch } from '@coda/core/validation';
 
-const ASK_ID_REGEX = /^[A-Za-z0-9._:-]+$/;
-
 const EXIT_VALIDATION_ERROR = 2;
 const EXIT_RUNTIME_ERROR = 1;
 const EXIT_TIMEOUT = 3;
@@ -15,13 +13,11 @@ const EXIT_CANCELLED = 4;
 const EXIT_INTERRUPTED = 130;
 
 type AskCommandRawOptions = {
-  id?: string;
   timeoutMs?: string;
   json?: boolean;
 };
 
 type AskCommandOptions = {
-  id: string | null;
   timeoutMs: number;
   json: boolean;
 };
@@ -54,15 +50,6 @@ export const resolveAskSocketPath = (): string => {
 };
 
 const parseAskCommandOptions = (rawOptions: AskCommandRawOptions): AskCommandOptions => {
-  if (rawOptions.id !== undefined) {
-    if (rawOptions.id.length === 0 || rawOptions.id.length > 64 || !ASK_ID_REGEX.test(rawOptions.id)) {
-      throw new CliExit(
-        EXIT_VALIDATION_ERROR,
-        '--id must match [A-Za-z0-9._:-]+ and be 64 characters or fewer'
-      );
-    }
-  }
-
   const rawTimeoutValue = rawOptions.timeoutMs ?? '0';
   const timeoutMs = Number.parseInt(rawTimeoutValue, 10);
   if (!Number.isFinite(timeoutMs) || Number.isNaN(timeoutMs) || timeoutMs < 0) {
@@ -70,7 +57,6 @@ const parseAskCommandOptions = (rawOptions: AskCommandRawOptions): AskCommandOpt
   }
 
   return {
-    id: rawOptions.id ?? null,
     timeoutMs,
     json: rawOptions.json ?? false,
   };
@@ -93,11 +79,7 @@ const readStdinJson = async (stdin: NodeJS.ReadStream): Promise<string> => {
   return input;
 };
 
-const createAskId = (explicitId: string | null): string => {
-  if (explicitId !== null) {
-    return explicitId;
-  }
-
+const createAskId = (): string => {
   return `ask-${Date.now()}-${randomBytes(6).toString('hex')}`;
 };
 
@@ -269,7 +251,7 @@ export const runAskCommand = async (
     throw new CliExit(EXIT_VALIDATION_ERROR, 'invalid ask request payload');
   }
 
-  const askId = createAskId(options.id);
+  const askId = createAskId();
   const socketPath = resolveAskSocketPath();
   const requestPayload: AskSocketRequest = {
     type: 'ask_request',

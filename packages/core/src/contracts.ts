@@ -49,6 +49,13 @@ export type StatusSnapshot = {
 };
 
 export const ASK_RESPONSE_SOURCE = 'tauri-ui';
+export const ASK_SESSION_CREATED_EVENT = 'ask_session_created';
+
+export type AskSessionCreatedEventPayload = {
+  askId: string;
+  requestedAtIso: string;
+  firstQuestionText: string | null;
+};
 
 export type AskOption = {
   label: string;

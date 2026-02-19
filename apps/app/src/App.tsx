@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } 
 import { DocViewerPanel } from './components/DocViewerPanel';
 import { DocsSidebar } from './components/DocsSidebar';
 import { AskInboxPanel } from './components/AskInboxPanel';
+import { useAskNotifications } from './useAskNotifications';
 import {
   allTreeNodeKeys,
   ancestorKeysForDoc,
@@ -64,6 +65,8 @@ type LoadDocDocumentOptions = {
 };
 
 export const App = (): ReactElement => {
+  useAskNotifications();
+
   const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocDocument | null>(null);

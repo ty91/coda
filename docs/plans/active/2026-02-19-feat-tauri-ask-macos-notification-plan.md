@@ -58,11 +58,11 @@ milestone: M1
    - [x] Exit criteria: dev 빌드에서 notification API 호출 시 권한 스코프 오류 없이 실행된다.
 
 4. **프론트엔드 알림 오케스트레이션 연결**
-   - [ ] Action: App 계층에서 ask 생성 이벤트를 구독하고 macOS에서만 알림 함수를 호출한다. 알림 본문에는 첫 질문 텍스트 일부를 ellipsis(`...`)와 함께 노출한다.
-   - [ ] Action: 알림 클릭 시 앱 포커싱(메인 윈도우 전면 복귀) 동작을 연결한다.
-   - [ ] Action: notification permission 확인/요청 흐름을 추가하고, 거부/오류는 사용자 플로우를 막지 않도록 로깅만 남긴다.
-   - [ ] Deliverables: 이벤트 기반 알림 발송 로직 + 권한 처리 + 중복 알림 방지 상태 관리.
-   - [ ] Exit criteria: ask 패널 열림/닫힘 상태와 무관하게 신규 ask 발생 시 1회 알림이 발송되고, 알림 클릭 시 앱이 포커싱되며, 폴링 반복에서는 추가 알림이 발생하지 않는다.
+   - [x] Action: App 계층에서 ask 생성 이벤트를 구독하고 macOS에서만 알림 함수를 호출한다. 알림 본문에는 첫 질문 텍스트 일부를 ellipsis(`...`)와 함께 노출한다.
+   - [x] Action: 알림 클릭 시 앱 포커싱(메인 윈도우 전면 복귀) 동작을 연결한다.
+   - [x] Action: notification permission 확인/요청 흐름을 추가하고, 거부/오류는 사용자 플로우를 막지 않도록 로깅만 남긴다.
+   - [x] Deliverables: 이벤트 기반 알림 발송 로직 + 권한 처리 + 중복 알림 방지 상태 관리.
+   - [x] Exit criteria: ask 패널 열림/닫힘 상태와 무관하게 신규 ask 발생 시 1회 알림이 발송되고, 알림 클릭 시 앱이 포커싱되며, 폴링 반복에서는 추가 알림이 발생하지 않는다.
 
 5. **회귀 테스트 및 전체 게이트**
    - [ ] Action: `App.test.tsx` 또는 관련 테스트에 이벤트 수신 시 notification API 호출, 중복 억제, 비-macOS no-op, 권한 거부 no-crash 케이스를 추가한다 (`apps/app/src/App.test.tsx:516`).
@@ -90,6 +90,7 @@ milestone: M1
 
 ## Progress Log
 
+- 2026-02-19: Approach step 4 완료. `useAskNotifications` hook으로 `ask_session_created` 구독, macOS-only gate, permission check/request, `ask_id` dedupe, 질문 미리보기 ellipsis, notification action 기반 window focus를 연결했다.
 - 2026-02-19: Approach step 3 완료. notification plugin을 Rust/TS에 추가하고 `default` capability에 `notification:default`를 반영했다. `cargo check`로 plugin 등록/권한 구성 빌드 경로를 확인했다.
 - 2026-02-19: Approach step 2 완료. `ask_session_created` 이벤트 payload를 추가하고, insert 성공 경로에서만 emit되도록 연결했다. `cargo test ask_runtime`으로 중복 insert 미발행 계약을 검증했다.
 - 2026-02-19: Approach step 1 완료. 신규 ask insert 성공 시점 트리거 + `ask_id` dedupe + macOS 전용 + 권한 거부 시 no-op 계약을 확정했다.

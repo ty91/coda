@@ -1,5 +1,5 @@
 import type { DocId, DocSummary } from '@coda/core/contracts';
-import { RefreshCw } from 'lucide-react';
+import { Folder, FolderOpen, RefreshCw } from 'lucide-react';
 import type { CSSProperties, ReactElement } from 'react';
 
 import type { TreeFolderNode, TreeNode, TreeSectionNode } from '../docs-tree';
@@ -49,7 +49,9 @@ const renderFolderNode = (
         aria-expanded={isExpanded}
         onClick={() => onToggleNode(node.key)}
       >
-        <span className="min-w-3 text-[0.72rem] text-[var(--color-coda-sidebar-label)]">{isExpanded ? 'v' : '>'}</span>
+        <span className="inline-flex min-w-3 items-center justify-center text-[var(--color-coda-sidebar-label)]">
+          {isExpanded ? <FolderOpen size={13} strokeWidth={2} aria-hidden /> : <Folder size={13} strokeWidth={2} aria-hidden />}
+        </span>
         <span>{node.name}</span>
       </button>
 
@@ -221,7 +223,9 @@ export const DocsSidebar = ({
                   aria-expanded={sectionExpanded}
                   onClick={() => onToggleNode(section.key)}
                 >
-                  <span className="min-w-3 text-[0.72rem]">{sectionExpanded ? 'v' : '>'}</span>
+                  <span className="inline-flex min-w-3 items-center justify-center text-[var(--color-coda-sidebar-label)]">
+                    {sectionExpanded ? <FolderOpen size={13} strokeWidth={2} aria-hidden /> : <Folder size={13} strokeWidth={2} aria-hidden />}
+                  </span>
                   <span>{section.label}</span>
                 </button>
                 {sectionContent(

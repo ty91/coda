@@ -45,6 +45,7 @@ type AskSubmittingState = Record<string, boolean>;
 
 type AskInboxPanelProps = {
   className?: string;
+  isOpen?: boolean;
   onPendingCountChange?: (count: number) => void;
 };
 
@@ -150,6 +151,7 @@ const formatExpiryText = (expiresAtIso: string | null): string => {
 
 export const AskInboxPanel = ({
   className,
+  isOpen = true,
   onPendingCountChange,
 }: AskInboxPanelProps): ReactElement | null => {
   const [sessions, setSessions] = useState<PendingAskSession[]>([]);
@@ -317,7 +319,7 @@ export const AskInboxPanel = ({
     return null;
   }
 
-  if (sessions.length === 0) {
+  if (sessions.length === 0 || !isOpen) {
     return null;
   }
 

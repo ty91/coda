@@ -69,6 +69,7 @@ export const App = (): ReactElement => {
   const [selectedDoc, setSelectedDoc] = useState<DocDocument | null>(null);
   const [expandedNodeKeys, setExpandedNodeKeys] = useState<Set<string>>(new Set<string>());
   const selectedDocIdRef = useRef<DocId | null>(null);
+  const pendingAskCountRef = useRef<number>(0);
   const listRefreshInFlightRef = useRef<Promise<DocSummary[]> | null>(null);
   const listRefreshQueuedRef = useRef<boolean>(false);
 
@@ -89,7 +90,13 @@ export const App = (): ReactElement => {
   const [isAskPanelOpen, setIsAskPanelOpen] = useState<boolean>(true);
 
   const hasPendingAsks = pendingAskCount > 0;
-  const findOverlayRightOffsetPx = hasPendingAsks
+  const isAskPanelVisible = hasPendingAsks && isAskPanelOpen;
+  const askPanelToggleLabel = hasPendingAsks
+    ? isAskPanelVisible
+      ? 'Close ask panel'
+      : 'Open ask panel'
+    : 'No pending asks';
+  const findOverlayRightOffsetPx = isAskPanelVisible
     ? ASK_FLOATING_PANEL_WIDTH_PX + ASK_FLOATING_PANEL_RIGHT_OFFSET_PX + FIND_OVERLAY_PANEL_GAP_PX
     : DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX;
 
@@ -265,6 +272,15 @@ export const App = (): ReactElement => {
 
     void loadDocDocument(selectedDocId);
   }, [loadDocDocument, selectedDocId]);
+
+  useEffect(() => {
+    const previousPendingAskCount = pendingAskCountRef.current;
+    if (previousPendingAskCount === 0 && pendingAskCount > 0) {
+      setIsAskPanelOpen(true);
+    }
+
+    pendingAskCountRef.current = pendingAskCount;
+  }, [pendingAskCount]);
 
   useEffect(() => {
     setExpandedNodeKeys((current) => {
@@ -451,10 +467,11 @@ export const App = (): ReactElement => {
         <header className="flex items-center justify-end px-1 pt-3">
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
-            aria-label={isAskPanelOpen ? 'Close ask panel' : 'Open ask panel'}
-            aria-pressed={isAskPanelOpen}
-            title={isAskPanelOpen ? 'Close ask panel' : 'Open ask panel'}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary disabled:opacity-50 disabled:hover:bg-[#f5f5f3] disabled:hover:text-coda-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
+            aria-label={askPanelToggleLabel}
+            aria-pressed={isAskPanelVisible}
+            title={askPanelToggleLabel}
+            disabled={!hasPendingAsks}
             onClick={() => {
               setIsAskPanelOpen((current) => !current);
             }}
@@ -487,6 +504,7 @@ export const App = (): ReactElement => {
       </section>
 
       <AskInboxPanel
+        isOpen={isAskPanelOpen}
         className="fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto"
         onPendingCountChange={setPendingAskCount}
       />

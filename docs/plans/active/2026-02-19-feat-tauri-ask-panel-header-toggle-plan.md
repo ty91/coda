@@ -38,10 +38,10 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
    - [x] Exit criteria: 데스크톱/모바일에서 아이콘 버튼이 일관된 위치에 항상 보이고 클릭으로 토글 이벤트가 발생한다.
 
 3. **ask 패널 노출 및 find 오버레이 오프셋 연동 리팩터링**
-   - [ ] Action: ask 패널 렌더링 조건을 pending + 토글 상태로 변경하고, `AskInboxPanel`은 기존 polling/sessions 책임만 유지한다.
-   - [ ] Action: find 오버레이 오프셋 계산을 "pending 존재"가 아닌 "실제 패널 표시 상태" 기준으로 변경한다.
-   - [ ] Deliverables: 토글 가능한 ask 패널 노출 제어와 오프셋 동기화.
-   - [ ] Exit criteria: 패널이 닫힌 상태에서는 pending ask가 있어도 패널/오프셋이 숨김 상태를 유지하고, 다시 열면 즉시 복구된다.
+   - [x] Action: ask 패널 렌더링 조건을 pending + 토글 상태로 변경하고, `AskInboxPanel`은 기존 polling/sessions 책임만 유지한다.
+   - [x] Action: find 오버레이 오프셋 계산을 "pending 존재"가 아닌 "실제 패널 표시 상태" 기준으로 변경한다.
+   - [x] Deliverables: 토글 가능한 ask 패널 노출 제어와 오프셋 동기화.
+   - [x] Exit criteria: 패널이 닫힌 상태에서는 pending ask가 있어도 패널/오프셋이 숨김 상태를 유지하고, 다시 열면 즉시 복구된다.
 
 4. **회귀 테스트 확장**
    - [ ] Action: `App.test.tsx`에 헤더 아이콘 노출, 클릭 토글(open/close), 토글 상태에 따른 ask 패널 DOM 및 find 오프셋 변화를 검증하는 케이스를 추가한다.
@@ -75,3 +75,4 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
 - 2026-02-19: 사용자 결정 반영. 헤더 ask 토글 아이콘은 pending ask 유무와 무관하게 항상 노출하는 정책으로 확정했다.
 - 2026-02-19: Step 1 완료. 상태 모델을 `showAskPanel = pendingAskCount > 0 && isAskPanelOpen`으로 고정했고, 아이콘 버튼은 항상 렌더링 + `aria-label`/`aria-pressed`를 갖는 토글 계약으로 확정했다. `isAskPanelOpen` 기본값은 `true`, pending ask가 `0 -> >0`으로 전환되면 자동 open 복귀로 정의했다.
 - 2026-02-19: Step 2 완료. `apps/app/src/App.tsx` 중앙 컨테이너에 헤더 액션 행을 추가하고 Lucide `MessageCircleQuestionMark` 아이콘 버튼(`data-testid=\"ask-panel-toggle-button\"`)을 배치했다. 아이콘 버튼은 항상 렌더링되며 `aria-label`/`aria-pressed` 기반 토글 입력이 동작한다.
+- 2026-02-19: Step 3 완료. `apps/app/src/App.tsx`에서 `isAskPanelVisible`(`pendingAskCount > 0 && isAskPanelOpen`) 기준으로 ask 패널/찾기 오프셋을 연동했고, pending ask `0 -> >0` 전환 시 자동 open 복귀를 추가했다. `apps/app/src/components/AskInboxPanel.tsx`에 `isOpen` prop을 추가해 컴포넌트 마운트는 유지하면서 패널 표시만 제어했다.

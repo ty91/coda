@@ -29,6 +29,7 @@ pub fn run() {
     let docs_watcher_state_for_setup = docs_watcher_state.clone();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .manage(ask_runtime_state.clone())
         .manage(project_registry_state.clone())

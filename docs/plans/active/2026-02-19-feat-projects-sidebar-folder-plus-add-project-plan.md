@@ -38,11 +38,11 @@ Projects 사이드바의 `Projects` 텍스트 오른쪽 끝에 `lucide-react`의
    - [x] Exit criteria: 앱 재시작 후에도 새 프로젝트가 유지되고, invalid path/duplicate 입력이 명시 오류로 거절된다.
 
 3. **Tauri UI 플로우 연결 (Folder picker + 상태 동기화)**
-   - [ ] Action: `FolderPlus` 클릭 시 폴더 선택기를 여는 경로를 추가하고(필요 시 Tauri dialog plugin 추가), 선택 결과를 IPC 입력으로 전달한다.
-   - [ ] Action: 등록 성공 후 프로젝트 목록/active badge/문서 목록을 일관되게 갱신하며 stale 상태를 정리한다.
-   - [ ] Action: 등록 실패 시 `projectError` 표면화 규칙과 재시도 UX를 정의한다.
-   - [ ] Deliverables: 헤더 아이콘 동작, 등록 성공/실패 UI, 상태 동기화 처리.
-   - [ ] Exit criteria: 사용자 시나리오(성공/중복/취소/경로 오류)에서 UI와 backend 상태가 서로 어긋나지 않는다.
+   - [x] Action: `FolderPlus` 클릭 시 폴더 선택기를 여는 경로를 추가하고(필요 시 Tauri dialog plugin 추가), 선택 결과를 IPC 입력으로 전달한다.
+   - [x] Action: 등록 성공 후 프로젝트 목록/active badge/문서 목록을 일관되게 갱신하며 stale 상태를 정리한다.
+   - [x] Action: 등록 실패 시 `projectError` 표면화 규칙과 재시도 UX를 정의한다.
+   - [x] Deliverables: 헤더 아이콘 동작, 등록 성공/실패 UI, 상태 동기화 처리.
+   - [x] Exit criteria: 사용자 시나리오(성공/중복/취소/경로 오류)에서 UI와 backend 상태가 서로 어긋나지 않는다.
 
 4. **회귀 테스트 + 품질 게이트 + Compound 문서화**
    - [ ] Action: React 테스트(`App.test.tsx`)에 FolderPlus 버튼 노출/클릭/등록 성공/오류 상태 회귀를 추가한다.
@@ -93,3 +93,4 @@ UI state transition table:
 - 2026-02-19: 외부 리서치 필요성 평가. 고위험 주제가 아니고 로컬 문맥이 충분해 계획 단계 외부 리서치는 생략.
 - 2026-02-19: step 1 완료. `ProjectsSidebar`에 FolderPlus 액션 버튼 + `addActionState/onRequestAddProject` 계약을 추가하고, 취소 포함 상태 전이 표를 plan 문서에 고정.
 - 2026-02-19: step 2 완료. `project_registration.rs` + `ProjectRegistryState::register_project_by_root_path` + `register_project` IPC를 추가해 canonicalize/`docs` 검증/중복 충돌 검사/원자적 global config write/BTree 정렬 기반 deterministic 저장/registry 재로딩을 구현.
+- 2026-02-19: step 3 완료. Tauri dialog plugin을 연결해 FolderPlus 클릭 → folder picker → `register_project` IPC를 구현하고, 성공 시 registry 재로딩/프로젝트 목록 동기화, 실패 시 `projectError` 노출, 취소 시 no-op 규칙을 고정. React 회귀 테스트(성공/취소/오류) 추가.

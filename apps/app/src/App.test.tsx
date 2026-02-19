@@ -3,6 +3,7 @@
 import type { DocDocument, DocSummary, ProjectSummary } from '@coda/core/contracts';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { open } from '@tauri-apps/plugin-dialog';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,6 +16,9 @@ vi.mock('@tauri-apps/api/core', () => ({
 vi.mock('@tauri-apps/api/event', () => ({
   listen: vi.fn(),
 }));
+vi.mock('@tauri-apps/plugin-dialog', () => ({
+  open: vi.fn(),
+}));
 vi.mock('./useAskNotifications', () => ({
   useAskNotifications: vi.fn(),
 }));
@@ -22,6 +26,7 @@ vi.mock('./useAskNotifications', () => ({
 const mockInvoke = vi.mocked(invoke);
 const mockIsTauri = vi.mocked(isTauri);
 const mockListen = vi.mocked(listen);
+const mockOpen = vi.mocked(open);
 
 const coreBeliefsSummary: DocSummary = {
   id: 'design-docs/core-beliefs.md',
@@ -163,25 +168,60 @@ const setupSuccessfulInvokeMock = (
 ): void => {
   mockIsTauri.mockReturnValue(true);
   mockListen.mockResolvedValue(() => {});
+  mockOpen.mockResolvedValue(null);
   let activeProjectId = 'alpha';
+  let registeredProjects = [...projectFixtures];
 
   mockInvoke.mockImplementation(async (command, args) => {
     if (command === 'list_projects') {
-      return projectFixtures;
+      return registeredProjects;
     }
 
     if (command === 'get_active_project') {
-      return projectFixtures.find((project) => project.projectId === activeProjectId) ?? alphaProject;
+      return registeredProjects.find((project) => project.projectId === activeProjectId) ?? alphaProject;
     }
 
     if (command === 'set_active_project') {
       const projectId = (args as { projectId: string } | undefined)?.projectId;
-      if (!projectId || !projectFixtures.some((project) => project.projectId === projectId)) {
+      if (!projectId || !registeredProjects.some((project) => project.projectId === projectId)) {
         throw new Error(`unknown project ${projectId ?? 'undefined'}`);
       }
 
       activeProjectId = projectId;
-      return projectFixtures.find((project) => project.projectId === projectId) ?? alphaProject;
+      return registeredProjects.find((project) => project.projectId === projectId) ?? alphaProject;
+    }
+
+    if (command === 'register_project') {
+      const rootPath = (args as { rootPath: string } | undefined)?.rootPath;
+      if (!rootPath) {
+        throw new Error('missing root path');
+      }
+
+      const derivedId = rootPath
+        .split('/')
+        .filter((value) => value.length > 0)
+        .at(-1)
+        ?.toLowerCase()
+        .replace(/[^a-z0-9-_]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      const projectId = derivedId && derivedId.length > 0 ? derivedId : 'project';
+      const projectSummary: ProjectSummary = {
+        projectId,
+        displayName: projectId,
+        rootPath,
+        docsPath: `${rootPath}/docs`,
+        hasLocalOverride: false,
+      };
+
+      if (registeredProjects.some((project) => project.projectId === projectId)) {
+        throw new Error(`duplicate project_id '${projectId}'`);
+      }
+
+      registeredProjects = [...registeredProjects, projectSummary].sort((left, right) =>
+        left.displayName.localeCompare(right.displayName)
+      );
+
+      return projectSummary;
     }
 
     if (command === 'list_doc_summaries') {
@@ -219,6 +259,7 @@ afterEach(() => {
   mockInvoke.mockReset();
   mockIsTauri.mockReset();
   mockListen.mockReset();
+  mockOpen.mockReset();
   cleanup();
 });
 
@@ -399,6 +440,70 @@ describe('App docs viewer', () => {
     expect(toggleButton.getAttribute('aria-expanded')).toBe('true');
     expect(toggleButton.getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByTestId('projects-sidebar')).toBeTruthy();
+  });
+
+  it('registers a project from FolderPlus action and refreshes project list', async () => {
+    setupSuccessfulInvokeMock();
+    mockOpen.mockResolvedValue('/tmp/gamma');
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    const addButton = screen.getByTestId('projects-add-button');
+    expect(addButton.getAttribute('aria-label')).toBe('Add project');
+    expect(addButton.hasAttribute('disabled')).toBe(false);
+
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(mockInvoke).toHaveBeenCalledWith('register_project', { rootPath: '/tmp/gamma' });
+    });
+    await screen.findByRole('button', { name: 'gamma' });
+  });
+
+  it('keeps state unchanged when FolderPlus flow is cancelled', async () => {
+    setupSuccessfulInvokeMock();
+    mockOpen.mockResolvedValue(null);
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    const addButton = screen.getByTestId('projects-add-button');
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      const registerCalls = mockInvoke.mock.calls.filter(([command]) => command === 'register_project');
+      expect(registerCalls).toHaveLength(0);
+      expect(addButton.hasAttribute('disabled')).toBe(false);
+    });
+    expect(screen.queryByText(/Unable to add project:/)).toBeNull();
+  });
+
+  it('shows registration error when FolderPlus register request fails', async () => {
+    setupSuccessfulInvokeMock();
+    mockOpen.mockResolvedValue('/tmp/alpha');
+
+    const baseInvoke = mockInvoke.getMockImplementation();
+    mockInvoke.mockImplementation(async (command, args) => {
+      if (command === 'register_project') {
+        throw new Error("project registration failed: duplicate root path '/tmp/alpha'.");
+      }
+
+      if (!baseInvoke) {
+        throw new Error('missing base invoke implementation');
+      }
+
+      return await baseInvoke(command, args);
+    });
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByTestId('projects-add-button'));
+
+    await screen.findByText(
+      "Unable to add project: project registration failed: duplicate root path '/tmp/alpha'."
+    );
   });
 
   it('switches projects and restores per-project selected document state', async () => {

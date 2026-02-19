@@ -9,13 +9,14 @@ import {
 } from '@coda/core/contracts';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { open as openDirectoryDialog } from '@tauri-apps/plugin-dialog';
 import { MessageCircleQuestionMark, PanelLeft } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
 import { AskInboxPanel } from './components/AskInboxPanel';
 import { DocViewerPanel } from './components/DocViewerPanel';
 import { DocsSidebar } from './components/DocsSidebar';
-import { ProjectsSidebar } from './components/ProjectsSidebar';
+import { ProjectsSidebar, type ProjectAddActionState } from './components/ProjectsSidebar';
 import { allTreeNodeKeys, ancestorKeysForDoc, buildTreeSections } from './docs-tree';
 import { useAskNotifications } from './useAskNotifications';
 
@@ -81,6 +82,7 @@ export const App = (): ReactElement => {
   const [projectLoading, setProjectLoading] = useState<boolean>(true);
   const [projectError, setProjectError] = useState<string | null>(null);
   const [isProjectSidebarOpen, setIsProjectSidebarOpen] = useState<boolean>(true);
+  const [projectAddActionState, setProjectAddActionState] = useState<ProjectAddActionState>('idle');
 
   const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
@@ -312,6 +314,33 @@ export const App = (): ReactElement => {
     [activeProject, snapshotCurrentProjectViewState]
   );
 
+  const handleProjectRegistration = useCallback(async (): Promise<void> => {
+    setProjectError(null);
+    setProjectAddActionState('selecting');
+
+    try {
+      const selectedPath = await openDirectoryDialog({
+        directory: true,
+        multiple: false,
+        title: 'Select a project root folder',
+      });
+      const rootPath = Array.isArray(selectedPath) ? selectedPath[0] : selectedPath;
+
+      if (!rootPath) {
+        return;
+      }
+
+      setProjectAddActionState('registering');
+      await invoke<ProjectSummary>('register_project', { rootPath });
+      await loadProjectRegistry();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      setProjectError(`Unable to add project: ${message}`);
+    } finally {
+      setProjectAddActionState('idle');
+    }
+  }, [loadProjectRegistry]);
+
   const handleDocsChangedEvent = useCallback(
     async (payload: DocsChangedEventPayload): Promise<void> => {
       const activeProjectIdAtEvent = activeProjectIdRef.current;
@@ -409,7 +438,7 @@ export const App = (): ReactElement => {
   }, [activeProjectId]);
 
   useEffect(() => {
-    const projectId = activeProject?.projectId;
+    const projectId = activeProjectId;
     activeProjectIdRef.current = projectId ?? null;
     listRefreshInFlightRef.current = null;
     listRefreshQueuedRef.current = false;
@@ -440,7 +469,7 @@ export const App = (): ReactElement => {
     setFindPreviousRequestToken(0);
 
     void loadDocSummariesQueued();
-  }, [activeProject, loadDocSummariesQueued]);
+  }, [activeProjectId, loadDocSummariesQueued]);
 
   useEffect(() => {
     if (!isTauri()) {
@@ -619,9 +648,13 @@ export const App = (): ReactElement => {
         loading={projectLoading}
         error={projectError}
         isOpen={isProjectSidebarOpen}
-        addActionState="idle"
+        addActionState={projectAddActionState}
         onRequestAddProject={() => {
-          void 0;
+          if (!isTauri()) {
+            setProjectError('Unable to add project: folder picker is available in the desktop app.');
+            return;
+          }
+          void handleProjectRegistration();
         }}
         onSelectProject={(projectId) => {
           void handleProjectSelection(projectId);

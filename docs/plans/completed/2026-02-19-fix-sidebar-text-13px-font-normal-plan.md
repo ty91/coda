@@ -1,7 +1,7 @@
 ---
 title: "Docs 사이드바 텍스트를 13px + font-normal로 통일"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, ui, sidebar, typography, regression, milestone-1]
 milestone: M1
 ---
@@ -93,6 +93,7 @@ milestone: M1
 - 2026-02-19: Step 5 완료. 전체 게이트(`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`)를 통과했다.
 - 2026-02-19: `pnpm --filter @coda/app tauri dev` 수동 스모크는 로컬 포트 충돌로 차단됐다. 정확한 에러: `Error: Port 1420 is already in use`.
 - 2026-02-19: 컴파운드 기록을 `docs/solutions/2026-02-19-docs-sidebar-text-13px-font-normal.md`에 추가했다.
+- 2026-02-19: 포트 점유 프로세스 정리 후 `pnpm --filter @coda/app tauri dev` 재기동 성공, 사용자 수동 확인 완료로 plan 상태를 `completed`로 전환했다.
 
 ## Assumptions / Open Questions
 

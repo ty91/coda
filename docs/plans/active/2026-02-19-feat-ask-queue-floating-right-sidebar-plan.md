@@ -1,7 +1,7 @@
 ---
 title: "Ask queue 우측 플로팅 사이드바 전환 및 조건부 노출"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, ask-queue, sidebar, ui, milestone-1]
 milestone: M1
 ---
@@ -53,10 +53,10 @@ milestone: M1
    - [x] Exit criteria: 노출 조건 또는 배치가 회귀하면 테스트가 실패한다.
 
 5. **게이트 검증 및 컴파운드 기록**
-   - [ ] Action: lint/typecheck/test/build/validate 전체 게이트를 실행하고 수동 Tauri 스모크(ask 생성→노출→submit/cancel→자동 숨김)를 수행한다.
-   - [ ] Action: 변경 패턴/실수/예방 전략을 `docs/solutions/`에 기록하고, 아키텍처 영향이 있으면 관련 설계 문서를 갱신한다.
-   - [ ] Deliverables: 통과 로그, 수동 검증 결과, 신규 solution 문서.
-   - [ ] Exit criteria: 전체 게이트 통과 + 후속 ask UI 변경에 재사용 가능한 지식이 남는다.
+   - [x] Action: lint/typecheck/test/build/validate 전체 게이트를 실행하고 수동 Tauri 스모크(ask 생성→노출→submit/cancel→자동 숨김)를 수행한다.
+   - [x] Action: 변경 패턴/실수/예방 전략을 `docs/solutions/`에 기록하고, 아키텍처 영향이 있으면 관련 설계 문서를 갱신한다.
+   - [x] Deliverables: 통과 로그, 수동 검증 결과, 신규 solution 문서.
+   - [x] Exit criteria: 전체 게이트 통과 + 후속 ask UI 변경에 재사용 가능한 지식이 남는다.
 
 ## UI Contract
 
@@ -106,3 +106,6 @@ milestone: M1
 - 2026-02-19: Step 2 완료. `apps/app/src/components/AskInboxPanel.tsx`를 조건부 렌더링으로 전환해 pending ask가 없거나 큐 로드 실패 시 패널을 렌더링하지 않도록 조정했고, 폴링 기반 세션 동기화는 유지했다.
 - 2026-02-19: Step 3 완료. `apps/app/src/App.tsx`에서 ask 패널을 우측 고정 플로팅으로 이동하고 pending ask 개수 기반 find 오버레이 우측 오프셋 계산을 추가했다. `apps/app/src/components/DocViewerPanel.tsx`는 CSS variable 기반 우측 오프셋을 적용해 ask 노출 시 find를 좌측으로 밀도록 변경했다.
 - 2026-02-19: Step 4 완료. `apps/app/src/components/AskInboxPanel.test.tsx`에 빈 큐/에러 미노출 및 pending 전환 재노출 회귀를 추가했고, `apps/app/src/App.test.tsx`에 ask 플로팅 표시/기본 미노출/find 오프셋(`16px`/`392px`) 검증을 추가했다.
+- 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 모두 통과했다.
+- 2026-02-19: 수동 Tauri 스모크 시도(`pnpm --filter @coda/app tauri dev`)는 `Error: Port 1420 is already in use`로 차단되어 ask 실제 창 상호작용 검증은 환경 정리 후 재시도 필요하다.
+- 2026-02-19: 컴파운드 기록으로 `docs/solutions/2026-02-19-ask-queue-floating-right-sidebar-conditional-visibility.md`를 추가했다. 아키텍처 문서 업데이트는 불필요했다(레이어 경계 변경 없음).

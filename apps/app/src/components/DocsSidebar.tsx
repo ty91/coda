@@ -90,11 +90,8 @@ const renderTreeNode = (
 
   const isActive = node.summary.id === selectedDocId;
   const docButtonClass = isActive
-    ? `${treeRowClass} grid gap-[0.05rem] bg-[var(--color-coda-sidebar-row-active)] shadow-[inset_0_0_0_1px_#d0d0cd] hover:bg-[var(--color-coda-sidebar-row-active)]`
-    : `${treeRowClass} grid gap-[0.05rem] hover:bg-[var(--color-coda-sidebar-row-hover)]`;
-  const docPathClass = isActive
-    ? 'font-mono text-[0.69rem] leading-[1.28] text-[#50504d]'
-    : 'font-mono text-[0.69rem] leading-[1.28] text-coda-text-muted';
+    ? `${treeRowClass} bg-[var(--color-coda-sidebar-row-active)] shadow-[inset_0_0_0_1px_#d0d0cd] hover:bg-[var(--color-coda-sidebar-row-active)]`
+    : `${treeRowClass} hover:bg-[var(--color-coda-sidebar-row-hover)]`;
 
   return (
     <li key={node.key}>
@@ -106,7 +103,6 @@ const renderTreeNode = (
         onClick={() => onSelectDoc(node.summary.id)}
       >
         <span className="text-[0.84rem] leading-[1.28]">{node.summary.displayTitle}</span>
-        <span className={docPathClass}>{node.summary.docPath}</span>
       </button>
     </li>
   );

@@ -47,10 +47,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Query updates refresh match set correctly; navigation cycles through matches predictably.
 
 4. **Add compact find UI in reader surface**
-   - [ ] Action: Add a minimal find bar in the reader header/panel with query input, match counter, prev/next controls, and close control.
-   - [ ] Action: Keep design language aligned with existing monochrome docs viewer tokens and spacing.
-   - [ ] Deliverables: Accessible find controls with keyboard-friendly focus order and ARIA labels.
-   - [ ] Exit criteria: Find UI is usable via keyboard only and visually consistent with current viewer styling.
+   - [x] Action: Add a minimal find bar in the reader header/panel with query input, match counter, prev/next controls, and close control.
+   - [x] Action: Keep design language aligned with existing monochrome docs viewer tokens and spacing.
+   - [x] Deliverables: Accessible find controls with keyboard-friendly focus order and ARIA labels.
+   - [x] Exit criteria: Find UI is usable via keyboard only and visually consistent with current viewer styling.
 
 5. **Add regression and edge-case tests**
    - [ ] Action: Extend app tests for shortcut trigger, UI open/close, and no-regression of existing document selection flow.
@@ -116,3 +116,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Step 1 complete. Interaction contract locked for shortcut, key navigation, search scope (body + metadata), empty/no-match behavior, and doc-switch reset semantics.
 - 2026-02-19: Step 2 complete. Added app-level find state and keyboard shortcut boundary in `apps/app/src/App.tsx`, plus viewer-prop wiring and input focus handling in `apps/app/src/components/DocViewerPanel.tsx`.
 - 2026-02-19: Step 3 complete. Added DOM-order, case-insensitive highlight matching across metadata + markdown body, plus next/previous active-match traversal and scroll-into-view behavior in `DocViewerPanel`.
+- 2026-02-19: Step 4 complete. Added compact reader find bar UI with input, counter, prev/next, close controls, and keyboard-friendly ARIA wiring in `DocViewerPanel`.

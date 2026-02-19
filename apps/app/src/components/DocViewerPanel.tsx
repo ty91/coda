@@ -187,6 +187,9 @@ export const DocViewerPanel = ({
   const highlightedMatchesRef = useRef<HTMLElement[]>([]);
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
   const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
+  const activeMatchPosition =
+    findMatchCount === 0 || activeFindMatchIndex === null ? '0/0' : `${activeFindMatchIndex + 1}/${findMatchCount}`;
+  const findNavigationDisabled = findMatchCount === 0;
 
   useEffect(() => {
     if (!findOpen) {
@@ -291,49 +294,78 @@ export const DocViewerPanel = ({
       </header>
 
       {selectedDoc && findOpen ? (
-        <div className="flex items-center gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2">
-          <label
-            className="text-[0.7rem] font-semibold tracking-[0.1em] text-coda-text-muted uppercase"
-            htmlFor="reader-find-input"
-          >
-            Find
+        <div className="grid gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2">
+          <label className="text-[0.7rem] font-semibold tracking-[0.1em] text-coda-text-muted uppercase" htmlFor="reader-find-input">
+            Find In Document
           </label>
-          <input
-            id="reader-find-input"
-            ref={findInputRef}
-            className="min-w-0 flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.88rem] text-coda-text-primary"
-            type="text"
-            value={findQuery}
-            onChange={(event) => onFindQueryChange(event.target.value)}
-            aria-label="Find in document"
-            data-testid="viewer-find-input"
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                if (event.shiftKey) {
-                  onFindRequestPrevious();
-                } else {
-                  onFindRequestNext();
-                }
-              }
 
-              if (event.key === 'Escape') {
-                event.preventDefault();
-                onFindClose();
-              }
-            }}
-          />
-          <button
-            type="button"
-            className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.72rem] font-medium text-coda-text-secondary"
-            onClick={onFindClose}
-            aria-label="Close find"
-          >
-            Close
-          </button>
-          <span className="min-w-[3rem] text-right text-[0.74rem] text-coda-text-muted" aria-live="polite">
-            {findMatchCount === 0 || activeFindMatchIndex === null ? '0/0' : `${activeFindMatchIndex + 1}/${findMatchCount}`}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              id="reader-find-input"
+              ref={findInputRef}
+              className="min-w-[10.5rem] flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.88rem] text-coda-text-primary"
+              type="text"
+              value={findQuery}
+              onChange={(event) => onFindQueryChange(event.target.value)}
+              aria-label="Find in document"
+              data-testid="viewer-find-input"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  if (event.shiftKey) {
+                    onFindRequestPrevious();
+                  } else {
+                    onFindRequestNext();
+                  }
+                }
+
+                if (event.key === 'Escape') {
+                  event.preventDefault();
+                  onFindClose();
+                }
+              }}
+            />
+
+            <button
+              type="button"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              onClick={onFindRequestPrevious}
+              disabled={findNavigationDisabled}
+              aria-label="Previous match"
+              title="Previous match"
+            >
+              Prev
+            </button>
+
+            <button
+              type="button"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              onClick={onFindRequestNext}
+              disabled={findNavigationDisabled}
+              aria-label="Next match"
+              title="Next match"
+            >
+              Next
+            </button>
+
+            <span
+              className="min-w-[3rem] text-right font-mono text-[0.74rem] text-coda-text-muted"
+              aria-live="polite"
+              data-testid="viewer-find-counter"
+            >
+              {activeMatchPosition}
+            </span>
+
+            <button
+              type="button"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary"
+              onClick={onFindClose}
+              aria-label="Close find"
+              title="Close find"
+            >
+              Close
+            </button>
+          </div>
         </div>
       ) : null}
 

@@ -8,7 +8,8 @@ Status: Design phase. Zero application code. Milestone 1 targets a working compo
 
 - Always search `docs/solutions/` before implementing. Reuse existing solutions.
 - Always check `docs/plans/active/` for an existing plan before starting work.
-- Never skip the compound step. Document what you learned in `docs/solutions/`.
+- Run the compound step only when work yields reusable learning, root-cause fixes, prevention guidance, or architecture impact.
+- If compound is needed, use the `compound` skill (`~/.codex/skills/compound`).
 - Files: max 500 lines. Split if approaching limit.
 - TypeScript: `type` over `interface`. No barrel files. Named exports only.
 - Validate at boundaries. Trust typed data internally.
@@ -79,11 +80,19 @@ status: "active"
 
 Sections: Problem, Root Cause, Solution, Prevention, Related.
 
-## Compound Step
+## Compound Step (When Needed)
 
-After completing work:
+Run compound only if at least one is true:
 
-1. What problem was solved? → Document in `docs/solutions/`
-2. What pattern emerged? → Tag for future discovery
-3. What mistake was made? → Document prevention strategy
-4. Does this affect architecture? → Update `docs/design-docs/`
+1. Non-trivial bug or root-cause fix was made.
+2. A reusable pattern or decision emerged.
+3. A new prevention strategy or checklist should be recorded.
+4. Architecture or design docs should change.
+
+Skip compound for low-signal work:
+
+- Trivial wording or formatting-only edits.
+- Routine mechanical updates with no reusable insight.
+- One-off local chores without project-level learning.
+
+When skipped, include a one-line reason in handoff.

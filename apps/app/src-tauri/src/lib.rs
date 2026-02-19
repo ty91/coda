@@ -23,11 +23,15 @@ pub fn run() {
     let ask_runtime_state = ask_runtime::AskRuntimeState::new();
     let project_registry_state = project_runtime::ProjectRegistryState::new()
         .expect("failed to initialize project registry runtime");
+    let docs_watcher_state = docs_watcher::DocsWatcherState::new();
+    let project_registry_state_for_setup = project_registry_state.clone();
+    let docs_watcher_state_for_setup = docs_watcher_state.clone();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .manage(ask_runtime_state.clone())
         .manage(project_registry_state.clone())
+        .manage(docs_watcher_state.clone())
         .invoke_handler(tauri::generate_handler![
             get_health_message,
             project_runtime::list_projects,
@@ -46,7 +50,11 @@ pub fn run() {
                         .build(),
                 )?;
             }
-            docs_watcher::start_docs_watcher(app.handle().clone())?;
+            docs_watcher::start_docs_watcher(
+                app.handle().clone(),
+                &docs_watcher_state_for_setup,
+                &project_registry_state_for_setup,
+            )?;
             ask_runtime::start_ask_socket_server(ask_runtime_state.clone(), app.handle().clone())?;
             Ok(())
         })

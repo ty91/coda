@@ -1,3 +1,4 @@
+use crate::docs_watcher::DocsWatcherState;
 use crate::project_registry::{
     load_project_registry_from_paths, validate_project_selection, workspace_root_path,
     ProjectContext, ProjectRegistry, ProjectSummary,
@@ -6,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
-use tauri::State;
+use tauri::{AppHandle, State};
 
 const CONFIG_PATH_SEGMENTS: [&str; 2] = [".coda", "config.toml"];
 const ACTIVE_PROJECT_STATE_PATH_SEGMENTS: [&str; 2] = [".coda", "app-state.toml"];
@@ -116,15 +117,6 @@ impl ProjectRegistryState {
         validate_project_selection(&inner.registry, &inner.active_project_id)
     }
 
-    pub fn active_project_id(&self) -> Result<String, String> {
-        let inner = self
-            .inner
-            .lock()
-            .map_err(|_| "project runtime state lock poisoned".to_string())?;
-
-        Ok(inner.active_project_id.clone())
-    }
-
     pub fn set_active_project_by_id(&self, project_id: &str) -> Result<ProjectSummary, String> {
         let (next_project, active_state_path) = {
             let mut inner = self
@@ -160,8 +152,13 @@ pub fn get_active_project(
 pub fn set_active_project(
     project_id: String,
     state: State<'_, ProjectRegistryState>,
+    watcher_state: State<'_, DocsWatcherState>,
+    app_handle: AppHandle,
 ) -> Result<ProjectSummary, String> {
-    state.set_active_project_by_id(&project_id)
+    let selected_project = state.set_active_project_by_id(&project_id)?;
+    let active_project = state.active_project_context()?;
+    watcher_state.switch_to_project(app_handle, &active_project)?;
+    Ok(selected_project)
 }
 
 fn resolve_initial_active_project_id(

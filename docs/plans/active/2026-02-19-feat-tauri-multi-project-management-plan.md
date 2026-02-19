@@ -46,10 +46,10 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
    - [x] Exit criteria: 앱 재시작 후 활성 프로젝트가 복원되고, 프로젝트 전환 시 서로 다른 `docs/` 목록이 IPC에서 반환된다.
 
 3. **Watcher 아키텍처 재구성 (프로젝트별 isolation)**
-   - [ ] Action: docs watcher를 활성 프로젝트 단일 감시 또는 등록 프로젝트 다중 감시 중 하나로 명시 선택하고, 이벤트 payload에 `project_id`를 포함한다.
-   - [ ] Action: watcher 교체 시 스레드/채널 정리 규약(중복 감시, orphan thread 방지)을 추가한다.
-   - [ ] Deliverables: project-aware `docs_changed` 이벤트 계약 + watcher lifecycle 관리 코드.
-   - [ ] Exit criteria: 프로젝트 A/B를 빠르게 전환해도 잘못된 프로젝트 문서가 갱신되지 않고 이벤트 라우팅이 섞이지 않는다.
+   - [x] Action: docs watcher를 활성 프로젝트 단일 감시 또는 등록 프로젝트 다중 감시 중 하나로 명시 선택하고, 이벤트 payload에 `project_id`를 포함한다.
+   - [x] Action: watcher 교체 시 스레드/채널 정리 규약(중복 감시, orphan thread 방지)을 추가한다.
+   - [x] Deliverables: project-aware `docs_changed` 이벤트 계약 + watcher lifecycle 관리 코드.
+   - [x] Exit criteria: 프로젝트 A/B를 빠르게 전환해도 잘못된 프로젝트 문서가 갱신되지 않고 이벤트 라우팅이 섞이지 않는다.
 
 4. **Tauri UI: 프로젝트 전환 UX + 상태 분리**
    - [ ] Action: 문서 사이드바의 왼쪽에 프로젝트 사이드바(프로젝트 리스트/선택 상태)를 신설하고, 메인 레이아웃을 3-패널(프로젝트/문서/뷰어) 기준으로 재구성한다.
@@ -87,9 +87,9 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: 사용자 UX 요구 반영. 프로젝트 사이드바를 문서 사이드바 왼쪽에 배치하고, 신호등 오른쪽 `PanelLeft` 버튼으로 토글하는 레이아웃 요구를 Plan step 4에 고정.
 - 2026-02-19: step 1 완료. `project_registry` 도메인 계약(`project_id`, root path, display name, local override precedence)을 구현하고 등록/선택/삭제/invalid path 시나리오를 Rust 테스트로 고정.
 - 2026-02-19: step 2 완료. `ProjectRegistryState`와 `list_projects/get_active_project/set_active_project` IPC를 추가하고 docs IPC가 활성 프로젝트 root/docs 경로를 사용하도록 전환. 활성 프로젝트 state(`~/.coda/app-state.toml`) 복원 회귀 테스트 추가.
+- 2026-02-19: step 3 완료. watcher 전략을 "활성 프로젝트 단일 감시"로 확정. 프로젝트 전환 시 기존 watcher thread를 stop+join 후 새 watcher를 시작하도록 lifecycle을 재구성하고 `docs_changed` payload에 `project_id`를 포함.
 
 ## Assumptions / Open Questions
 
 - Assumption: 다중 프로젝트 등록 소스는 우선 글로벌 설정(`~/.coda/config.toml`)이 기본이며, 활성 프로젝트 포인터만 앱 런타임 상태로 관리한다.
-- Open question: watcher 전략을 "활성 프로젝트 단일 감시"로 제한할지, "등록 프로젝트 전체 감시"로 시작할지(성능/복잡도 trade-off) 최종 확정 필요.
 - Open question: ask 세션이 향후 프로젝트 컨텍스트를 강제해야 하는지(현재 ask payload에는 프로젝트 식별자가 없음) 정책 결정 필요.

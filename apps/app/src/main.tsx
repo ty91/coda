@@ -11,9 +11,13 @@ if (!rootElement) {
   throw new Error('missing #root container');
 }
 
-void applyMacOsWindowEffects().catch((error: unknown) => {
-  console.warn('failed to apply macOS window effects', error);
-});
+if (typeof window !== 'undefined') {
+  window.requestAnimationFrame(() => {
+    void applyMacOsWindowEffects().catch((error: unknown) => {
+      console.warn('failed to apply macOS window effects', error);
+    });
+  });
+}
 
 createRoot(rootElement).render(
   <StrictMode>

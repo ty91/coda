@@ -1,3 +1,4 @@
+import { isTauri } from '@tauri-apps/api/core';
 import { Effect, EffectState, getCurrentWindow, type Effects } from '@tauri-apps/api/window';
 
 export type MacOsWindowMaterial = 'hudWindow' | 'sidebar';
@@ -18,8 +19,7 @@ type ApplyMacOsWindowEffectsOptions = {
   applyEffects?: EffectsApplier;
 };
 
-const isTauriRuntime = (): boolean =>
-  typeof window !== 'undefined' && typeof (window as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ !== 'undefined';
+const isTauriRuntime = (): boolean => isTauri();
 
 const applyCurrentWindowEffects = async (effects: Effects): Promise<void> => {
   await getCurrentWindow().setEffects(effects);

@@ -1,4 +1,4 @@
-import { SCAFFOLD_STATUS, type DocDocument, type DocId, type DocSummary } from '@coda/core/contracts';
+import { type DocDocument, type DocId, type DocSummary } from '@coda/core/contracts';
 import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
 
@@ -10,13 +10,6 @@ import {
   buildTreeSections,
   defaultExpandedSectionKeys,
 } from './docs-tree';
-import { eyebrowClass, ghostButtonClass, headerRowClass, panelSurfaceClass, subtleTextClass } from './ui-classes';
-
-type HealthResponse = {
-  message: string;
-};
-
-const APP_TITLE = 'Coda Mission Control';
 const ANNOTATION_TODO_NOTE =
   'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
 
@@ -35,9 +28,6 @@ const areSameSet = (left: Set<string>, right: Set<string>): boolean => {
 };
 
 export const App = (): ReactElement => {
-  const [healthMessage, setHealthMessage] = useState<string>('Idle');
-  const [healthLoading, setHealthLoading] = useState<boolean>(false);
-
   const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocDocument | null>(null);
@@ -51,18 +41,6 @@ export const App = (): ReactElement => {
 
   const treeSections = useMemo(() => buildTreeSections(docSummaries), [docSummaries]);
   const treeNodeKeys = useMemo(() => allTreeNodeKeys(treeSections), [treeSections]);
-
-  const runHealthCheck = async (): Promise<void> => {
-    setHealthLoading(true);
-    try {
-      const response = await invoke<HealthResponse>('get_health_message', {
-        projectName: SCAFFOLD_STATUS.projectName,
-      });
-      setHealthMessage(response.message);
-    } finally {
-      setHealthLoading(false);
-    }
-  };
 
   const loadDocSummaries = useCallback(async (): Promise<void> => {
     setListLoading(true);
@@ -201,34 +179,6 @@ export const App = (): ReactElement => {
       />
 
       <section className="grid min-w-0 gap-3">
-        <header
-          className={`${panelSurfaceClass} ${headerRowClass} p-4 max-[980px]:flex-col max-[980px]:items-stretch`}
-        >
-          <div>
-            <p className={eyebrowClass}>Milestone 1</p>
-            <h1 className="mt-1 text-[clamp(1.3rem,1.8vw,1.85rem)] font-semibold tracking-[-0.02em]">{APP_TITLE}</h1>
-            <p className={subtleTextClass}>Structured docs workspace with compact thread-like navigation.</p>
-          </div>
-
-          <div
-            className="grid min-w-[220px] gap-2 rounded-coda-md border border-coda-line-soft bg-[#fafaf8] p-3 max-[980px]:min-w-0 max-[980px]:w-full"
-            aria-live="polite"
-          >
-            <p className="text-[0.66rem] font-semibold tracking-[0.11em] text-coda-text-muted uppercase">
-              Bridge Status
-            </p>
-            <p className="font-semibold">{healthMessage}</p>
-            <button
-              type="button"
-              className={ghostButtonClass}
-              onClick={() => void runHealthCheck()}
-              disabled={healthLoading}
-            >
-              {healthLoading ? 'Checking...' : 'Check connection'}
-            </button>
-          </div>
-        </header>
-
         <DocViewerPanel
           selectedDoc={selectedDoc}
           documentLoading={documentLoading}

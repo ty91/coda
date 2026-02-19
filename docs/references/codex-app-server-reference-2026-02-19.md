@@ -8,6 +8,8 @@ sources:
   - https://developers.openai.com/codex/cli/reference
   - https://developers.openai.com/codex/changelog
   - https://developers.openai.com/codex/open-source
+  - https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md
+  - https://github.com/openai/codex/blob/main/codex-rs/app-server/src/transport.rs
   - https://openai.com/index/unlocking-codex-for-building-and-coding-agents/
 ---
 
@@ -19,50 +21,59 @@ This report summarizes official OpenAI information about Codex App Server as of 
 
 ## What Codex App Server is
 
-Codex App Server is a local server interface for Codex that exposes:
-
-- a stable OpenAPI route (`/v1/runs`) for basic programmatic execution,
-- and an experimental JSON-RPC protocol for richer client integrations.
+Codex App Server is a local server interface for Codex that exposes a bidirectional JSON-RPC protocol for rich client integrations.
 
 OpenAI positions App Server for deep product integrations where SDK-only or MCP-only flows are not enough.
 
 ## Protocol and runtime model
 
-From the App Server docs:
+From the official docs and open-source app-server README:
 
-- Transport: newline-delimited JSON messages over `stdin`/`stdout`.
+- Transport defaults to newline-delimited JSON messages over `stdin`/`stdout` (`stdio://`).
+- WebSocket transport (`ws://IP:PORT`) exists but is explicitly marked experimental/unsupported in the README.
 - Server launch: `codex app-server`.
-- Protocol schema is published for typed client generation.
-- OpenAPI spec is also published for `/v1/runs` clients.
+- The connection requires an initialization handshake: `initialize` request followed by an `initialized` notification.
+- Protocol schema is published and can be generated locally for typed clients (`generate-ts`, `generate-json-schema`).
 
 The docs recommend SDK for straightforward automation, and App Server when you need low-level lifecycle and event control.
 
 ## Core concepts surfaced by the protocol
 
-The protocol is organized around session, thread, turn, and tool operations.
+The protocol is organized around thread, turn, item, and tool operations.
 
 Key method groups include:
 
-- Session/config: `session/configure`, `session/read`, `session/write`, plus app-level config read/write.
-- Thread lifecycle: list/read/archive/unarchive/history access.
-- Turn lifecycle: start, cancel, stream, summary/url reads, and resume flows.
-- Human approval: `approval/request`.
-- Discovery: tools, skills, templates, registry, and experimental-feature listing.
-- External context: MCP tool/prompt/resource listing and resource reads.
-
-The docs also call out command deduping behavior and distinct approval IDs to reduce approval ambiguity in integrations.
+- Thread lifecycle: `thread/start`, `thread/resume`, `thread/fork`, `thread/list`, `thread/read`, `thread/archive`, `thread/unarchive`, and related status notifications.
+- Turn lifecycle: `turn/start`, `turn/steer`, `turn/interrupt`, and completion/status notifications.
+- Command execution: `command/exec` for one-off command execution under server sandbox policy.
+- Skills: `skills/list` and `skills/config/write` are available. `skills/remote/*` is marked under development and should not be used in production clients yet.
+- Discovery/config: model listing, experimental-feature listing, collaboration-mode listing, and config read/write APIs.
+- External context: MCP status/listing and MCP OAuth flows.
 
 ## Streamed output model
 
-App Server streams typed output items rather than only a final text blob.
+App Server streams typed notifications, not only a final text blob.
 
 Documented output/event shapes include:
 
-- `output_text` and `reasoning_text`,
-- reasoning-effort metadata,
-- command execution begin/end events.
+- `item/started` and `item/completed`,
+- incremental deltas like `item/agentMessage/delta`,
+- command execution and tool-progress events,
+- turn lifecycle notifications such as `turn/started` and `turn/completed`.
 
 This matters for UIs that need incremental rendering, audit timelines, or custom approval UX.
+
+## `/v1/runs` clarification (important)
+
+An earlier internal reference in this repository described App Server as exposing a stable OpenAPI route at `/v1/runs`.
+
+Current public sources reviewed on **February 19, 2026** do not show `/v1/runs` as an app-server transport surface. The official App Server docs and open-source implementation describe JSON-RPC over `stdio://` (default) and experimental `ws://IP:PORT`.
+
+Direct local CLI validation with `codex-cli 0.104.0` also rejects HTTP listeners. Exact error:
+
+`unsupported --listen URL \`http://127.0.0.1:1234\`; expected \`stdio://\` or \`ws://IP:PORT\``
+
+Practical implication: integrate against the JSON-RPC protocol and generated schemas, and treat any `/v1/runs` mention as stale until reconfirmed by an official source.
 
 ## Stability status (important)
 
@@ -95,8 +106,8 @@ OpenAI's open-source page states Codex App and most of Codex CLI are open source
 
 App Server-related components are listed as:
 
-- `apps/app-server`
-- `packages/app-server-protocol`
+- `codex-rs/app-server`
+- `codex-rs/app-server-protocol`
 
 OpenAI directs bug reports and feature requests through GitHub Issues on that repository.
 
@@ -115,4 +126,4 @@ For Coda-like orchestration clients, App Server appears strongest when you need:
 - resumable thread/turn lifecycle control,
 - typed protocol contracts generated from official schemas.
 
-Use `/v1/runs` for minimal execution integration, then adopt JSON-RPC methods selectively where richer control is required.
+Start from the JSON-RPC handshake and the minimal flow (`initialize` → `thread/start` or `thread/resume` → `turn/start`), then layer optional methods (approvals, skills, MCP, config APIs) as product needs grow.

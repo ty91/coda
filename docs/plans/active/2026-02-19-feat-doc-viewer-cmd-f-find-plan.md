@@ -65,10 +65,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Automated checks pass and manual viewer behavior matches the defined contract.
 
 7. **Compound follow-up**
-   - [ ] Action: Capture solved pattern and prevention notes in `docs/solutions/` after implementation.
-   - [ ] Action: Update design docs only if this work introduces a reusable keyboard-shortcut convention beyond this feature.
-   - [ ] Deliverables: New solution doc linked to this plan.
-   - [ ] Exit criteria: Future agents can discover and reuse the in-document find pattern.
+   - [x] Action: Capture solved pattern and prevention notes in `docs/solutions/` after implementation.
+   - [x] Action: Update design docs only if this work introduces a reusable keyboard-shortcut convention beyond this feature.
+   - [x] Deliverables: New solution doc linked to this plan.
+   - [x] Exit criteria: Future agents can discover and reuse the in-document find pattern.
 
 ## Validation
 
@@ -121,3 +121,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Step 6 complete. Full gate passed with `pnpm validate` at repo root.
 - 2026-02-19: Step 6 app checks passed: `pnpm --filter @coda/app typecheck`, `pnpm --filter @coda/app test -- --runInBand`, `pnpm --filter @coda/app build`.
 - 2026-02-19: Step 6 manual smoke startup succeeded: `pnpm --filter @coda/app tauri dev` booted Vite (`http://localhost:1420/`) and launched `target/debug/coda-app`; in-window visual Cmd+F verification still requires direct user interaction.
+- 2026-02-19: Step 7 complete. Captured compound notes in `docs/solutions/2026-02-19-doc-viewer-cmd-f-in-document-find.md`; architecture/design doc updates were not required for this feature-scoped shortcut addition.

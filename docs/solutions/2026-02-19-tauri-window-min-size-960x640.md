@@ -1,5 +1,5 @@
 ---
-title: "Set Tauri window minimum size to 640x640"
+title: "Set Tauri window minimum size to 960x640"
 date: 2026-02-19
 tags: [tauri, window, desktop-only, ux]
 status: "active"
@@ -15,7 +15,7 @@ The Tauri window config defined initial width/height but had no minimum size con
 
 ## Solution
 
-- Added `minWidth: 640` and `minHeight: 640` in `apps/app/src-tauri/tauri.conf.json`.
+- Added `minWidth: 960` and `minHeight: 640` in `apps/app/src-tauri/tauri.conf.json`.
 
 ## Prevention
 

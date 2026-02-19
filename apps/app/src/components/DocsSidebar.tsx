@@ -5,9 +5,9 @@ import type { CSSProperties, ReactElement } from 'react';
 import type { TreeFolderNode, TreeNode, TreeSectionNode } from '../docs-tree';
 import {
   eyebrowClass,
-  messageTextClass,
   sidebarSectionClass,
   sidebarSectionHeaderClass,
+  sidebarMessageTextClass,
   sidebarSurfaceClass,
   treeRowClass,
 } from '../ui-classes';
@@ -100,7 +100,7 @@ const renderTreeNode = (
         aria-current={isActive ? 'page' : undefined}
         onClick={() => onSelectDoc(node.summary.id)}
       >
-        <span className="text-[0.84rem] leading-[1.28]">{node.summary.displayTitle}</span>
+        <span className="leading-[1.28]">{node.summary.displayTitle}</span>
       </button>
     </li>
   );
@@ -153,11 +153,11 @@ export const DocsSidebar = ({
         <p className={eyebrowClass}>Workspace</p>
       </header>
 
-      {listLoading ? <p className={messageTextClass}>Loading markdown docs from `docs/`...</p> : null}
-      {listError ? <p className="text-[0.92rem] text-coda-error">{listError}</p> : null}
+      {listLoading ? <p className={sidebarMessageTextClass}>Loading markdown docs from `docs/`...</p> : null}
+      {listError ? <p className="text-[0.8125rem] font-normal text-coda-error">{listError}</p> : null}
 
       {!listLoading && !listError && summaries.length === 0 ? (
-        <p className={messageTextClass}>No markdown docs found in `docs/`.</p>
+        <p className={sidebarMessageTextClass}>No markdown docs found in `docs/`.</p>
       ) : null}
 
       {!listLoading && !listError && summaries.length > 0 ? (

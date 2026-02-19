@@ -17,3 +17,12 @@ tags: [tech-debt, docs-viewer, ui]
 - **Impact**: Reduced usability during long-document search/navigation.
 - **Plan**: Address in upcoming UI improvement pass.
 - **Status**: Open
+
+### TD-002: macOS Ask Notification Click-to-Focus Gap
+
+- **Area**: Tauri app ask notification flow (macOS).
+- **Problem**: Ask-arrival notifications are shown, but clicking the notification does not reliably bring the app window to the foreground.
+- **Expected**: Clicking the ask notification should focus and foreground the main app window consistently.
+- **Impact**: The human-in-the-loop response loop still requires manual app switching, reducing responsiveness.
+- **Plan**: Investigate a reliable desktop-native focus path (plugin capability vs custom native integration), then reintroduce and verify click-to-focus behavior.
+- **Status**: Open

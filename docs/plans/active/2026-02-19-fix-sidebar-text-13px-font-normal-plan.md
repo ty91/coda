@@ -45,10 +45,10 @@ milestone: M1
    - [x] Exit criteria: 사이드바 DOM에서 텍스트 크기/굵기 불일치가 남지 않는다.
 
 4. **회귀 테스트 추가/보강**
-   - [ ] Action: `apps/app/src/ui-classes.test.ts`에 사이드바 타이포그래피 계약(13px, `font-normal`) 검증을 추가한다.
-   - [ ] Action: 필요 시 `apps/app/src/App.test.tsx`에서 핵심 사이드바 버튼 클래스 계약을 보강해 UI 클래스 변경 누락을 탐지한다.
-   - [ ] Deliverables: 타이포그래피 회귀 방지 테스트.
-   - [ ] Exit criteria: 폰트 크기/굵기 계약이 깨지면 테스트가 실패한다.
+   - [x] Action: `apps/app/src/ui-classes.test.ts`에 사이드바 타이포그래피 계약(13px, `font-normal`) 검증을 추가한다.
+   - [x] Action: 필요 시 `apps/app/src/App.test.tsx`에서 핵심 사이드바 버튼 클래스 계약을 보강해 UI 클래스 변경 누락을 탐지한다.
+   - [x] Deliverables: 타이포그래피 회귀 방지 테스트.
+   - [x] Exit criteria: 폰트 크기/굵기 계약이 깨지면 테스트가 실패한다.
 
 5. **검증 및 컴파운드 기록**
    - [ ] Action: 전체 게이트(lint/typecheck/tests/build/validate)와 앱 수동 스모크를 수행해 시각/동작 회귀를 확인한다.
@@ -89,6 +89,7 @@ milestone: M1
 - 2026-02-19: Step 1 완료. `Scope Contract` 표로 포함/비포함 대상을 고정해 구현/테스트 기준을 명문화했다.
 - 2026-02-19: Step 2 완료. `apps/app/src/ui-classes.ts`의 사이드바 텍스트 토큰을 `0.8125rem` + `font-normal`로 정렬하고, 범위 외 영향 방지를 위해 `sidebarMessageTextClass`를 분리했다.
 - 2026-02-19: Step 3 완료. `DocsSidebar`의 인라인 텍스트 클래스(`text-[0.84rem]`, `text-[0.92rem]`)를 정리해 요청 타이포그래피 기준으로 통일했다.
+- 2026-02-19: Step 4 완료. `ui-classes.test.ts`와 `App.test.tsx`에 13px + `font-normal` 회귀 계약을 추가해 타이포그래피 누락을 탐지 가능하게 했다.
 
 ## Assumptions / Open Questions
 

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  eyebrowClass,
   markdownContentClass,
+  sidebarMessageTextClass,
   sidebarSectionClass,
   sidebarSectionHeaderClass,
   treeRowClass,
@@ -24,5 +26,16 @@ describe('markdownContentClass', () => {
     expect(sidebarSectionHeaderClass).toContain('py-[0.22rem]');
     expect(treeRowClass).toContain('min-h-[1.62rem]');
     expect(treeRowClass).toContain('py-[0.18rem]');
+  });
+
+  it('keeps DocsSidebar text tokens at 13px and font-normal', () => {
+    expect(sidebarSectionHeaderClass).toContain('text-[0.8125rem]');
+    expect(sidebarSectionHeaderClass).toContain('font-normal');
+    expect(treeRowClass).toContain('text-[0.8125rem]');
+    expect(treeRowClass).toContain('font-normal');
+    expect(eyebrowClass).toContain('text-[0.8125rem]');
+    expect(eyebrowClass).toContain('font-normal');
+    expect(sidebarMessageTextClass).toContain('text-[0.8125rem]');
+    expect(sidebarMessageTextClass).toContain('font-normal');
   });
 });

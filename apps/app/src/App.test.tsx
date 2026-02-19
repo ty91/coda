@@ -223,12 +223,18 @@ describe('App docs viewer', () => {
     render(<App />);
 
     await screen.findByRole('button', { name: 'Design Docs' });
+    const sidebarLabel = screen.getByText('Workspace');
+    expect(sidebarLabel.className).toContain('text-[0.8125rem]');
+    expect(sidebarLabel.className).toContain('font-normal');
+
     fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
     const coreBeliefsButton = screen.getByRole('button', { name: /Core Beliefs/ });
     fireEvent.click(coreBeliefsButton);
 
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
     expect(screen.getByText(/Beliefs body/)).toBeTruthy();
+    expect(coreBeliefsButton.className).toContain('text-[0.8125rem]');
+    expect(coreBeliefsButton.className).toContain('font-normal');
     expect(coreBeliefsButton.className).toContain('!bg-[var(--color-coda-sidebar-row-hover)]');
     expect(coreBeliefsButton.className).not.toContain('shadow-[inset_0_0_0_1px_#d0d0cd]');
     expect(screen.queryByText(/TODO\(M2\): Add inline annotation/)).toBeNull();

@@ -25,6 +25,7 @@ Status: Design phase. Zero application code. Milestone 1 targets a working compo
 | `docs/design-docs/core-beliefs.md` | Golden principles — never violate these |
 | `docs/plans/active/` | Current plans — check before starting work |
 | `docs/plans/completed/` | Past plans — reference for similar work |
+| `docs/plans/tech-debt-tracker.md` | Tech debt tracker — reference for planned cleanup and follow-up refactors |
 | `docs/solutions/` | Solved problems — search before implementing |
 | `docs/brainstorms/` | Ideas and exploration |
 | `docs/design-docs/` | Architecture decisions, ADRs, UX spec, design rationale |

@@ -414,7 +414,7 @@ describe('App docs viewer', () => {
     const findInput = await screen.findByTestId('viewer-find-input');
     const findOverlay = screen.getByTestId('viewer-find-overlay');
     expect(document.activeElement).toBe(findInput);
-    expect(findOverlay.className).toContain('absolute');
+    expect(findOverlay.className).toContain('fixed');
     expect(findOverlay.className).toContain('right-4');
 
     fireEvent.change(findInput, { target: { value: 'core' } });

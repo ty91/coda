@@ -3,7 +3,7 @@ title: "Tailwind CSS adoption for Tauri docs viewer UI"
 date: 2026-02-18
 tags: [tailwindcss, tauri, ui, styling, milestone-1]
 status: "active"
-related_plan: "docs/plans/active/2026-02-18-feat-tailwindcss-ui-adoption-plan.md"
+related_plan: "docs/plans/completed/2026-02-18-feat-tailwindcss-ui-adoption-plan.md"
 ---
 
 ## Problem
@@ -39,7 +39,7 @@ The app frontend styling did not match architecture intent. UI used a large sele
 
 ## Related
 
-- `docs/plans/active/2026-02-18-feat-tailwindcss-ui-adoption-plan.md`
+- `docs/plans/completed/2026-02-18-feat-tailwindcss-ui-adoption-plan.md`
 - `apps/app/src/styles.css`
 - `apps/app/src/ui-classes.ts`
 - `apps/app/src/App.tsx`

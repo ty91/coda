@@ -32,10 +32,10 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
    - [x] Exit criteria: pending 상태 변화와 사용자 토글 입력이 충돌하지 않는 단일 상태 규칙이 문서화된다.
 
 2. **중앙 컨테이너 헤더에 Lucide 토글 버튼 추가**
-   - [ ] Action: `App` 중앙 영역에 헤더 액션 컨테이너를 추가하고 Lucide `MessageCircleQuestionMark` 아이콘 버튼을 배치한다.
-   - [ ] Action: 기존 레이아웃(문서 뷰어, 드래그 영역, 모바일 브레이크포인트)과 시각 충돌이 없도록 간격/정렬을 조정한다.
-   - [ ] Deliverables: 중앙 컨테이너 헤더의 ask 토글 아이콘 UI.
-   - [ ] Exit criteria: 데스크톱/모바일에서 아이콘 버튼이 일관된 위치에 항상 보이고 클릭으로 토글 이벤트가 발생한다.
+   - [x] Action: `App` 중앙 영역에 헤더 액션 컨테이너를 추가하고 Lucide `MessageCircleQuestionMark` 아이콘 버튼을 배치한다.
+   - [x] Action: 기존 레이아웃(문서 뷰어, 드래그 영역, 모바일 브레이크포인트)과 시각 충돌이 없도록 간격/정렬을 조정한다.
+   - [x] Deliverables: 중앙 컨테이너 헤더의 ask 토글 아이콘 UI.
+   - [x] Exit criteria: 데스크톱/모바일에서 아이콘 버튼이 일관된 위치에 항상 보이고 클릭으로 토글 이벤트가 발생한다.
 
 3. **ask 패널 노출 및 find 오버레이 오프셋 연동 리팩터링**
    - [ ] Action: ask 패널 렌더링 조건을 pending + 토글 상태로 변경하고, `AskInboxPanel`은 기존 polling/sessions 책임만 유지한다.
@@ -74,3 +74,4 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
 - 2026-02-19: 외부 리서치는 생략했다. 로컬 컨텍스트가 충분하고, Lucide 아이콘 availability는 로컬 타입 정의에서 확인했다.
 - 2026-02-19: 사용자 결정 반영. 헤더 ask 토글 아이콘은 pending ask 유무와 무관하게 항상 노출하는 정책으로 확정했다.
 - 2026-02-19: Step 1 완료. 상태 모델을 `showAskPanel = pendingAskCount > 0 && isAskPanelOpen`으로 고정했고, 아이콘 버튼은 항상 렌더링 + `aria-label`/`aria-pressed`를 갖는 토글 계약으로 확정했다. `isAskPanelOpen` 기본값은 `true`, pending ask가 `0 -> >0`으로 전환되면 자동 open 복귀로 정의했다.
+- 2026-02-19: Step 2 완료. `apps/app/src/App.tsx` 중앙 컨테이너에 헤더 액션 행을 추가하고 Lucide `MessageCircleQuestionMark` 아이콘 버튼(`data-testid=\"ask-panel-toggle-button\"`)을 배치했다. 아이콘 버튼은 항상 렌더링되며 `aria-label`/`aria-pressed` 기반 토글 입력이 동작한다.

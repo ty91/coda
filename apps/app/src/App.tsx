@@ -7,6 +7,7 @@ import {
 } from '@coda/core/contracts';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { MessageCircleQuestionMark } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
 import { DocViewerPanel } from './components/DocViewerPanel';
@@ -85,6 +86,7 @@ export const App = (): ReactElement => {
   const [findNextRequestToken, setFindNextRequestToken] = useState<number>(0);
   const [findPreviousRequestToken, setFindPreviousRequestToken] = useState<number>(0);
   const [pendingAskCount, setPendingAskCount] = useState<number>(0);
+  const [isAskPanelOpen, setIsAskPanelOpen] = useState<boolean>(true);
 
   const hasPendingAsks = pendingAskCount > 0;
   const findOverlayRightOffsetPx = hasPendingAsks
@@ -445,7 +447,23 @@ export const App = (): ReactElement => {
         onSelectDoc={setSelectedDocId}
       />
 
-      <section className="grid min-h-0 min-w-0">
+      <section className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] gap-2">
+        <header className="flex items-center justify-end px-1 pt-3">
+          <button
+            type="button"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
+            aria-label={isAskPanelOpen ? 'Close ask panel' : 'Open ask panel'}
+            aria-pressed={isAskPanelOpen}
+            title={isAskPanelOpen ? 'Close ask panel' : 'Open ask panel'}
+            onClick={() => {
+              setIsAskPanelOpen((current) => !current);
+            }}
+            data-testid="ask-panel-toggle-button"
+          >
+            <MessageCircleQuestionMark size={15} strokeWidth={2} aria-hidden />
+          </button>
+        </header>
+
         <DocViewerPanel
           selectedDoc={selectedDoc}
           documentLoading={documentLoading}

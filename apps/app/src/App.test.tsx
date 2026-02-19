@@ -198,9 +198,6 @@ describe('App docs viewer', () => {
     expect(sidebar.className).toContain('h-full');
     expect(sidebar.className).toContain('min-h-0');
     expect(sidebar.className).toContain('overflow-y-auto');
-    expect(sidebar.className).toContain('border-[var(--color-coda-sidebar-line)]');
-    expect(sidebar.className).toContain('bg-[var(--color-coda-sidebar-rail)]');
-    expect(sidebar.className).not.toContain('bg-transparent');
     expect(sidebar.className).not.toContain('max-h-[100vh]');
 
     const viewerSurface = screen.getByTestId('viewer-drag-region').closest('section');

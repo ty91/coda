@@ -50,7 +50,7 @@ const renderFolderNode = (
       </button>
 
       {isExpanded ? (
-        <ul className="m-0 list-none space-y-[0.08rem] p-0" role="group">
+        <ul className="m-0 list-none space-y-[0.04rem] p-0" role="group">
           {node.children.map((childNode) =>
             renderTreeNode(
               childNode,
@@ -120,7 +120,7 @@ const sectionContent = (
   }
 
   return (
-    <ul className="m-0 list-none space-y-[0.08rem] p-0" role="tree">
+    <ul className="m-0 list-none space-y-[0.04rem] p-0" role="tree">
       {section.children.map((node) =>
         renderTreeNode(node, 1, selectedDocId, expandedNodeKeys, onToggleNode, onSelectDoc)
       )}
@@ -161,7 +161,7 @@ export const DocsSidebar = ({
       ) : null}
 
       {!listLoading && !listError && summaries.length > 0 ? (
-        <nav className="grid gap-[0.35rem]" aria-label="Docs navigation tree">
+        <nav className="grid gap-[0.2rem]" aria-label="Docs navigation tree">
           {treeSections.map((section) => {
             const sectionExpanded = expandedNodeKeys.has(section.key);
 

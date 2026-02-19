@@ -8,6 +8,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import {
   isPermissionGranted,
   onAction,
+  registerActionTypes,
   requestPermission,
   sendNotification,
 } from '@tauri-apps/plugin-notification';
@@ -15,13 +16,22 @@ import { useEffect, useRef } from 'react';
 
 const ASK_NOTIFICATION_TITLE = 'New ask needs your response';
 const ASK_NOTIFICATION_PREVIEW_MAX_LENGTH = 92;
+const ASK_NOTIFICATION_ACTION_TYPE_ID = 'ask-arrival-actions';
+const ASK_NOTIFICATION_OPEN_ACTION_ID = 'open-coda';
 
 const isMacOS = (): boolean => {
   if (typeof navigator === 'undefined') {
     return false;
   }
 
-  return navigator.userAgent.toLowerCase().includes('mac');
+  const platform = navigator.platform.toLowerCase();
+  const userAgent = navigator.userAgent.toLowerCase();
+  return (
+    platform.includes('mac') ||
+    userAgent.includes('macintosh') ||
+    userAgent.includes('mac os') ||
+    userAgent.includes('darwin')
+  );
 };
 
 const buildNotificationPreview = (firstQuestionText: string | null): string => {
@@ -79,6 +89,8 @@ export const useAskNotifications = (): void => {
         sendNotification({
           title: ASK_NOTIFICATION_TITLE,
           body: buildNotificationPreview(payload.firstQuestionText),
+          sound: 'Ping',
+          actionTypeId: ASK_NOTIFICATION_ACTION_TYPE_ID,
         });
       } catch (error: unknown) {
         console.warn('Unable to send ask notification', error);
@@ -87,25 +99,47 @@ export const useAskNotifications = (): void => {
 
     const subscribe = async (): Promise<void> => {
       try {
-        notificationActionListener = await onAction((): void => {
-          void focusMainWindow();
-        });
-
         unlistenAskCreated = await listen<AskSessionCreatedEventPayload>(
           ASK_SESSION_CREATED_EVENT,
           (event): void => {
             void notifyForAsk(event.payload);
           }
         );
-
-        if (cleanupRequested) {
-          unlistenAskCreated?.();
-          void notificationActionListener?.unregister();
-          unlistenAskCreated = null;
-          notificationActionListener = null;
-        }
       } catch (error: unknown) {
         console.warn('Unable to subscribe to ask notification events', error);
+      }
+
+      try {
+        await registerActionTypes([
+          {
+            id: ASK_NOTIFICATION_ACTION_TYPE_ID,
+            actions: [
+              {
+                id: ASK_NOTIFICATION_OPEN_ACTION_ID,
+                title: 'Open Coda',
+                foreground: true,
+              },
+            ],
+          },
+        ]);
+      } catch (error: unknown) {
+        console.warn('Unable to register notification action types', error);
+      }
+
+      try {
+        notificationActionListener = await onAction((): void => {
+          void focusMainWindow();
+        });
+      } catch (error: unknown) {
+        // Some runtimes may not expose action callbacks; keep notification delivery active.
+        console.warn('Unable to subscribe to notification action callbacks', error);
+      }
+
+      if (cleanupRequested) {
+        unlistenAskCreated?.();
+        void notificationActionListener?.unregister();
+        unlistenAskCreated = null;
+        notificationActionListener = null;
       }
     };
 

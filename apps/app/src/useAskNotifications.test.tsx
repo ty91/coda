@@ -8,6 +8,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import {
   isPermissionGranted,
   onAction,
+  registerActionTypes,
   requestPermission,
   sendNotification,
 } from '@tauri-apps/plugin-notification';
@@ -27,6 +28,7 @@ vi.mock('@tauri-apps/api/window', () => ({
 vi.mock('@tauri-apps/plugin-notification', () => ({
   isPermissionGranted: vi.fn(),
   onAction: vi.fn(),
+  registerActionTypes: vi.fn(),
   requestPermission: vi.fn(),
   sendNotification: vi.fn(),
 }));
@@ -36,13 +38,18 @@ const mockListen = vi.mocked(listen);
 const mockGetCurrentWindow = vi.mocked(getCurrentWindow);
 const mockIsPermissionGranted = vi.mocked(isPermissionGranted);
 const mockOnAction = vi.mocked(onAction);
+const mockRegisterActionTypes = vi.mocked(registerActionTypes);
 const mockRequestPermission = vi.mocked(requestPermission);
 const mockSendNotification = vi.mocked(sendNotification);
 
-const setUserAgent = (value: string): void => {
+const setNavigatorProfile = (value: { userAgent: string; platform: string }): void => {
   Object.defineProperty(window.navigator, 'userAgent', {
     configurable: true,
-    value,
+    value: value.userAgent,
+  });
+  Object.defineProperty(window.navigator, 'platform', {
+    configurable: true,
+    value: value.platform,
   });
 };
 
@@ -52,11 +59,15 @@ const HookHarness = (): ReactElement => {
 };
 
 beforeEach(() => {
-  setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6)');
+  setNavigatorProfile({
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6)',
+    platform: 'MacIntel',
+  });
   mockIsTauri.mockReturnValue(true);
   mockListen.mockResolvedValue(() => {});
   mockIsPermissionGranted.mockResolvedValue(true);
   mockRequestPermission.mockResolvedValue('granted');
+  mockRegisterActionTypes.mockResolvedValue(undefined);
   mockSendNotification.mockImplementation(() => {});
   mockOnAction.mockResolvedValue({
     plugin: 'notification',
@@ -77,6 +88,7 @@ afterEach(() => {
   mockGetCurrentWindow.mockReset();
   mockIsPermissionGranted.mockReset();
   mockOnAction.mockReset();
+  mockRegisterActionTypes.mockReset();
   mockRequestPermission.mockReset();
   mockSendNotification.mockReset();
   cleanup();
@@ -108,7 +120,22 @@ describe('useAskNotifications', () => {
       expect(mockSendNotification).toHaveBeenCalledWith({
         title: 'New ask needs your response',
         body: 'Can we ship scope A this sprint?...',
+        sound: 'Ping',
+        actionTypeId: 'ask-arrival-actions',
       });
+    });
+  });
+
+  it('treats mac platform as supported even when user agent is generic', async () => {
+    setNavigatorProfile({
+      userAgent: 'Mozilla/5.0 AppleWebKit/605.1.15',
+      platform: 'MacIntel',
+    });
+
+    render(<HookHarness />);
+
+    await waitFor(() => {
+      expect(mockListen).toHaveBeenCalledWith('ask_session_created', expect.any(Function));
     });
   });
 
@@ -137,8 +164,43 @@ describe('useAskNotifications', () => {
     });
   });
 
+  it('still subscribes ask events when notification action listener fails', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    mockOnAction.mockRejectedValue(new Error('action listener unsupported'));
+
+    render(<HookHarness />);
+
+    await waitFor(() => {
+      expect(mockListen).toHaveBeenCalledWith('ask_session_created', expect.any(Function));
+    });
+
+    const askEventHandler = mockListen.mock.calls[0]?.[1];
+    if (!askEventHandler) {
+      throw new Error('ask event handler should be registered');
+    }
+
+    askEventHandler({
+      event: 'ask_session_created',
+      id: 1,
+      payload: {
+        askId: 'ask-action-failure',
+        requestedAtIso: '2026-02-19T16:00:00Z',
+        firstQuestionText: 'Event should still notify.',
+      },
+    });
+
+    await waitFor(() => {
+      expect(mockSendNotification).toHaveBeenCalledTimes(1);
+    });
+
+    warnSpy.mockRestore();
+  });
+
   it('no-ops on non-macOS platforms', async () => {
-    setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64)');
+    setNavigatorProfile({
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      platform: 'Win32',
+    });
 
     render(<HookHarness />);
 

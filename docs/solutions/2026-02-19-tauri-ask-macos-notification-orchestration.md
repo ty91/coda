@@ -28,8 +28,12 @@ New `coda ask` sessions reached the Tauri runtime queue, but users had no OS-lev
   - permission check/request flow,
   - `ask_id` dedupe in-memory set,
   - ellipsis preview from first question text,
-  - action callback -> main window focus (`unminimize/show/setFocus`).
+  - macOS sound hint (`Ping`) and notification action type registration (`Open Coda`),
+  - action callback path -> main window focus (`unminimize/show/setFocus`).
 - Added regressions for notification send/dedupe/non-macOS no-op/permission denied no-op/focus action.
+- Manual smoke result:
+  - ask-arrival notification exposure: verified (banner appears briefly),
+  - click-to-focus: not verified on desktop plugin path; documented as follow-up limitation.
 
 ## Prevention
 
@@ -37,6 +41,7 @@ New `coda ask` sessions reached the Tauri runtime queue, but users had no OS-lev
 - Keep notification side effects in a dedicated hook with explicit platform and permission guards.
 - Lock notification behavior with dedicated hook tests, not only app-shell tests.
 - Keep `ask_id` as canonical dedupe key across runtime and frontend orchestration.
+- Treat desktop click-focus behavior as capability-dependent; validate with plugin-level feasibility before binding product contract.
 
 ## Related
 

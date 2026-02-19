@@ -41,10 +41,10 @@ milestone: M1
    - [x] Exit criteria: pending=0 상태에서 Ask UI DOM이 사라지고, pending>0으로 전환되면 자동으로 재노출된다.
 
 3. **앱 셸 우측 플로팅 사이드바 적용**
-   - [ ] Action: `App` 레이아웃에서 ask 패널을 인라인 흐름에서 분리하고 우측 플로팅 사이드바 포지션으로 이동한다.
-   - [ ] Action: 기존 reader/drag-region/find overlay와 상호작용 충돌이 없도록 위치/폭/여백/stacking을 조정하고, ask 표시 중 find 오버레이의 우측 기준점을 좌측으로 이동시킨다.
-   - [ ] Deliverables: 우측 플로팅 ask 사이드바 UI와 레이아웃 영향 제거.
-   - [ ] Exit criteria: ask 패널 표시 여부가 문서 본문 폭/세로 흐름을 밀지 않고 독립적으로 동작하며, ask 표시 시 find 오버레이가 겹치지 않는다.
+   - [x] Action: `App` 레이아웃에서 ask 패널을 인라인 흐름에서 분리하고 우측 플로팅 사이드바 포지션으로 이동한다.
+   - [x] Action: 기존 reader/drag-region/find overlay와 상호작용 충돌이 없도록 위치/폭/여백/stacking을 조정하고, ask 표시 중 find 오버레이의 우측 기준점을 좌측으로 이동시킨다.
+   - [x] Deliverables: 우측 플로팅 ask 사이드바 UI와 레이아웃 영향 제거.
+   - [x] Exit criteria: ask 패널 표시 여부가 문서 본문 폭/세로 흐름을 밀지 않고 독립적으로 동작하며, ask 표시 시 find 오버레이가 겹치지 않는다.
 
 4. **회귀 테스트 갱신**
    - [ ] Action: `AskInboxPanel` 테스트를 "빈 큐 문구 노출"에서 "빈 큐/로딩/에러 미노출" 계약으로 전환하고, pending 발생 시 렌더링 복귀를 검증한다.
@@ -104,3 +104,4 @@ milestone: M1
 - 2026-02-19: 요구사항 확정. ask가 표시되면 find 오버레이는 좌측으로 밀려야 하며, 실제 ask 아이템이 있을 때만 ask 패널을 노출한다(빈 큐/로딩/일시 에러는 미노출).
 - 2026-02-19: Step 1 완료. `UI Contract` 섹션에 노출/배치/find offset/stacking 계약을 고정하고 Step 1 체크박스를 완료 처리했다.
 - 2026-02-19: Step 2 완료. `apps/app/src/components/AskInboxPanel.tsx`를 조건부 렌더링으로 전환해 pending ask가 없거나 큐 로드 실패 시 패널을 렌더링하지 않도록 조정했고, 폴링 기반 세션 동기화는 유지했다.
+- 2026-02-19: Step 3 완료. `apps/app/src/App.tsx`에서 ask 패널을 우측 고정 플로팅으로 이동하고 pending ask 개수 기반 find 오버레이 우측 오프셋 계산을 추가했다. `apps/app/src/components/DocViewerPanel.tsx`는 CSS variable 기반 우측 오프셋을 적용해 ask 노출 시 find를 좌측으로 밀도록 변경했다.

@@ -20,6 +20,10 @@ import {
 const ANNOTATION_TODO_NOTE =
   'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
 const FIND_QUERY_DEBOUNCE_MS = 150;
+const DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX = 16;
+const ASK_FLOATING_PANEL_WIDTH_PX = 360;
+const ASK_FLOATING_PANEL_RIGHT_OFFSET_PX = 16;
+const FIND_OVERLAY_PANEL_GAP_PX = 16;
 
 const isEditableEventTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) {
@@ -82,6 +86,12 @@ export const App = (): ReactElement => {
   const [findInputFocusToken, setFindInputFocusToken] = useState<number>(0);
   const [findNextRequestToken, setFindNextRequestToken] = useState<number>(0);
   const [findPreviousRequestToken, setFindPreviousRequestToken] = useState<number>(0);
+  const [pendingAskCount, setPendingAskCount] = useState<number>(0);
+
+  const hasPendingAsks = pendingAskCount > 0;
+  const findOverlayRightOffsetPx = hasPendingAsks
+    ? ASK_FLOATING_PANEL_WIDTH_PX + ASK_FLOATING_PANEL_RIGHT_OFFSET_PX + FIND_OVERLAY_PANEL_GAP_PX
+    : DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX;
 
   const treeSections = useMemo(() => buildTreeSections(docSummaries), [docSummaries]);
   const treeNodeKeys = useMemo(() => allTreeNodeKeys(treeSections), [treeSections]);
@@ -445,7 +455,7 @@ export const App = (): ReactElement => {
           selectedDoc={selectedDoc}
           documentLoading={documentLoading}
           documentError={documentError}
-          annotationNote={ANNOTATION_TODO_NOTE}
+          findOverlayRightOffsetPx={findOverlayRightOffsetPx}
           findOpen={findOpen}
           findInputQuery={findInputQuery}
           findSearchQuery={findSearchQuery}
@@ -461,9 +471,12 @@ export const App = (): ReactElement => {
           onFindMatchCountChange={setFindMatchCount}
           onActiveFindMatchIndexChange={setActiveFindMatchIndex}
         />
-
-        <AskInboxPanel />
       </section>
+
+      <AskInboxPanel
+        className="fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto max-[980px]:left-2 max-[980px]:right-2 max-[980px]:top-2 max-[980px]:max-h-[calc(100vh-1rem)] max-[980px]:w-auto"
+        onPendingCountChange={setPendingAskCount}
+      />
     </main>
   );
 };

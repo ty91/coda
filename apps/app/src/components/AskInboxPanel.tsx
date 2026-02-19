@@ -43,6 +43,11 @@ type AskNotesState = Record<string, string>;
 type AskErrorsState = Record<string, string | null>;
 type AskSubmittingState = Record<string, boolean>;
 
+type AskInboxPanelProps = {
+  className?: string;
+  onPendingCountChange?: (count: number) => void;
+};
+
 const createEmptyAnswerDraft = (): AnswerDraft => {
   return {
     selectedIndex: null,
@@ -143,7 +148,10 @@ const formatExpiryText = (expiresAtIso: string | null): string => {
   return `Expires at ${parsed.toLocaleTimeString()}`;
 };
 
-export const AskInboxPanel = (): ReactElement | null => {
+export const AskInboxPanel = ({
+  className,
+  onPendingCountChange,
+}: AskInboxPanelProps): ReactElement | null => {
   const [sessions, setSessions] = useState<PendingAskSession[]>([]);
   const [draftsByAsk, setDraftsByAsk] = useState<AskDraftsState>({});
   const [notesByAsk, setNotesByAsk] = useState<AskNotesState>({});
@@ -186,6 +194,10 @@ export const AskInboxPanel = (): ReactElement | null => {
       window.clearInterval(timer);
     };
   }, [loadPendingAsks]);
+
+  useEffect(() => {
+    onPendingCountChange?.(sessions.length);
+  }, [onPendingCountChange, sessions.length]);
 
   const setQuestionDraft = useCallback(
     (askId: string, questionId: string, updater: (draft: AnswerDraft) => AnswerDraft): void => {
@@ -309,8 +321,15 @@ export const AskInboxPanel = (): ReactElement | null => {
     return null;
   }
 
+  const panelClassName = [
+    'rounded-coda-xl border border-coda-line-soft bg-white/84 p-4 shadow-sm',
+    className,
+  ]
+    .filter((value) => Boolean(value))
+    .join(' ');
+
   return (
-    <section className="rounded-coda-xl border border-coda-line-soft bg-white/84 p-4 shadow-sm">
+    <section className={panelClassName} data-testid="ask-inbox-panel">
       <header className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-sm font-semibold tracking-[-0.01em] text-coda-text-primary">Ask Queue</h2>
         <span className="text-xs text-coda-text-secondary">{sessions.length} pending</span>

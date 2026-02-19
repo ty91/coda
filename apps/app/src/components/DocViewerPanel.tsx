@@ -1,5 +1,5 @@
 import type { DocDocument } from '@coda/core/contracts';
-import { useEffect, useRef, type ReactElement } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactElement } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { eyebrowClass, headerRowClass, markdownContentClass, messageTextClass, panelSurfaceClass } from '../ui-classes';
@@ -132,7 +132,7 @@ type DocViewerPanelProps = {
   selectedDoc: DocDocument | null;
   documentLoading: boolean;
   documentError: string | null;
-  annotationNote: string;
+  findOverlayRightOffsetPx: number;
   findOpen: boolean;
   findInputQuery: string;
   findSearchQuery: string;
@@ -168,7 +168,7 @@ export const DocViewerPanel = ({
   selectedDoc,
   documentLoading,
   documentError,
-  annotationNote,
+  findOverlayRightOffsetPx,
   findOpen,
   findInputQuery,
   findSearchQuery,
@@ -194,6 +194,9 @@ export const DocViewerPanel = ({
   const activeMatchPosition =
     findMatchCount === 0 || activeFindMatchIndex === null ? '0/0' : `${activeFindMatchIndex + 1}/${findMatchCount}`;
   const findNavigationDisabled = findMatchCount === 0;
+  const findOverlayStyle = {
+    ['--viewer-find-right-offset' as string]: `${findOverlayRightOffsetPx}px`,
+  } as CSSProperties;
 
   useEffect(() => {
     if (!findOpen) {
@@ -311,7 +314,8 @@ export const DocViewerPanel = ({
 
       {selectedDoc && findOpen ? (
         <div
-          className="fixed top-12 right-4 left-auto z-30 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)] max-[980px]:top-2 max-[980px]:right-2 max-[980px]:left-2 max-[980px]:w-auto"
+          className="fixed top-12 right-[var(--viewer-find-right-offset)] left-auto z-30 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)] max-[980px]:top-2 max-[980px]:right-2 max-[980px]:left-2 max-[980px]:w-auto"
+          style={findOverlayStyle}
           data-testid="viewer-find-overlay"
         >
           <label className="text-[0.7rem] font-semibold tracking-[0.02em] text-coda-text-muted" htmlFor="reader-find-input">
@@ -390,12 +394,6 @@ export const DocViewerPanel = ({
 
       {showDocPanelStatus ? (
         <div className="grid gap-3">
-          {selectedDoc ? (
-            <p className={`${messageTextClass} rounded-coda-sm border border-dashed border-coda-line-strong bg-[#fafaf8] px-3 py-[0.65rem]`}>
-              {annotationNote}
-            </p>
-          ) : null}
-
           {documentLoading ? <p className={messageTextClass}>Loading selected document...</p> : null}
           {documentError ? <p className="text-[0.92rem] text-coda-error">{documentError}</p> : null}
         </div>

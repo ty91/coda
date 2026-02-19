@@ -3,7 +3,7 @@ title: "macOS ask-arrival notifications for Tauri ask queue"
 date: 2026-02-19
 tags: [tauri, app, ask-queue, macos, notification, human-in-loop, milestone-1]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-tauri-ask-macos-notification-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-tauri-ask-macos-notification-plan.md"
 ---
 
 ## Problem

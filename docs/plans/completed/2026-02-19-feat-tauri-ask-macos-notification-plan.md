@@ -1,7 +1,7 @@
 ---
 title: "Tauri ask 수신 시 macOS 시스템 알림 도입"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, ask-queue, macos, notification, human-in-loop, milestone-1]
 milestone: M1
 ---

@@ -203,6 +203,13 @@ Orchestrator processes the user's decision
 
 **State management**: Zustand (lightweight, no boilerplate) for UI state. Server state (plans, agent runs) flows through Tauri IPC commands.
 
+**Project scope model**: The Tauri app treats the active project as first-class runtime context.
+
+- Registered projects are loaded from `~/.coda/config.toml` with optional local overrides in `.coda/config.toml`.
+- Active project selection is persisted at `~/.coda/app-state.toml`.
+- Docs IPC (`list_doc_summaries`, `get_doc_document`) resolves paths from the active project's root/docs paths, not from compile-time workspace assumptions.
+- Docs watcher runs as active-project single watcher and emits project-scoped `docs_changed` events with `project_id`.
+
 ### Agent Runtime
 
 Both Claude Code and Codex are invoked as **CLI subprocesses**. This is intentional:

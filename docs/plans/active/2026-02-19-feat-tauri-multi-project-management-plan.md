@@ -60,11 +60,11 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
    - [x] Exit criteria: 프로젝트 전환 후 이전 프로젝트 문서/오류/검색 상태가 섞이지 않고, 토글 버튼으로 프로젝트 사이드바 가시성이 안정적으로 제어된다.
 
 5. **테스트 전략 + 품질 게이트 + 문서화(Compound)**
-   - [ ] Action: Rust 테스트에 프로젝트 레지스트리 validation, 활성 프로젝트 전환, watcher event `project_id` 라우팅 회귀를 추가한다.
-   - [ ] Action: React 테스트에 프로젝트 전환 시 로딩/선택/오류 분리, stale 이벤트 무시, ask 패널 맥락 표시를 추가한다.
-   - [ ] Action: 구현 완료 후 `docs/solutions/`에 문제/원인/예방을 기록하고, 필요 시 아키텍처 문서(예: `architecture-overview.md`)의 프로젝트 범위 모델을 갱신한다.
-   - [ ] Deliverables: 자동화 회귀 테스트, 전체 게이트 결과, compound 문서.
-   - [ ] Exit criteria: 전체 게이트 통과 + 다중 프로젝트 회귀 시나리오가 테스트로 고정된다.
+   - [x] Action: Rust 테스트에 프로젝트 레지스트리 validation, 활성 프로젝트 전환, watcher event `project_id` 라우팅 회귀를 추가한다.
+   - [x] Action: React 테스트에 프로젝트 전환 시 로딩/선택/오류 분리, stale 이벤트 무시, ask 패널 맥락 표시를 추가한다.
+   - [x] Action: 구현 완료 후 `docs/solutions/`에 문제/원인/예방을 기록하고, 필요 시 아키텍처 문서(예: `architecture-overview.md`)의 프로젝트 범위 모델을 갱신한다.
+   - [x] Deliverables: 자동화 회귀 테스트, 전체 게이트 결과, compound 문서.
+   - [x] Exit criteria: 전체 게이트 통과 + 다중 프로젝트 회귀 시나리오가 테스트로 고정된다.
 
 ## Validation
 
@@ -89,6 +89,7 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: step 2 완료. `ProjectRegistryState`와 `list_projects/get_active_project/set_active_project` IPC를 추가하고 docs IPC가 활성 프로젝트 root/docs 경로를 사용하도록 전환. 활성 프로젝트 state(`~/.coda/app-state.toml`) 복원 회귀 테스트 추가.
 - 2026-02-19: step 3 완료. watcher 전략을 "활성 프로젝트 단일 감시"로 확정. 프로젝트 전환 시 기존 watcher thread를 stop+join 후 새 watcher를 시작하도록 lifecycle을 재구성하고 `docs_changed` payload에 `project_id`를 포함.
 - 2026-02-19: step 4 완료. 좌측 프로젝트 사이드바 + `PanelLeft` 토글을 추가하고 프로젝트 전환 IPC를 UI에 연결. 프로젝트별 선택 문서/폴더 확장 상태 캐시를 적용해 전환 시 상태 섞임을 방지하고, 헤더에 활성 프로젝트 badge를 표시해 ask 맥락 혼동을 줄임.
+- 2026-02-19: step 5 완료. Rust/React 회귀 테스트를 보강하고 compound 문서(`docs/solutions/2026-02-19-tauri-multi-project-management.md`) 및 아키텍처 문서(`docs/design-docs/architecture-overview.md`)를 갱신. 전체 품질 게이트(`lint/typecheck/test/build/validate` + tauri cargo test + 지정된 App/useAskNotifications 테스트) 통과.
 
 ## Assumptions / Open Questions
 

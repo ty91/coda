@@ -278,7 +278,7 @@ describe('App docs viewer', () => {
     mockListen.mockResolvedValue(() => {});
 
     let holdRefreshFetch = false;
-    let resolveRefreshFetch: ((value: DocDocument) => void) | null = null;
+    const pendingRefreshResolvers: Array<(value: DocDocument) => void> = [];
 
     mockInvoke.mockImplementation(async (command, args) => {
       if (command === 'list_doc_summaries') {
@@ -293,7 +293,7 @@ describe('App docs viewer', () => {
 
         if (docId === 'design-docs/core-beliefs.md' && holdRefreshFetch) {
           return await new Promise<DocDocument>((resolve) => {
-            resolveRefreshFetch = resolve;
+            pendingRefreshResolvers.push(resolve);
           });
         }
 
@@ -332,14 +332,24 @@ describe('App docs viewer', () => {
     });
 
     await waitFor(() => {
-      expect(resolveRefreshFetch).toBeTruthy();
+      expect(pendingRefreshResolvers.length).toBeGreaterThan(0);
     });
 
     expect(screen.getByText(/Beliefs body core core/)).toBeTruthy();
     expect(screen.queryByText('Loading selected document...')).toBeNull();
 
-    resolveRefreshFetch?.({
-      ...documents['design-docs/core-beliefs.md'],
+    const refreshResolver = pendingRefreshResolvers.shift();
+    if (!refreshResolver) {
+      throw new Error('refresh fetch resolver was not set');
+    }
+
+    const refreshedDoc = documents['design-docs/core-beliefs.md'];
+    if (!refreshedDoc) {
+      throw new Error('missing core beliefs document fixture');
+    }
+
+    (refreshResolver as (value: DocDocument) => void)({
+      ...refreshedDoc,
       markdownBody: '## Core\n\nBeliefs body updated',
     });
     holdRefreshFetch = false;

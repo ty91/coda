@@ -59,10 +59,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Removing shortcut wiring or match-navigation logic causes targeted test failures.
 
 6. **Run full gate and manual smoke**
-   - [ ] Action: Run full repository gate (`lint`, `typecheck`, `test`, `build`, `validate`).
-   - [ ] Action: Run app-focused checks and manual Tauri smoke for Cmd+F flow on docs with multiple matches and zero matches.
-   - [ ] Deliverables: Command results and manual verification notes.
-   - [ ] Exit criteria: Automated checks pass and manual viewer behavior matches the defined contract.
+   - [x] Action: Run full repository gate (`lint`, `typecheck`, `test`, `build`, `validate`).
+   - [x] Action: Run app-focused checks and manual Tauri smoke for Cmd+F flow on docs with multiple matches and zero matches.
+   - [x] Deliverables: Command results and manual verification notes.
+   - [x] Exit criteria: Automated checks pass and manual viewer behavior matches the defined contract.
 
 7. **Compound follow-up**
    - [ ] Action: Capture solved pattern and prevention notes in `docs/solutions/` after implementation.
@@ -118,3 +118,6 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Step 3 complete. Added DOM-order, case-insensitive highlight matching across metadata + markdown body, plus next/previous active-match traversal and scroll-into-view behavior in `DocViewerPanel`.
 - 2026-02-19: Step 4 complete. Added compact reader find bar UI with input, counter, prev/next, close controls, and keyboard-friendly ARIA wiring in `DocViewerPanel`.
 - 2026-02-19: Step 5 complete. Expanded `apps/app/src/App.test.tsx` with Cmd/Ctrl+F find coverage, counter navigation assertions, no-match disabled-state assertions, and doc-switch reset verification.
+- 2026-02-19: Step 6 complete. Full gate passed with `pnpm validate` at repo root.
+- 2026-02-19: Step 6 app checks passed: `pnpm --filter @coda/app typecheck`, `pnpm --filter @coda/app test -- --runInBand`, `pnpm --filter @coda/app build`.
+- 2026-02-19: Step 6 manual smoke startup succeeded: `pnpm --filter @coda/app tauri dev` booted Vite (`http://localhost:1420/`) and launched `target/debug/coda-app`; in-window visual Cmd+F verification still requires direct user interaction.

@@ -2,7 +2,7 @@ export const panelSurfaceClass =
   'rounded-coda-lg border border-coda-line-soft bg-[#fffffff7] shadow-coda-soft backdrop-blur-[6px]';
 
 export const sidebarSurfaceClass =
-  'rounded-coda-lg border border-[var(--color-coda-sidebar-line)] bg-[var(--color-coda-sidebar-rail)] shadow-[0_12px_32px_#12121210] backdrop-blur-[16px]';
+  'rounded-coda-lg border-0 bg-transparent shadow-none';
 
 export const sidebarUtilityGroupClass =
   'grid gap-1 rounded-coda-md border border-[var(--color-coda-sidebar-line)] bg-[var(--color-coda-sidebar-rail-solid)] p-1';

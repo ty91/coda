@@ -30,7 +30,6 @@ export const App = (): ReactElement => {
   const [docSummaries, setDocSummaries] = useState<DocSummary[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<DocId | null>(null);
   const [selectedDoc, setSelectedDoc] = useState<DocDocument | null>(null);
-  const [includeHidden, setIncludeHidden] = useState<boolean>(false);
   const [expandedNodeKeys, setExpandedNodeKeys] = useState<Set<string>>(new Set<string>());
 
   const [listLoading, setListLoading] = useState<boolean>(true);
@@ -46,9 +45,7 @@ export const App = (): ReactElement => {
     setListError(null);
 
     try {
-      const summaries = await invoke<DocSummary[]>('list_doc_summaries', {
-        includeHidden,
-      });
+      const summaries = await invoke<DocSummary[]>('list_doc_summaries');
       setDocSummaries(summaries);
 
       setSelectedDocId((currentId) => {
@@ -71,7 +68,7 @@ export const App = (): ReactElement => {
     } finally {
       setListLoading(false);
     }
-  }, [includeHidden]);
+  }, []);
 
   const loadDocDocument = useCallback(async (docId: DocId): Promise<void> => {
     setDocumentLoading(true);
@@ -160,12 +157,10 @@ export const App = (): ReactElement => {
         summaries={docSummaries}
         treeSections={treeSections}
         selectedDocId={selectedDocId}
-        includeHidden={includeHidden}
         expandedNodeKeys={expandedNodeKeys}
         listLoading={listLoading}
         listError={listError}
         onRefresh={loadDocSummaries}
-        onToggleHidden={setIncludeHidden}
         onToggleNode={onToggleNode}
         onSelectDoc={setSelectedDocId}
       />

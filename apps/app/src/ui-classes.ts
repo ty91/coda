@@ -4,12 +4,6 @@ export const panelSurfaceClass =
 export const sidebarSurfaceClass =
   'rounded-coda-lg border-0 bg-transparent shadow-none';
 
-export const sidebarUtilityGroupClass =
-  'grid gap-1 rounded-coda-md border border-[var(--color-coda-sidebar-line)] bg-[var(--color-coda-sidebar-rail-solid)] p-1';
-
-export const sidebarUtilityButtonClass =
-  'flex min-h-[1.95rem] w-full items-center justify-between rounded-[0.55rem] border-0 bg-transparent px-[0.62rem] py-[0.38rem] text-[0.82rem] font-medium text-[var(--color-coda-sidebar-text)] transition-colors hover:bg-[var(--color-coda-sidebar-row-hover)]';
-
 export const sidebarIconButtonClass =
   'inline-flex h-[1.9rem] w-[1.9rem] items-center justify-center rounded-[0.55rem] border border-[var(--color-coda-sidebar-line)] bg-[var(--color-coda-sidebar-rail-solid)] text-[var(--color-coda-sidebar-text)] transition-colors hover:bg-[var(--color-coda-sidebar-row-hover)] disabled:cursor-wait disabled:opacity-60';
 

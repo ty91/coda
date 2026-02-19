@@ -10,8 +10,6 @@ import {
   sidebarSectionHeaderClass,
   sidebarSurfaceClass,
   sidebarIconButtonClass,
-  sidebarUtilityButtonClass,
-  sidebarUtilityGroupClass,
   treeRowClass,
 } from '../ui-classes';
 
@@ -19,12 +17,10 @@ type DocsSidebarProps = {
   summaries: DocSummary[];
   treeSections: TreeSectionNode[];
   selectedDocId: DocId | null;
-  includeHidden: boolean;
   expandedNodeKeys: Set<string>;
   listLoading: boolean;
   listError: string | null;
   onRefresh: () => Promise<void>;
-  onToggleHidden: (value: boolean) => void;
   onToggleNode: (nodeKey: string) => void;
   onSelectDoc: (docId: DocId) => void;
 };
@@ -142,12 +138,10 @@ export const DocsSidebar = ({
   summaries,
   treeSections,
   selectedDocId,
-  includeHidden,
   expandedNodeKeys,
   listLoading,
   listError,
   onRefresh,
-  onToggleHidden,
   onToggleNode,
   onSelectDoc,
 }: DocsSidebarProps): ReactElement => {
@@ -181,34 +175,11 @@ export const DocsSidebar = ({
         </div>
       </header>
 
-      <div className={sidebarUtilityGroupClass}>
-        <label className={`${sidebarUtilityButtonClass} cursor-pointer`} htmlFor="include-hidden-toggle">
-          <span className="inline-flex items-center gap-2">
-            <input
-              id="include-hidden-toggle"
-              type="checkbox"
-              aria-label="Show hidden/template docs"
-              className="m-0 h-[0.78rem] w-[0.78rem] accent-[#5a5a57]"
-              checked={includeHidden}
-              onChange={(event) => onToggleHidden(event.target.checked)}
-            />
-            <span>Show hidden/template docs</span>
-          </span>
-          <span className="text-[0.66rem] font-semibold tracking-[0.08em] text-[var(--color-coda-sidebar-label)] uppercase">
-            {includeHidden ? 'On' : 'Off'}
-          </span>
-        </label>
-      </div>
-
       {listLoading ? <p className={messageTextClass}>Loading markdown docs from `docs/`...</p> : null}
       {listError ? <p className="text-[0.92rem] text-coda-error">{listError}</p> : null}
 
       {!listLoading && !listError && summaries.length === 0 ? (
-        <p className={messageTextClass}>
-          {includeHidden
-            ? 'No markdown docs found in `docs/`.'
-            : 'No visible markdown docs found in `docs/`. Enable hidden/template docs to include templates.'}
-        </p>
+        <p className={messageTextClass}>No markdown docs found in `docs/`.</p>
       ) : null}
 
       {!listLoading && !listError && summaries.length > 0 ? (

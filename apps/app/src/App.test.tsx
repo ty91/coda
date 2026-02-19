@@ -61,22 +61,6 @@ const slackReferenceSummary: DocSummary = {
   isHidden: false,
 };
 
-const hiddenTemplateSummary: DocSummary = {
-  id: 'plans/.template.md',
-  fileName: '.template.md',
-  docPath: 'plans/.template.md',
-  relativePath: 'docs/plans/.template.md',
-  section: 'plans',
-  title: null,
-  displayTitle: 'template',
-  date: null,
-  status: 'draft',
-  tags: [],
-  milestone: null,
-  isTemplate: true,
-  isHidden: true,
-};
-
 const visibleSummaries: DocSummary[] = [coreBeliefsSummary, executionPlanSummary, slackReferenceSummary];
 
 const documents: Record<string, DocDocument> = {
@@ -92,19 +76,12 @@ const documents: Record<string, DocDocument> = {
     ...slackReferenceSummary,
     markdownBody: '## Slack\n\nSlack reference body',
   },
-  'plans/.template.md': {
-    ...hiddenTemplateSummary,
-    markdownBody: '## Goal\n\nTemplate body',
-  },
 };
 
 const setupSuccessfulInvokeMock = (): void => {
   mockInvoke.mockImplementation(async (command, args) => {
     if (command === 'list_doc_summaries') {
-      const includeHidden = (args as { includeHidden?: boolean } | undefined)?.includeHidden ?? false;
-      if (includeHidden) {
-        return [...visibleSummaries, hiddenTemplateSummary];
-      }
+      expect(args).toBeUndefined();
       return visibleSummaries;
     }
 
@@ -193,21 +170,13 @@ describe('App docs viewer', () => {
     await screen.findByText('Unable to load docs: list failed');
   });
 
-  it('reloads docs with hidden/template files when filter is enabled', async () => {
+  it('does not render hidden/template filter controls', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
 
     await screen.findByRole('button', { name: 'Design Docs' });
-    expect(screen.queryByText('template')).toBeNull();
-
-    fireEvent.click(screen.getByLabelText('Show hidden/template docs'));
-
-    await waitFor(() => {
-      expect(mockInvoke).toHaveBeenCalledWith('list_doc_summaries', { includeHidden: true });
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
-    await screen.findByRole('button', { name: /template/ });
+    expect(screen.queryByLabelText('Show hidden/template docs')).toBeNull();
   });
 
   it('reloads docs when icon refresh control is clicked', async () => {

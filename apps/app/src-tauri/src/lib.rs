@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+mod docs_watcher;
 mod plan_viewer;
 
 #[derive(Serialize)]
@@ -30,6 +31,7 @@ pub fn run() {
                         .build(),
                 )?;
             }
+            docs_watcher::start_docs_watcher(app.handle().clone())?;
             Ok(())
         })
         .run(tauri::generate_context!())

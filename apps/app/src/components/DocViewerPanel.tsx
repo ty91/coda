@@ -134,7 +134,8 @@ type DocViewerPanelProps = {
   documentError: string | null;
   annotationNote: string;
   findOpen: boolean;
-  findQuery: string;
+  findInputQuery: string;
+  findSearchQuery: string;
   findMatchCount: number;
   activeFindMatchIndex: number | null;
   findInputFocusToken: number;
@@ -169,7 +170,8 @@ export const DocViewerPanel = ({
   documentError,
   annotationNote,
   findOpen,
-  findQuery,
+  findInputQuery,
+  findSearchQuery,
   findMatchCount,
   activeFindMatchIndex,
   findInputFocusToken,
@@ -227,13 +229,13 @@ export const DocViewerPanel = ({
       return;
     }
 
-    if (findQuery.trim().length === 0) {
+    if (findSearchQuery.trim().length === 0) {
       resetFindState();
       return;
     }
 
     clearFindHighlights(readerArticle);
-    const highlightedMatches = highlightMatches(readerArticle, findQuery);
+    const highlightedMatches = highlightMatches(readerArticle, findSearchQuery);
     highlightedMatchesRef.current = highlightedMatches;
     onFindMatchCountChange(highlightedMatches.length);
 
@@ -246,7 +248,7 @@ export const DocViewerPanel = ({
     onActiveFindMatchIndexChange(0);
   }, [
     findOpen,
-    findQuery,
+    findSearchQuery,
     onActiveFindMatchIndexChange,
     onFindMatchCountChange,
     selectedDoc,
@@ -322,7 +324,7 @@ export const DocViewerPanel = ({
               ref={findInputRef}
               className="min-w-[10.5rem] flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.88rem] text-coda-text-primary"
               type="text"
-              value={findQuery}
+              value={findInputQuery}
               onChange={(event) => onFindQueryChange(event.target.value)}
               aria-label="Find in document"
               data-testid="viewer-find-input"

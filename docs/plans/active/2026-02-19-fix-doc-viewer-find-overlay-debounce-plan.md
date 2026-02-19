@@ -40,10 +40,10 @@ milestone: M1
    - [x] Exit criteria: Cmd/Ctrl+F 시 find UI가 레이아웃 밀림 없이 우상단 오버레이로 표시된다.
 
 3. **디바운스 검색 파이프라인 추가**
-   - [ ] Action: 입력 즉시 상태와 검색 실행 상태를 분리하고, 검색 실행 상태는 150ms 디바운스 타이머를 통해 갱신한다.
-   - [ ] Action: Enter/Shift+Enter 네비게이션과 close/reset 흐름이 디바운스 상태와 충돌하지 않도록 토큰/카운터 리셋 조건을 정리한다.
-   - [ ] Deliverables: 디바운스 적용된 매치 계산 흐름.
-   - [ ] Exit criteria: 연속 타이핑 시 매 키스트로크마다 하이라이트 재계산이 발생하지 않는다.
+   - [x] Action: 입력 즉시 상태와 검색 실행 상태를 분리하고, 검색 실행 상태는 150ms 디바운스 타이머를 통해 갱신한다.
+   - [x] Action: Enter/Shift+Enter 네비게이션과 close/reset 흐름이 디바운스 상태와 충돌하지 않도록 토큰/카운터 리셋 조건을 정리한다.
+   - [x] Deliverables: 디바운스 적용된 매치 계산 흐름.
+   - [x] Exit criteria: 연속 타이핑 시 매 키스트로크마다 하이라이트 재계산이 발생하지 않는다.
 
 4. **회귀 테스트 보강**
    - [ ] Action: 기존 find 테스트에 오버레이 렌더링 조건(클래스/배치 신호) 검증을 추가한다.
@@ -94,3 +94,4 @@ milestone: M1
 - 2026-02-19: 디바운스 지연 시간 결정을 확정했다(150ms).
 - 2026-02-19: Step 1 완료. 오버레이 배치/반응형/키보드/150ms debounce 계약을 `Interaction Contract`로 고정했다.
 - 2026-02-19: Step 2 완료. `DocViewerPanel` find UI를 absolute 우상단 오버레이로 이동하고 mobile 폭 대응을 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
+- 2026-02-19: Step 3 완료. `App`에 입력 상태(`findInputQuery`)와 검색 상태(`findSearchQuery`)를 분리하고 150ms debounce + stale navigation guard를 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.

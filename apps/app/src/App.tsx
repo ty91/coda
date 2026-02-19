@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } 
 
 import { DocViewerPanel } from './components/DocViewerPanel';
 import { DocsSidebar } from './components/DocsSidebar';
+import { AskInboxPanel } from './components/AskInboxPanel';
 import {
   allTreeNodeKeys,
   ancestorKeysForDoc,
@@ -18,6 +19,7 @@ import {
 } from './docs-tree';
 const ANNOTATION_TODO_NOTE =
   'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
+const FIND_QUERY_DEBOUNCE_MS = 150;
 
 const isEditableEventTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) {
@@ -73,7 +75,8 @@ export const App = (): ReactElement => {
   const [documentError, setDocumentError] = useState<string | null>(null);
 
   const [findOpen, setFindOpen] = useState<boolean>(false);
-  const [findQuery, setFindQuery] = useState<string>('');
+  const [findInputQuery, setFindInputQuery] = useState<string>('');
+  const [findSearchQuery, setFindSearchQuery] = useState<string>('');
   const [findMatchCount, setFindMatchCount] = useState<number>(0);
   const [activeFindMatchIndex, setActiveFindMatchIndex] = useState<number | null>(null);
   const [findInputFocusToken, setFindInputFocusToken] = useState<number>(0);
@@ -294,12 +297,28 @@ export const App = (): ReactElement => {
 
   useEffect(() => {
     setFindOpen(false);
-    setFindQuery('');
+    setFindInputQuery('');
+    setFindSearchQuery('');
     setFindMatchCount(0);
     setActiveFindMatchIndex(null);
     setFindNextRequestToken(0);
     setFindPreviousRequestToken(0);
   }, [selectedDocId]);
+
+  useEffect(() => {
+    if (!findOpen || !selectedDocId) {
+      setFindSearchQuery('');
+      return;
+    }
+
+    const debounceTimer = window.setTimeout(() => {
+      setFindSearchQuery(findInputQuery);
+    }, FIND_QUERY_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(debounceTimer);
+    };
+  }, [findInputQuery, findOpen, selectedDocId]);
 
   const openFind = useCallback((): void => {
     setFindOpen(true);
@@ -307,16 +326,35 @@ export const App = (): ReactElement => {
   }, []);
 
   const requestFindNext = useCallback((): void => {
+    if (findInputQuery.trim().length === 0) {
+      return;
+    }
+
+    if (findSearchQuery !== findInputQuery) {
+      setFindSearchQuery(findInputQuery);
+      return;
+    }
+
     setFindNextRequestToken((current) => current + 1);
-  }, []);
+  }, [findInputQuery, findSearchQuery]);
 
   const requestFindPrevious = useCallback((): void => {
+    if (findInputQuery.trim().length === 0) {
+      return;
+    }
+
+    if (findSearchQuery !== findInputQuery) {
+      setFindSearchQuery(findInputQuery);
+      return;
+    }
+
     setFindPreviousRequestToken((current) => current + 1);
-  }, []);
+  }, [findInputQuery, findSearchQuery]);
 
   const closeFind = useCallback((): void => {
     setFindOpen(false);
-    setFindQuery('');
+    setFindInputQuery('');
+    setFindSearchQuery('');
     setFindMatchCount(0);
     setActiveFindMatchIndex(null);
     setFindNextRequestToken(0);
@@ -348,7 +386,7 @@ export const App = (): ReactElement => {
         return;
       }
 
-      if (event.key === 'Enter' && findQuery.trim().length > 0) {
+      if (event.key === 'Enter' && findInputQuery.trim().length > 0) {
         event.preventDefault();
         if (event.shiftKey) {
           requestFindPrevious();
@@ -367,7 +405,7 @@ export const App = (): ReactElement => {
     documentError,
     documentLoading,
     findOpen,
-    findQuery,
+    findInputQuery,
     openFind,
     requestFindNext,
     requestFindPrevious,
@@ -409,19 +447,22 @@ export const App = (): ReactElement => {
           documentError={documentError}
           annotationNote={ANNOTATION_TODO_NOTE}
           findOpen={findOpen}
-          findQuery={findQuery}
+          findInputQuery={findInputQuery}
+          findSearchQuery={findSearchQuery}
           findMatchCount={findMatchCount}
           activeFindMatchIndex={activeFindMatchIndex}
           findInputFocusToken={findInputFocusToken}
           findNextRequestToken={findNextRequestToken}
           findPreviousRequestToken={findPreviousRequestToken}
-          onFindQueryChange={setFindQuery}
+          onFindQueryChange={setFindInputQuery}
           onFindClose={closeFind}
           onFindRequestNext={requestFindNext}
           onFindRequestPrevious={requestFindPrevious}
           onFindMatchCountChange={setFindMatchCount}
           onActiveFindMatchIndexChange={setActiveFindMatchIndex}
         />
+
+        <AskInboxPanel />
       </section>
     </main>
   );

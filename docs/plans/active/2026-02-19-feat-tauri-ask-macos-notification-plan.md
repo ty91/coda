@@ -71,8 +71,8 @@ milestone: M1
    - [x] Exit criteria: 회귀 테스트가 알림 중복/미발송/권한 예외 회귀를 차단하고, 전체 품질 게이트가 통과한다.
 
 6. **수동 macOS 스모크 + 컴파운드 기록**
-   - [ ] Action: macOS에서 `tauri dev`로 ask 유입 시 실제 시스템 알림 노출을 확인하고, 권한 첫 요청/거부/재허용 시나리오를 수동 검증한다.
-   - [ ] Action: 결과를 `docs/solutions/`에 기록하고, 알림 정책이 아키텍처 결정(예: 알림 채널 우선순위)에 영향을 주면 관련 design doc을 갱신한다.
+   - [ ] Action: macOS에서 `tauri dev`로 ask 유입 시 실제 시스템 알림 노출을 확인하고, 권한 첫 요청/거부/재허용 시나리오를 수동 검증한다. (blocked: 로컬 `:1420` 포트 사용 중으로 `tauri dev` 기동 실패)
+   - [x] Action: 결과를 `docs/solutions/`에 기록하고, 알림 정책이 아키텍처 결정(예: 알림 채널 우선순위)에 영향을 주면 관련 design doc을 갱신한다.
    - [ ] Deliverables: 수동 검증 결과 + solution 문서 + 필요 시 아키텍처 문서 업데이트.
    - [ ] Exit criteria: 로컬 재현 절차와 예방 규칙이 문서화되어 후속 알림 기능에서 재사용 가능하다.
 
@@ -90,6 +90,7 @@ milestone: M1
 
 ## Progress Log
 
+- 2026-02-19: Approach step 6 부분 완료. solution 문서(`docs/solutions/2026-02-19-tauri-ask-macos-notification-orchestration.md`)를 기록했다. 다만 `pnpm --filter @coda/app tauri dev` 실행 시 `Port 1420 is already in use`로 수동 macOS 스모크는 차단됐다.
 - 2026-02-19: Approach step 5 완료. `useAskNotifications.test.tsx`에 notification 호출/중복 억제/non-macOS no-op/권한 거부 no-op/액션 포커싱 회귀를 추가했다. 실행: `pnpm --filter @coda/app test -- App.test.tsx`, `pnpm --filter @coda/app test -- AskInboxPanel.test.tsx`, `cd apps/app/src-tauri && cargo test`.
 - 2026-02-19: Approach step 4 완료. `useAskNotifications` hook으로 `ask_session_created` 구독, macOS-only gate, permission check/request, `ask_id` dedupe, 질문 미리보기 ellipsis, notification action 기반 window focus를 연결했다.
 - 2026-02-19: Approach step 3 완료. notification plugin을 Rust/TS에 추가하고 `default` capability에 `notification:default`를 반영했다. `cargo check`로 plugin 등록/권한 구성 빌드 경로를 확인했다.

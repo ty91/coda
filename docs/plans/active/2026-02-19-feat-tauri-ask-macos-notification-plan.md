@@ -65,10 +65,10 @@ milestone: M1
    - [x] Exit criteria: ask 패널 열림/닫힘 상태와 무관하게 신규 ask 발생 시 1회 알림이 발송되고, 알림 클릭 시 앱이 포커싱되며, 폴링 반복에서는 추가 알림이 발생하지 않는다.
 
 5. **회귀 테스트 및 전체 게이트**
-   - [ ] Action: `App.test.tsx` 또는 관련 테스트에 이벤트 수신 시 notification API 호출, 중복 억제, 비-macOS no-op, 권한 거부 no-crash 케이스를 추가한다 (`apps/app/src/App.test.tsx:516`).
-   - [ ] Action: 필요 시 Rust 테스트를 확장해 ask 생성 이벤트 발행 조건(성공 insert만 발행)을 검증한다 (`apps/app/src-tauri/src/ask_runtime_tests.rs:40`).
-   - [ ] Deliverables: 알림 계약 회귀 테스트와 실행 로그.
-   - [ ] Exit criteria: 회귀 테스트가 알림 중복/미발송/권한 예외 회귀를 차단하고, 전체 품질 게이트가 통과한다.
+   - [x] Action: `App.test.tsx` 또는 관련 테스트에 이벤트 수신 시 notification API 호출, 중복 억제, 비-macOS no-op, 권한 거부 no-crash 케이스를 추가한다 (`apps/app/src/App.test.tsx:516`).
+   - [x] Action: 필요 시 Rust 테스트를 확장해 ask 생성 이벤트 발행 조건(성공 insert만 발행)을 검증한다 (`apps/app/src-tauri/src/ask_runtime_tests.rs:40`).
+   - [x] Deliverables: 알림 계약 회귀 테스트와 실행 로그.
+   - [x] Exit criteria: 회귀 테스트가 알림 중복/미발송/권한 예외 회귀를 차단하고, 전체 품질 게이트가 통과한다.
 
 6. **수동 macOS 스모크 + 컴파운드 기록**
    - [ ] Action: macOS에서 `tauri dev`로 ask 유입 시 실제 시스템 알림 노출을 확인하고, 권한 첫 요청/거부/재허용 시나리오를 수동 검증한다.
@@ -90,6 +90,7 @@ milestone: M1
 
 ## Progress Log
 
+- 2026-02-19: Approach step 5 완료. `useAskNotifications.test.tsx`에 notification 호출/중복 억제/non-macOS no-op/권한 거부 no-op/액션 포커싱 회귀를 추가했다. 실행: `pnpm --filter @coda/app test -- App.test.tsx`, `pnpm --filter @coda/app test -- AskInboxPanel.test.tsx`, `cd apps/app/src-tauri && cargo test`.
 - 2026-02-19: Approach step 4 완료. `useAskNotifications` hook으로 `ask_session_created` 구독, macOS-only gate, permission check/request, `ask_id` dedupe, 질문 미리보기 ellipsis, notification action 기반 window focus를 연결했다.
 - 2026-02-19: Approach step 3 완료. notification plugin을 Rust/TS에 추가하고 `default` capability에 `notification:default`를 반영했다. `cargo check`로 plugin 등록/권한 구성 빌드 경로를 확인했다.
 - 2026-02-19: Approach step 2 완료. `ask_session_created` 이벤트 payload를 추가하고, insert 성공 경로에서만 emit되도록 연결했다. `cargo test ask_runtime`으로 중복 insert 미발행 계약을 검증했다.

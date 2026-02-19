@@ -15,6 +15,9 @@ vi.mock('@tauri-apps/api/core', () => ({
 vi.mock('@tauri-apps/api/event', () => ({
   listen: vi.fn(),
 }));
+vi.mock('./useAskNotifications', () => ({
+  useAskNotifications: vi.fn(),
+}));
 
 const mockInvoke = vi.mocked(invoke);
 const mockIsTauri = vi.mocked(isTauri);

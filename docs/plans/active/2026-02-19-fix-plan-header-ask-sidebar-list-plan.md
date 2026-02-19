@@ -41,10 +41,10 @@ milestone: M1
    - [x] Exit criteria: ask 아이콘 클릭 시 우측 사이드바만 열리고 닫히며, 모달 DOM이 생성되지 않는다.
 
 3. **질문 리스트 컴포넌트 연결 일원화**
-   - [ ] Action: 질문 리스트 UI는 `AskInboxPanel`(또는 추출된 동등 컴포넌트) 한 경로로만 렌더링되게 정리한다.
-   - [ ] Action: 기존 polling, pending count 동기화, submit/cancel 동작을 유지하고 데이터 계약 회귀가 없도록 점검한다.
-   - [ ] Deliverables: 단일 질문 리스트 렌더링 경로 + 기존 ask 런타임 계약 유지.
-   - [ ] Exit criteria: 신규/기존 ask 세션에서 질문 표시 및 응답 제출이 기존과 동일하게 동작한다.
+   - [x] Action: 질문 리스트 UI는 `AskInboxPanel`(또는 추출된 동등 컴포넌트) 한 경로로만 렌더링되게 정리한다.
+   - [x] Action: 기존 polling, pending count 동기화, submit/cancel 동작을 유지하고 데이터 계약 회귀가 없도록 점검한다.
+   - [x] Deliverables: 단일 질문 리스트 렌더링 경로 + 기존 ask 런타임 계약 유지.
+   - [x] Exit criteria: 신규/기존 ask 세션에서 질문 표시 및 응답 제출이 기존과 동일하게 동작한다.
 
 4. **회귀 테스트 확장**
    - [ ] Action: `App.test.tsx`에 ask 아이콘 클릭 후 "사이드바 렌더됨 + 모달 미존재"를 동시에 검증하는 케이스를 추가한다.
@@ -78,6 +78,7 @@ milestone: M1
 - 2026-02-19: `coda ask --json`으로 사용자 확인 완료. 질문 리스트는 기존 `AskInboxPanel` 재사용, 대상 앱 헤더는 `App.tsx` 중앙 헤더로 확정했다.
 - 2026-02-19: Step 1 완료. `docs/design-docs/ask-sidebar-interaction-contract.md`에 모달 금지/사이드바 토글 계약, 시나리오 표, 테스트 문장을 기록했다.
 - 2026-02-19: Step 2 완료. `App.tsx` ask 토글 버튼에 `aria-controls`/`aria-expanded`를 연결하고 패널 고정 레이아웃 상수를 명시했으며, `AskInboxPanel`은 `role="complementary"` + 패널 id/라벨 계약을 받도록 정리했다.
+- 2026-02-19: Step 3 완료. `App.tsx`에서 ask 리스트 렌더 경로가 `AskInboxPanel` 1회 사용으로 유지됨을 확인했고, `pnpm --filter @coda/app test -- AskInboxPanel.test.tsx`로 polling/pending count/submit/cancel 계약 회귀가 없음을 재검증했다.
 
 ## Assumptions / Open Questions
 

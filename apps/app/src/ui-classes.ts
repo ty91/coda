@@ -1,5 +1,5 @@
 export const panelSurfaceClass =
-  'rounded-coda-lg border border-coda-line-soft bg-[#fffffff7] shadow-coda-soft backdrop-blur-[6px]';
+  'rounded-coda-lg bg-[#fffffff7] shadow-coda-soft backdrop-blur-[6px]';
 
 export const sidebarSurfaceClass =
   'rounded-coda-lg border-0 bg-transparent shadow-none';

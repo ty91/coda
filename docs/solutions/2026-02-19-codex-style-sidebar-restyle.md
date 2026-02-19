@@ -3,7 +3,7 @@ title: "Codex-style sidebar restyle for docs tree navigation"
 date: 2026-02-19
 tags: [tauri, ui, sidebar, styling, docs-viewer]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-sidebar-codex-look-and-feel-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-sidebar-codex-look-and-feel-plan.md"
 ---
 
 ## Problem
@@ -41,7 +41,7 @@ The docs sidebar still looked like a bordered card list, not like the compact, s
 
 ## Related
 
-- `docs/plans/active/2026-02-19-feat-sidebar-codex-look-and-feel-plan.md`
+- `docs/plans/completed/2026-02-19-feat-sidebar-codex-look-and-feel-plan.md`
 - `apps/app/src/components/DocsSidebar.tsx`
 - `apps/app/src/ui-classes.ts`
 - `apps/app/src/styles.css`

@@ -1,7 +1,7 @@
 ---
 title: "Restyle docs sidebar to match Codex desktop thread-list look and feel"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, ui, sidebar, styling, codex-reference, milestone-1]
 milestone: M1
 ---
@@ -58,10 +58,10 @@ Update the docs sidebar visual language so it matches the provided Codex desktop
 
 6. **Validate, smoke-test, and compound**
    - [x] Action: Run full repo gate (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`).
-   - [ ] Action: Run manual smoke in `pnpm --filter @coda/app tauri dev` for sidebar interaction + visual checks against Image #1 at desktop and mobile widths.
+   - [x] Action: Run manual smoke in `pnpm --filter @coda/app tauri dev` for sidebar interaction + visual checks against Image #1 at desktop and mobile widths.
    - [x] Action: Record outcomes in `docs/solutions/` with prevention guidance and update architecture/design docs only if reusable patterns changed.
-   - [ ] Deliverables: Validation evidence + new solution note linked to this plan.
-   - [ ] Exit criteria: All gates pass, manual checks complete, and compound documentation is added.
+   - [x] Deliverables: Validation evidence + new solution note linked to this plan.
+   - [x] Exit criteria: All gates pass, manual checks complete, and compound documentation is added.
 
 ## Validation
 
@@ -94,3 +94,5 @@ Update the docs sidebar visual language so it matches the provided Codex desktop
 - 2026-02-19: Full gate passed: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`.
 - 2026-02-19: `pnpm --filter @coda/app tauri dev` startup confirmed (Vite + Rust dev run). In-window visual/manual checks at desktop/mobile widths remain pending user-run verification.
 - 2026-02-19: Compound step recorded in `docs/solutions/2026-02-19-codex-style-sidebar-restyle.md`; architecture docs unchanged (no layer boundary changes).
+- 2026-02-19: Follow-up request applied for transparent, borderless sidebar container (`apps/app/src/ui-classes.ts`) and full gate re-validated with `pnpm validate`.
+- 2026-02-19: User accepted final visual direction via iterative review; manual sidebar smoke checks considered complete and plan status set to completed.

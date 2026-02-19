@@ -140,7 +140,7 @@ export const DocsSidebar = ({
 }: DocsSidebarProps): ReactElement => {
   return (
     <aside
-      className={`${sidebarSurfaceClass} relative grid h-full min-h-0 gap-3 overflow-y-auto px-3 pb-3 pt-11`}
+      className={`${sidebarSurfaceClass} relative grid h-full min-h-0 content-start gap-3 overflow-y-auto px-3 pb-3 pt-11`}
       aria-label="Documentation sidebar"
     >
       <div
@@ -161,7 +161,7 @@ export const DocsSidebar = ({
       ) : null}
 
       {!listLoading && !listError && summaries.length > 0 ? (
-        <nav className="grid gap-[0.2rem]" aria-label="Docs navigation tree">
+        <nav className="grid content-start self-start gap-[0.2rem]" aria-label="Docs navigation tree">
           {treeSections.map((section) => {
             const sectionExpanded = expandedNodeKeys.has(section.key);
 

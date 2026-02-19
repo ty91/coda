@@ -197,8 +197,13 @@ describe('App docs viewer', () => {
     const sidebar = screen.getByLabelText('Documentation sidebar');
     expect(sidebar.className).toContain('h-full');
     expect(sidebar.className).toContain('min-h-0');
+    expect(sidebar.className).toContain('content-start');
     expect(sidebar.className).toContain('overflow-y-auto');
     expect(sidebar.className).not.toContain('max-h-[100vh]');
+
+    const docsNav = screen.getByRole('navigation', { name: 'Docs navigation tree' });
+    expect(docsNav.className).toContain('content-start');
+    expect(docsNav.className).toContain('self-start');
 
     const viewerSurface = screen.getByTestId('viewer-drag-region').closest('section');
     expect(viewerSurface).toBeTruthy();

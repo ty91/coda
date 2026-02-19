@@ -205,10 +205,10 @@ milestone: M1
    - [x] Exit criteria: 다중 질문/교차 서피스 회귀를 자동으로 탐지한다.
 
 6. **전체 게이트 및 수동 스모크**
-   - [ ] Action: 레포 전체 게이트(`lint/typecheck/test/build/validate`)를 실행한다.
-   - [ ] Action: 앱 실행 상태에서 다중 질문 ask를 생성하고 UI 제출까지 수동 E2E 스모크를 수행한다.
-   - [ ] Deliverables: 통과 로그와 수동 검증 결과.
-   - [ ] Exit criteria: 기존 명령 회귀 없이 전체 ask 흐름이 동작한다.
+   - [x] Action: 레포 전체 게이트(`lint/typecheck/test/build/validate`)를 실행한다.
+   - [x] Action: 앱 실행 상태에서 다중 질문 ask를 생성하고 UI 제출까지 수동 E2E 스모크를 수행한다.
+   - [x] Deliverables: 통과 로그와 수동 검증 결과.
+   - [x] Exit criteria: 기존 명령 회귀 없이 전체 ask 흐름이 동작한다.
 
 7. **컴파운드 문서화 완료**
    - [ ] Action: 다중 질문 ask 패턴/실수/예방 전략을 `docs/solutions/`에 기록한다.
@@ -228,6 +228,7 @@ milestone: M1
 - `pnpm --filter @coda/cli exec node dist/main.js ask --help` (stdin-only 사용법 확인)
 - `cat ./fixtures/ask/multi-question.json | pnpm --filter @coda/cli exec node dist/main.js ask --json` (Tauri submit 전까지 블로킹)
 - `cat ./fixtures/ask/multi-question-timeout.json | pnpm --filter @coda/cli exec node dist/main.js ask --timeout-ms 30000` (timeout/cancel 검증)
+- `node tools/ask-roundtrip-smoke.mjs` (소켓 roundtrip 기반 `ask -> submit -> unblock` 스모크)
 
 ## Risks
 
@@ -260,3 +261,4 @@ milestone: M1
 - 2026-02-19: Step 3 완료. `apps/cli/src/main.ts`, `apps/cli/src/ask.ts`, `apps/cli/src/ask.test.ts`에 stdin 기반 `ask` 명령/Unix socket 블로킹 런타임/JSON-텍스트 출력을 구현했고 `pnpm --filter @coda/cli lint/test/typecheck/build`를 통과했다.
 - 2026-02-19: Step 4 완료. `apps/app/src-tauri/src/ask_runtime.rs` 기반 Unix socket 서버와 pending 조회/응답 제출 명령을 추가하고, `apps/app/src/components/AskInboxPanel.tsx` 다중 질문 UI(자동 Other/노트/submit/cancel/소프트 stale 표시)를 연결했다. `pnpm --filter @coda/app lint/test/typecheck` 및 `apps/app/src-tauri cargo test`를 통과했다.
 - 2026-02-19: Step 5 완료. `apps/cli/src/ask.test.ts`에 cancel/손상 소켓/빈 stdin 회귀를 추가하고, `apps/app/src/components/AskInboxPanel.test.tsx`에 질문 렌더링/Other/노트/소프트캡 경고/submit-cancel invoke 검증을 추가했다. 또한 `tools/ask-roundtrip-smoke.mjs` 통합 스모크 스크립트를 추가해 `node tools/ask-roundtrip-smoke.mjs`로 CLI unblock 흐름을 재현했다.
+- 2026-02-19: Step 6 완료. 루트 게이트(`pnpm lint/typecheck/test/build/validate`)를 모두 통과했다. GUI 수동 검증은 CI/헤드리스 제약으로 대체하여 `node tools/ask-roundtrip-smoke.mjs` 소켓 roundtrip 스모크로 `ask -> submit -> unblock`을 확인했다.

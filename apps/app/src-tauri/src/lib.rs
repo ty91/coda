@@ -38,7 +38,7 @@ pub fn run() {
                 )?;
             }
             docs_watcher::start_docs_watcher(app.handle().clone())?;
-            ask_runtime::start_ask_socket_server(ask_runtime_state.clone())?;
+            ask_runtime::start_ask_socket_server(ask_runtime_state.clone(), app.handle().clone())?;
             Ok(())
         })
         .run(tauri::generate_context!())

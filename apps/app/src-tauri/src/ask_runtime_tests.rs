@@ -1,6 +1,7 @@
 use super::{
     AskAnswer, AskNote, AskOption, AskQuestion, AskRequestBatch, AskRuntimeState, AskSocketRequest,
-    AskResponseStatus, SubmitAskResponsePayload, SubmitAskResponseStatus,
+    AskResponseStatus, AskSessionCreatedEventPayload, SubmitAskResponsePayload,
+    SubmitAskResponseStatus,
 };
 use std::sync::mpsc;
 use std::time::Duration;
@@ -35,6 +36,44 @@ fn build_request(timeout_ms: u64, requested_at_iso: &str, require_note: bool) ->
         timeout_ms,
         requested_at_iso: requested_at_iso.to_string(),
     }
+}
+
+#[test]
+fn returns_created_event_payload_when_session_is_inserted() {
+    let state = AskRuntimeState::new();
+    let (sender, _receiver) = mpsc::channel();
+
+    let payload = state
+        .insert_pending_session(build_request(0, "2026-02-19T00:00:00Z", false), sender)
+        .expect("session should be inserted");
+
+    assert_eq!(
+        payload,
+        AskSessionCreatedEventPayload {
+            ask_id: "ask-test-1".to_string(),
+            requested_at_iso: "2026-02-19T00:00:00Z".to_string(),
+            first_question_text: Some("Choose scope".to_string()),
+        }
+    );
+}
+
+#[test]
+fn rejects_duplicate_insert_before_event_payload_is_returned() {
+    let state = AskRuntimeState::new();
+    let (first_sender, _first_receiver) = mpsc::channel();
+    let (second_sender, _second_receiver) = mpsc::channel();
+
+    state
+        .insert_pending_session(build_request(0, "2026-02-19T00:00:00Z", false), first_sender)
+        .expect("initial insert should succeed");
+
+    let duplicate_result =
+        state.insert_pending_session(build_request(0, "2026-02-19T00:00:00Z", false), second_sender);
+
+    assert_eq!(
+        duplicate_result.expect_err("duplicate insert should fail"),
+        "ask session already exists: ask-test-1".to_string()
+    );
 }
 
 #[test]

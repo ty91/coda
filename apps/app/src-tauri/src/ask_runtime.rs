@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Duration;
-use tauri::State;
+use tauri::{AppHandle, Emitter, State};
 use time::format_description::well_known::Rfc3339;
 use time::{Duration as TimeDuration, OffsetDateTime};
 
@@ -16,6 +16,7 @@ const ASK_SOCKET_PATH_SEGMENTS: [&str; 2] = [".coda", "runtime"];
 const ASK_SOCKET_SWEEP_INTERVAL: Duration = Duration::from_secs(5);
 const ASK_EXPIRED_RETENTION_WINDOW: TimeDuration = TimeDuration::seconds(30);
 const ASK_RESPONSE_SOURCE: &str = "tauri-ui";
+pub const ASK_SESSION_CREATED_EVENT: &str = "ask_session_created";
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AskOption {
@@ -119,6 +120,14 @@ pub struct SubmitAskResponsePayload {
     status: SubmitAskResponseStatus,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AskSessionCreatedEventPayload {
+    ask_id: String,
+    requested_at_iso: String,
+    first_question_text: Option<String>,
+}
+
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 enum SubmitAskResponseStatus {
@@ -137,12 +146,13 @@ impl AskRuntimeState {
         &self,
         request: AskSocketRequest,
         response_sender: mpsc::Sender<AskResponseBatch>,
-    ) -> Result<(), String> {
+    ) -> Result<AskSessionCreatedEventPayload, String> {
         let now = OffsetDateTime::now_utc();
         let requested_at = parse_requested_at_iso(&request.requested_at_iso).unwrap_or(now);
+        let ask_id = request.ask_id;
 
         let session = PendingAskSession {
-            ask_id: request.ask_id.clone(),
+            ask_id: ask_id.clone(),
             request: request.request,
             requested_at,
             requested_at_iso: request.requested_at_iso,
@@ -155,12 +165,22 @@ impl AskRuntimeState {
             .lock()
             .map_err(|_| "ask runtime state lock poisoned".to_string())?;
 
-        if inner.pending.contains_key(&request.ask_id) {
-            return Err(format!("ask session already exists: {}", request.ask_id));
+        if inner.pending.contains_key(&ask_id) {
+            return Err(format!("ask session already exists: {}", ask_id));
         }
 
-        inner.pending.insert(request.ask_id, session);
-        Ok(())
+        let event_payload = AskSessionCreatedEventPayload {
+            ask_id: session.ask_id.clone(),
+            requested_at_iso: session.requested_at_iso.clone(),
+            first_question_text: session
+                .request
+                .questions
+                .first()
+                .map(|question| question.question.clone()),
+        };
+
+        inner.pending.insert(ask_id, session);
+        Ok(event_payload)
     }
 
     fn remove_pending_session(&self, ask_id: &str) {
@@ -319,7 +339,7 @@ impl AskRuntimeState {
     }
 }
 
-pub fn start_ask_socket_server(state: AskRuntimeState) -> Result<(), Error> {
+pub fn start_ask_socket_server(state: AskRuntimeState, app_handle: AppHandle) -> Result<(), Error> {
     let socket_path = resolve_ask_socket_path()?;
     prepare_socket_path(&socket_path)?;
 
@@ -333,8 +353,13 @@ pub fn start_ask_socket_server(state: AskRuntimeState) -> Result<(), Error> {
                 match stream {
                     Ok(stream) => {
                         let per_connection_state = runtime_state.clone();
+                        let per_connection_handle = app_handle.clone();
                         thread::spawn(move || {
-                            if let Err(error) = handle_socket_connection(stream, per_connection_state)
+                            if let Err(error) = handle_socket_connection(
+                                stream,
+                                per_connection_state,
+                                per_connection_handle,
+                            )
                             {
                                 log::warn!("ask socket connection failed: {error}");
                             }
@@ -377,12 +402,19 @@ pub fn submit_ask_response(
     state.submit_response(payload)
 }
 
-fn handle_socket_connection(mut stream: UnixStream, state: AskRuntimeState) -> Result<(), String> {
+fn handle_socket_connection(
+    mut stream: UnixStream,
+    state: AskRuntimeState,
+    app_handle: AppHandle,
+) -> Result<(), String> {
     let request = read_socket_request(&stream).map_err(|error| error.to_string())?;
     let ask_id = request.ask_id.clone();
     let (response_sender, response_receiver) = mpsc::channel::<AskResponseBatch>();
 
-    state.insert_pending_session(request, response_sender)?;
+    let created_payload = state.insert_pending_session(request, response_sender)?;
+    if let Err(error) = emit_ask_session_created_event(&app_handle, &created_payload) {
+        log::warn!("{error}");
+    }
 
     let response = response_receiver.recv().map_err(|_| {
         format!(
@@ -400,6 +432,15 @@ fn handle_socket_connection(mut stream: UnixStream, state: AskRuntimeState) -> R
 
     state.remove_pending_session(&ask_id);
     write_result
+}
+
+fn emit_ask_session_created_event(
+    app_handle: &AppHandle,
+    payload: &AskSessionCreatedEventPayload,
+) -> Result<(), String> {
+    app_handle
+        .emit(ASK_SESSION_CREATED_EVENT, payload)
+        .map_err(|error| format!("failed to emit ask session created event: {error}"))
 }
 
 fn read_socket_request(stream: &UnixStream) -> Result<AskSocketRequest, Error> {

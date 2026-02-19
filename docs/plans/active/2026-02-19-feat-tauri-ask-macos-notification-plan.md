@@ -46,10 +46,10 @@ milestone: M1
    - One-sentence behavior: "신규 ask insert 성공 시 macOS에서만 ask_id당 1회 알림을 보내고, 중복 조회나 권한 거부는 알림만 건너뛰며 앱 동작은 계속된다."
 
 2. **Tauri 런타임에서 신규 ask 이벤트 발행**
-   - [ ] Action: `ask_runtime`에 "신규 ask 생성 이벤트" payload를 정의하고, `insert_pending_session` 성공 경로에서만 이벤트를 발행하도록 리팩터링한다 (`apps/app/src-tauri/src/ask_runtime.rs:136`).
-   - [ ] Action: `lib.rs` setup 경로에 필요한 핸들을 주입해 런타임 스레드에서도 이벤트 emit이 가능하도록 연결한다 (`apps/app/src-tauri/src/lib.rs:32`).
-   - [ ] Deliverables: ask 생성 이벤트 타입 + emit 경로 + 실패/중복 insert 시 미발행 보장.
-   - [ ] Exit criteria: 신규 ask 1건 유입 시 이벤트 1건만 발행되고, 동일 ask 중복 insert는 실패하며 이벤트가 발생하지 않는다.
+   - [x] Action: `ask_runtime`에 "신규 ask 생성 이벤트" payload를 정의하고, `insert_pending_session` 성공 경로에서만 이벤트를 발행하도록 리팩터링한다 (`apps/app/src-tauri/src/ask_runtime.rs:136`).
+   - [x] Action: `lib.rs` setup 경로에 필요한 핸들을 주입해 런타임 스레드에서도 이벤트 emit이 가능하도록 연결한다 (`apps/app/src-tauri/src/lib.rs:32`).
+   - [x] Deliverables: ask 생성 이벤트 타입 + emit 경로 + 실패/중복 insert 시 미발행 보장.
+   - [x] Exit criteria: 신규 ask 1건 유입 시 이벤트 1건만 발행되고, 동일 ask 중복 insert는 실패하며 이벤트가 발생하지 않는다.
 
 3. **Notification plugin 및 권한 구성 추가**
    - [ ] Action: Tauri notification plugin을 Rust/TS 양쪽에 추가하고 앱 부팅 시 plugin을 등록한다 (`apps/app/src-tauri/Cargo.toml:19`, `apps/app/src-tauri/src/lib.rs:23`, `apps/app/package.json:17`).
@@ -90,6 +90,7 @@ milestone: M1
 
 ## Progress Log
 
+- 2026-02-19: Approach step 2 완료. `ask_session_created` 이벤트 payload를 추가하고, insert 성공 경로에서만 emit되도록 연결했다. `cargo test ask_runtime`으로 중복 insert 미발행 계약을 검증했다.
 - 2026-02-19: Approach step 1 완료. 신규 ask insert 성공 시점 트리거 + `ask_id` dedupe + macOS 전용 + 권한 거부 시 no-op 계약을 확정했다.
 - 2026-02-19: planning target 확정. "Tauri 앱에서 ask 도착 시 macOS 시스템 알림" 요구를 확인했다.
 - 2026-02-19: `docs/plans/active/`를 확인했고 동일 주제 active plan은 없음을 확인했다.

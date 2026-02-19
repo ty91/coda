@@ -51,10 +51,10 @@ milestone: M1
    - [x] Exit criteria: 폰트 크기/굵기 계약이 깨지면 테스트가 실패한다.
 
 5. **검증 및 컴파운드 기록**
-   - [ ] Action: 전체 게이트(lint/typecheck/tests/build/validate)와 앱 수동 스모크를 수행해 시각/동작 회귀를 확인한다.
-   - [ ] Action: 완료 후 `docs/solutions/`에 문제/원인/예방을 기록하고 필요 시 관련 문서를 갱신한다.
-   - [ ] Deliverables: 게이트 통과 로그 + 신규 solution 문서.
-   - [ ] Exit criteria: 요청 타이포그래피가 반영되고 재발 방지 지식이 남는다.
+   - [x] Action: 전체 게이트(lint/typecheck/tests/build/validate)와 앱 수동 스모크를 수행해 시각/동작 회귀를 확인한다.
+   - [x] Action: 완료 후 `docs/solutions/`에 문제/원인/예방을 기록하고 필요 시 관련 문서를 갱신한다.
+   - [x] Deliverables: 게이트 통과 로그 + 신규 solution 문서.
+   - [x] Exit criteria: 요청 타이포그래피가 반영되고 재발 방지 지식이 남는다.
 
 ## Validation
 
@@ -90,6 +90,9 @@ milestone: M1
 - 2026-02-19: Step 2 완료. `apps/app/src/ui-classes.ts`의 사이드바 텍스트 토큰을 `0.8125rem` + `font-normal`로 정렬하고, 범위 외 영향 방지를 위해 `sidebarMessageTextClass`를 분리했다.
 - 2026-02-19: Step 3 완료. `DocsSidebar`의 인라인 텍스트 클래스(`text-[0.84rem]`, `text-[0.92rem]`)를 정리해 요청 타이포그래피 기준으로 통일했다.
 - 2026-02-19: Step 4 완료. `ui-classes.test.ts`와 `App.test.tsx`에 13px + `font-normal` 회귀 계약을 추가해 타이포그래피 누락을 탐지 가능하게 했다.
+- 2026-02-19: Step 5 완료. 전체 게이트(`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`)를 통과했다.
+- 2026-02-19: `pnpm --filter @coda/app tauri dev` 수동 스모크는 로컬 포트 충돌로 차단됐다. 정확한 에러: `Error: Port 1420 is already in use`.
+- 2026-02-19: 컴파운드 기록을 `docs/solutions/2026-02-19-docs-sidebar-text-13px-font-normal.md`에 추가했다.
 
 ## Assumptions / Open Questions
 

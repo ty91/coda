@@ -1,7 +1,7 @@
 ---
 title: "Tauri 앱 다중 프로젝트 관리 구조 확장"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, multi-project, workspace, docs-viewer, architecture]
 milestone: M2
 ---
@@ -90,6 +90,7 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: step 3 완료. watcher 전략을 "활성 프로젝트 단일 감시"로 확정. 프로젝트 전환 시 기존 watcher thread를 stop+join 후 새 watcher를 시작하도록 lifecycle을 재구성하고 `docs_changed` payload에 `project_id`를 포함.
 - 2026-02-19: step 4 완료. 좌측 프로젝트 사이드바 + `PanelLeft` 토글을 추가하고 프로젝트 전환 IPC를 UI에 연결. 프로젝트별 선택 문서/폴더 확장 상태 캐시를 적용해 전환 시 상태 섞임을 방지하고, 헤더에 활성 프로젝트 badge를 표시해 ask 맥락 혼동을 줄임.
 - 2026-02-19: step 5 완료. Rust/React 회귀 테스트를 보강하고 compound 문서(`docs/solutions/2026-02-19-tauri-multi-project-management.md`) 및 아키텍처 문서(`docs/design-docs/architecture-overview.md`)를 갱신. 전체 품질 게이트(`lint/typecheck/test/build/validate` + tauri cargo test + 지정된 App/useAskNotifications 테스트) 통과.
+- 2026-02-19: 구현/검증 완료 기준 충족으로 plan status를 `completed`로 전환하고 파일을 `docs/plans/completed/`로 이동.
 
 ## Assumptions / Open Questions
 

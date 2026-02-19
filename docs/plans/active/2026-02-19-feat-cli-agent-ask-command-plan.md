@@ -191,11 +191,11 @@ milestone: M1
    - [x] Exit criteria: 유효 Tauri 응답이 도착할 때만 명령이 해제된다.
 
 4. **Tauri 백엔드/프런트엔드 질문 패널 구현 (`apps/app`)**
-   - [ ] Action: ask socket 서버 초기화, pending ask 조회/응답 제출 Tauri 명령을 추가한다.
-   - [ ] Action: 다중 질문 렌더링 컴포넌트(선택지 + 자동 Other + 노트 + submit/cancel)를 구현한다.
-   - [ ] Action: pending 목록 새로고침과 stale 표시 로직을 추가한다.
-   - [ ] Deliverables: `apps/app/src-tauri/src` ask 모듈 + `apps/app/src` ask UI 컴포넌트.
-   - [ ] Exit criteria: CLI에서 생성된 질문 묶음이 앱에 나타나고 제출 시 CLI가 해제된다.
+   - [x] Action: ask socket 서버 초기화, pending ask 조회/응답 제출 Tauri 명령을 추가한다.
+   - [x] Action: 다중 질문 렌더링 컴포넌트(선택지 + 자동 Other + 노트 + submit/cancel)를 구현한다.
+   - [x] Action: pending 목록 새로고침과 stale 표시 로직을 추가한다.
+   - [x] Deliverables: `apps/app/src-tauri/src` ask 모듈 + `apps/app/src` ask UI 컴포넌트.
+   - [x] Exit criteria: CLI에서 생성된 질문 묶음이 앱에 나타나고 제출 시 CLI가 해제된다.
 
 5. **회귀 및 통합 검증 강화**
    - [ ] Action: core/cli에 다중 질문 제약, 빈 stdin/손상 JSON, timeout, cancel, 소켓 단절/손상 페이로드 테스트를 추가한다.
@@ -258,3 +258,4 @@ milestone: M1
 - 2026-02-19: Step 1 완료. Ask I/O 계약 표와 상태 전이 매트릭스를 문서에 고정했다.
 - 2026-02-19: Step 2 완료. `packages/core/src/contracts.ts`, `packages/core/src/validation.ts`, `packages/core/src/validation.test.ts`에 ask 타입/검증/회귀 테스트를 추가했고 `pnpm --filter @coda/core test/typecheck/build`를 통과했다.
 - 2026-02-19: Step 3 완료. `apps/cli/src/main.ts`, `apps/cli/src/ask.ts`, `apps/cli/src/ask.test.ts`에 stdin 기반 `ask` 명령/Unix socket 블로킹 런타임/JSON-텍스트 출력을 구현했고 `pnpm --filter @coda/cli lint/test/typecheck/build`를 통과했다.
+- 2026-02-19: Step 4 완료. `apps/app/src-tauri/src/ask_runtime.rs` 기반 Unix socket 서버와 pending 조회/응답 제출 명령을 추가하고, `apps/app/src/components/AskInboxPanel.tsx` 다중 질문 UI(자동 Other/노트/submit/cancel/소프트 stale 표시)를 연결했다. `pnpm --filter @coda/app lint/test/typecheck` 및 `apps/app/src-tauri cargo test`를 통과했다.

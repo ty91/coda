@@ -294,7 +294,7 @@ Coda fills this gap.
 | Feature | Description | Priority |
 |---|---|---|
 | Codex integration | Invoke Codex as a subprocess. Route coding/debugging/structured-review tasks to Codex, everything else to Claude. | P1 |
-| Task routing | Configurable routing rules in `.coda/config.yaml`. Default: planning/research → Claude, coding/debugging → Codex. | P1 |
+| Task routing | Configurable routing rules in `.coda/config.toml`. Default: planning/research → Claude, coding/debugging → Codex. | P1 |
 | Parallel execution | Run multiple review agents simultaneously. Merge and deduplicate findings. | P1 |
 | SQLite state | Agent run tracking, event log, FTS search index over docs/. Rebuild from files if lost. | P1 |
 | Enhanced failure handling | Timeout management per task type. Output validation against expected schemas. Structured escalation. | P2 |
@@ -406,7 +406,7 @@ Coda fills this gap.
 | Agent runtime | CLI subprocesses (claude, codex) | No SDK lock-in; stream processing; process isolation |
 | Knowledge storage | Markdown files with YAML frontmatter in `docs/` | Git-native; human-readable; agent-legible |
 | Operational storage | SQLite at `.coda/state.db` | Fast queries; concurrent writes; rebuildable from files |
-| Configuration | YAML at `.coda/config.yaml` + `~/.config/coda/` | Layered precedence; human and agent readable |
+| Configuration | TOML at `.coda/config.toml` + `~/.coda/config.toml` | Layered precedence; human and agent readable |
 | Slack integration | Webhooks (outbound) + Socket Mode (inbound actions) | No server infrastructure; no public URL required |
 | Issue tracker | Adapter pattern with REST API | Extensible to new trackers |
 

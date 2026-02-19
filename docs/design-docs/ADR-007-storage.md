@@ -115,7 +115,7 @@ Coda is local-first by design. For multi-device scenarios:
 
 - **Knowledge base**: Already synced via git (push/pull).
 - **SQLite state**: Not synced. Each device has its own `.coda/state.db`. This is acceptable because operational state (agent runs, events) is device-specific.
-- **User preferences**: Global config at `~/.config/coda/` is not synced by default. Users can symlink or use dotfile managers if desired.
+- **User preferences**: Global config at `~/.coda/` is not synced by default. Users can symlink or use dotfile managers if desired.
 - **Future**: If cloud sync is needed (e.g., start a plan on laptop, approve on phone), we'd add an optional sync layer over the SQLite state. This is not in scope for Milestones 1-3.
 
 ## Consequences

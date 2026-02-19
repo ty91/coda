@@ -218,7 +218,7 @@ See [ADR-007: Local-First Data Architecture](./ADR-007-storage.md) for the full 
 
 - **Plans, solutions, brainstorms**: Markdown files with YAML frontmatter in `docs/`. These are the system of record, version-controlled in git.
 - **Agent run state, event log, search index**: SQLite database at `.coda/state.db`. This is local, ephemeral (can be rebuilt from files), and fast to query.
-- **User preferences**: YAML/TOML config files at `~/.config/coda/` (global) and `.coda/config.yaml` (per-project).
+- **User preferences**: TOML config files at `~/.coda/` (global) and `.coda/config.toml` (per-project).
 
 ### Communication
 
@@ -283,12 +283,12 @@ Agent sandboxing is enforced at two levels:
 │     (CODA_SLACK_WEBHOOK, CODA_JIRA_TOKEN)    │
 │                                              │
 │  3. Encrypted config file                    │
-│     (~/.config/coda/secrets.enc)             │
+│     (~/.coda/secrets.enc)                    │
 │     Encrypted with a key derived from        │
 │     system keychain                          │
 │                                              │
 │  NEVER in:                                   │
-│  - .coda/config.yaml (in repo)              │
+│  - .coda/config.toml (in repo)              │
 │  - CLAUDE.md / AGENTS.md                    │
 │  - Any file tracked by git                  │
 └─────────────────────────────────────────────┘

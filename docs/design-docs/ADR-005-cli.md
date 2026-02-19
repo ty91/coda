@@ -66,7 +66,7 @@ coda
 
 Skills are markdown files that define domain expertise. They live in:
 1. `.coda/skills/` -- project-specific skills
-2. `~/.config/coda/skills/` -- global user skills
+2. `~/.coda/skills/` -- global user skills
 3. Built-in skills shipped with Coda
 
 A skill file:
@@ -91,18 +91,20 @@ The `triggers` field tells the orchestrator when to auto-load this skill into ag
 
 1. **Custom agents**: Drop an agent definition (markdown with system prompt + tool permissions) into `.coda/agents/`. The orchestrator discovers and routes to them.
 2. **Custom skills**: Drop a skill file into `.coda/skills/`. Loaded based on trigger matching or explicit invocation.
-3. **Hooks**: Shell commands that run at lifecycle points (pre-plan, post-work, pre-review, post-compound). Defined in `.coda/config.yaml`:
+3. **Hooks**: Shell commands that run at lifecycle points (pre-plan, post-work, pre-review, post-compound). Defined in `.coda/config.toml`:
 
-```yaml
-hooks:
-  post-work:
-    - command: "pnpm lint"
-      on_failure: block    # block | warn | ignore
-    - command: "pnpm typecheck"
-      on_failure: block
-  post-compound:
-    - command: "pnpm run docs-lint"
-      on_failure: warn
+```toml
+[[hooks.post_work]]
+command = "pnpm lint"
+on_failure = "block" # block | warn | ignore
+
+[[hooks.post_work]]
+command = "pnpm typecheck"
+on_failure = "block"
+
+[[hooks.post_compound]]
+command = "pnpm run docs-lint"
+on_failure = "warn"
 ```
 
 ### Configuration Layers
@@ -110,8 +112,8 @@ hooks:
 Configuration is resolved with precedence (highest first):
 1. CLI flags (`--agent claude`)
 2. Environment variables (`CODA_AGENT=claude`)
-3. Project config (`.coda/config.yaml`)
-4. User global config (`~/.config/coda/config.yaml`)
+3. Project config (`.coda/config.toml`)
+4. User global config (`~/.coda/config.toml`)
 5. Built-in defaults
 
 ## Consequences

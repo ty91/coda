@@ -44,7 +44,7 @@ your-project/
 ├── CLAUDE.md                    # Agent entry point (table of contents)
 ├── AGENTS.md                    # Codex-specific entry point
 ├── .coda/
-│   ├── config.yaml              # Project-level Coda configuration
+│   ├── config.toml              # Project-level Coda configuration
 │   ├── state.db                 # SQLite: agent runs, events, search index
 │   └── skills/                  # Project-specific custom skills
 ├── docs/
@@ -111,7 +111,7 @@ A CI job (`coda-docs-lint`) validates the knowledge base:
 - No `status: active` docs older than 30 days without an update (staleness check).
 - `index.md` files are up to date (list all files in their directory).
 - `CLAUDE.md` stays under 200 lines.
-- Solution categories match a defined taxonomy in `.coda/config.yaml`.
+- Solution categories match a defined taxonomy in `.coda/config.toml`.
 
 ## Consequences
 

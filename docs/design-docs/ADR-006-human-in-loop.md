@@ -97,15 +97,16 @@ This keeps human-in-the-loop prompts in a single local trust boundary (CLI + des
 
 ### Timeout and Escalation
 
-```yaml
-# .coda/config.yaml
-approval:
-  timeout_minutes: 60          # Reminder after 60 min
-  escalation_minutes: 240      # Escalate to secondary after 4 hours
-  escalation_target: "@alice"  # Slack handle or Coda user
-  auto_approve:
-    p3_only_reviews: true      # Auto-approve reviews with only P3 findings
-    plans_by: ["@self"]        # Auto-approve plans created by self (solo dev mode)
+```toml
+# .coda/config.toml
+[approval]
+timeout_minutes = 60 # Reminder after 60 min
+escalation_minutes = 240 # Escalate to secondary after 4 hours
+escalation_target = "@alice" # Slack handle or Coda user
+
+[approval.auto_approve]
+p3_only_reviews = true # Auto-approve reviews with only P3 findings
+plans_by = ["@self"] # Auto-approve plans created by self (solo dev mode)
 ```
 
 The escalation chain:

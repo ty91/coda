@@ -388,23 +388,21 @@ When a decision is pending too long:
 
 Granular control over what you hear about:
 
-```yaml
-# .coda/alerts.yml
-defaults:
-  channel: "#coda-agents"
-  quiet_hours: "22:00-08:00"
+```toml
+# .coda/alerts.toml
+[defaults]
+channel = "#coda-agents"
+quiet_hours = "22:00-08:00"
 
-projects:
-  coda:
-    plan_approval: dm        # DM for plan approvals
-    pr_ready: channel        # Channel for PR notifications
-    task_complete: digest     # Batch into digest
-    failure: dm              # DM for failures
+[projects.coda]
+plan_approval = "dm" # DM for plan approvals
+pr_ready = "channel" # Channel for PR notifications
+task_complete = "digest" # Batch into digest
+failure = "dm" # DM for failures
 
-agents:
-  agent-3:
-    trust_level: 2           # Plan-approved
-    noise: low               # Only failures and decisions
+[agents."agent-3"]
+trust_level = 2 # Plan-approved
+noise = "low" # Only failures and decisions
 ```
 
 ---

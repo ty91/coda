@@ -89,7 +89,7 @@ Test Writing        -> Codex        Close to implementation
 Brainstorming       -> Claude Code  Creative, divergent thinking
 ```
 
-These mappings are configurable per-project in `.coda/config.yaml` under `agent.routing`.
+These mappings are configurable per-project in `.coda/config.toml` under `agent.routing`.
 
 ## Failure Handling
 

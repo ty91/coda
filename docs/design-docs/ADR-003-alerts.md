@@ -69,18 +69,15 @@ Alerts are routed based on:
 
 ### Quiet Hours / Do Not Disturb
 
-Configurable in `~/.config/coda/alerts.yaml`:
+Configurable in `~/.coda/alerts.toml`:
 
-```yaml
-quiet_hours:
-  enabled: true
-  start: "22:00"
-  end: "08:00"
-  timezone: "Asia/Seoul"
-  behavior: queue     # queue | suppress | downgrade
-  # queue: hold alerts and deliver when quiet hours end
-  # suppress: drop P3 alerts, queue P1/P2
-  # downgrade: deliver P1 as P2 timing, suppress P3
+```toml
+[quiet_hours]
+enabled = true
+start = "22:00"
+end = "08:00"
+timezone = "Asia/Seoul"
+behavior = "queue" # queue | suppress | downgrade
 ```
 
 During quiet hours, P1 alerts are never fully suppressed -- they're queued and delivered immediately when quiet hours end.

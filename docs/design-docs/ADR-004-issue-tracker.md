@@ -87,17 +87,17 @@ type TrackerRef = {
 
 Status mapping is configurable per-project because every team maps workflow states differently:
 
-```yaml
-# .coda/config.yaml
-tracker:
-  jira:
-    project: PROJ
-    status_map:
-      draft: "To Do"
-      planned: "To Do"
-      in_progress: "In Progress"
-      review: "In Review"
-      done: "Done"
+```toml
+# .coda/config.toml
+[tracker.jira]
+project = "PROJ"
+
+[tracker.jira.status_map]
+draft = "To Do"
+planned = "To Do"
+in_progress = "In Progress"
+review = "In Review"
+done = "Done"
 ```
 
 ### Sync Strategy: Event-Driven with Polling Fallback

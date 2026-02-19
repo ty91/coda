@@ -224,10 +224,7 @@ impl AskRuntimeState {
                 .lock()
                 .map_err(|_| "ask runtime state lock poisoned".to_string())?;
 
-            inner
-                .pending
-                .get(&payload.ask_id)
-                .cloned()
+            inner.pending.get(&payload.ask_id).cloned()
         }
         .ok_or_else(|| format!("ask session not found: {}", payload.ask_id))?;
 
@@ -359,8 +356,7 @@ pub fn start_ask_socket_server(state: AskRuntimeState, app_handle: AppHandle) ->
                                 stream,
                                 per_connection_state,
                                 per_connection_handle,
-                            )
-                            {
+                            ) {
                                 log::warn!("ask socket connection failed: {error}");
                             }
                         });
@@ -375,12 +371,10 @@ pub fn start_ask_socket_server(state: AskRuntimeState, app_handle: AppHandle) ->
     let sweeper_state = state;
     thread::Builder::new()
         .name("coda-ask-socket-sweeper".to_string())
-        .spawn(move || {
-            loop {
-                thread::sleep(ASK_SOCKET_SWEEP_INTERVAL);
-                if let Err(error) = sweeper_state.sweep_expired_sessions() {
-                    log::warn!("ask session sweep failed: {error}");
-                }
+        .spawn(move || loop {
+            thread::sleep(ASK_SOCKET_SWEEP_INTERVAL);
+            if let Err(error) = sweeper_state.sweep_expired_sessions() {
+                log::warn!("ask session sweep failed: {error}");
             }
         })?;
 
@@ -486,7 +480,10 @@ fn validate_socket_request(request: &AskSocketRequest) -> Result<(), Error> {
     Ok(())
 }
 
-fn write_socket_response(stream: &mut UnixStream, response: &AskResponseBatch) -> Result<(), Error> {
+fn write_socket_response(
+    stream: &mut UnixStream,
+    response: &AskResponseBatch,
+) -> Result<(), Error> {
     let json = serde_json::to_string(response)
         .map_err(|error| Error::other(format!("failed to serialize ask response: {error}")))?;
 
@@ -495,7 +492,10 @@ fn write_socket_response(stream: &mut UnixStream, response: &AskResponseBatch) -
     stream.flush()
 }
 
-fn validate_required_note(session: &PendingAskSession, note: Option<&String>) -> Result<(), String> {
+fn validate_required_note(
+    session: &PendingAskSession,
+    note: Option<&String>,
+) -> Result<(), String> {
     if !session
         .request
         .note
@@ -543,8 +543,10 @@ fn validate_and_normalize_answers(
                 ));
             }
 
-            let normalized_other_text = normalize_optional_text(answer.other_text)
-                .ok_or_else(|| format!("other_text is required for question id: {}", question.id))?;
+            let normalized_other_text =
+                normalize_optional_text(answer.other_text).ok_or_else(|| {
+                    format!("other_text is required for question id: {}", question.id)
+                })?;
 
             normalized_answers.push(AskAnswer {
                 id: question.id.clone(),
@@ -563,9 +565,12 @@ fn validate_and_normalize_answers(
             ));
         }
 
-        let selected_index = answer
-            .selected_index
-            .ok_or_else(|| format!("selected_index is required for question id: {}", question.id))?;
+        let selected_index = answer.selected_index.ok_or_else(|| {
+            format!(
+                "selected_index is required for question id: {}",
+                question.id
+            )
+        })?;
 
         let selected_option = question.options.get(selected_index).ok_or_else(|| {
             format!(
@@ -644,7 +649,9 @@ fn resolve_ask_socket_path() -> Result<PathBuf, Error> {
     let home = std::env::var_os("HOME").ok_or_else(|| Error::other("failed to resolve HOME"))?;
     let base_path = ASK_SOCKET_PATH_SEGMENTS
         .iter()
-        .fold(PathBuf::from(home), |current, segment| current.join(segment));
+        .fold(PathBuf::from(home), |current, segment| {
+            current.join(segment)
+        });
 
     Ok(base_path.join(ASK_SOCKET_FILE_NAME))
 }

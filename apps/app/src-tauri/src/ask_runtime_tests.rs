@@ -1,6 +1,6 @@
 use super::{
-    AskAnswer, AskNote, AskOption, AskQuestion, AskRequestBatch, AskRuntimeState, AskSocketRequest,
-    AskResponseStatus, AskSessionCreatedEventPayload, SubmitAskResponsePayload,
+    AskAnswer, AskNote, AskOption, AskQuestion, AskRequestBatch, AskResponseStatus,
+    AskRuntimeState, AskSessionCreatedEventPayload, AskSocketRequest, SubmitAskResponsePayload,
     SubmitAskResponseStatus,
 };
 use std::sync::mpsc;
@@ -64,11 +64,16 @@ fn rejects_duplicate_insert_before_event_payload_is_returned() {
     let (second_sender, _second_receiver) = mpsc::channel();
 
     state
-        .insert_pending_session(build_request(0, "2026-02-19T00:00:00Z", false), first_sender)
+        .insert_pending_session(
+            build_request(0, "2026-02-19T00:00:00Z", false),
+            first_sender,
+        )
         .expect("initial insert should succeed");
 
-    let duplicate_result =
-        state.insert_pending_session(build_request(0, "2026-02-19T00:00:00Z", false), second_sender);
+    let duplicate_result = state.insert_pending_session(
+        build_request(0, "2026-02-19T00:00:00Z", false),
+        second_sender,
+    );
 
     assert_eq!(
         duplicate_result.expect_err("duplicate insert should fail"),

@@ -21,8 +21,10 @@ The ask queue sidebar could only appear when pending asks existed and had no use
 - Added pending transition recovery: when ask count changes `0 -> >0`, panel auto-opens.
 - Updated find overlay offset logic to depend on real panel visibility (`isAskPanelVisible`) instead of pending count alone.
 - Extended `AskInboxPanel` with `isOpen` prop to hide/show panel content while keeping polling and `onPendingCountChange` updates alive.
+- Follow-up: removed the pending-based `disabled` gate so the header icon stays clickable at all times.
+- Follow-up: when no pending ask exists, toggling open now renders the ask panel with an explicit empty state (`No pending asks.`) instead of remaining hidden.
 - Added app-level regression coverage for:
-  - header icon always visible + disabled with no pending asks,
+  - header icon always visible + clickable with no pending asks,
   - toggle open/close behavior when pending asks exist,
   - find overlay right offset switching (`392px` vs `16px`) with panel visibility.
 

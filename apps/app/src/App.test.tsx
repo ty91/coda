@@ -280,17 +280,23 @@ describe('App docs viewer', () => {
     expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();
   });
 
-  it('keeps ask floating sidebar hidden when no pending ask exists', async () => {
+  it('opens ask panel empty state via header toggle when no pending ask exists', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
 
     await screen.findByRole('button', { name: 'Design Docs' });
     const askPanelToggle = screen.getByTestId('ask-panel-toggle-button');
-    expect(askPanelToggle.getAttribute('aria-label')).toBe('No pending asks');
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('Open ask panel');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
-    expect(askPanelToggle.hasAttribute('disabled')).toBe(true);
+    expect(askPanelToggle.hasAttribute('disabled')).toBe(false);
     expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+
+    fireEvent.click(askPanelToggle);
+    expect(askPanelToggle.getAttribute('aria-label')).toBe('Close ask panel');
+    expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('ask-inbox-panel')).toBeTruthy();
+    expect(screen.getByText('No pending asks.')).toBeTruthy();
   });
 
   it('expands nested folders and loads nested documents from the tree', async () => {

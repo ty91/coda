@@ -87,15 +87,10 @@ export const App = (): ReactElement => {
   const [findNextRequestToken, setFindNextRequestToken] = useState<number>(0);
   const [findPreviousRequestToken, setFindPreviousRequestToken] = useState<number>(0);
   const [pendingAskCount, setPendingAskCount] = useState<number>(0);
-  const [isAskPanelOpen, setIsAskPanelOpen] = useState<boolean>(true);
+  const [isAskPanelOpen, setIsAskPanelOpen] = useState<boolean>(false);
 
-  const hasPendingAsks = pendingAskCount > 0;
-  const isAskPanelVisible = hasPendingAsks && isAskPanelOpen;
-  const askPanelToggleLabel = hasPendingAsks
-    ? isAskPanelVisible
-      ? 'Close ask panel'
-      : 'Open ask panel'
-    : 'No pending asks';
+  const isAskPanelVisible = isAskPanelOpen;
+  const askPanelToggleLabel = isAskPanelOpen ? 'Close ask panel' : 'Open ask panel';
   const findOverlayRightOffsetPx = isAskPanelVisible
     ? ASK_FLOATING_PANEL_WIDTH_PX + ASK_FLOATING_PANEL_RIGHT_OFFSET_PX + FIND_OVERLAY_PANEL_GAP_PX
     : DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX;
@@ -467,11 +462,10 @@ export const App = (): ReactElement => {
         <header className="flex items-center justify-end px-1 pt-3">
           <button
             type="button"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary disabled:opacity-50 disabled:hover:bg-[#f5f5f3] disabled:hover:text-coda-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89]"
             aria-label={askPanelToggleLabel}
-            aria-pressed={isAskPanelVisible}
+            aria-pressed={isAskPanelOpen}
             title={askPanelToggleLabel}
-            disabled={!hasPendingAsks}
             onClick={() => {
               setIsAskPanelOpen((current) => !current);
             }}
@@ -505,6 +499,7 @@ export const App = (): ReactElement => {
 
       <AskInboxPanel
         isOpen={isAskPanelOpen}
+        showWhenEmpty
         className="fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto"
         onPendingCountChange={setPendingAskCount}
       />

@@ -46,6 +46,7 @@ type AskSubmittingState = Record<string, boolean>;
 type AskInboxPanelProps = {
   className?: string;
   isOpen?: boolean;
+  showWhenEmpty?: boolean;
   onPendingCountChange?: (count: number) => void;
 };
 
@@ -152,6 +153,7 @@ const formatExpiryText = (expiresAtIso: string | null): string => {
 export const AskInboxPanel = ({
   className,
   isOpen = true,
+  showWhenEmpty = false,
   onPendingCountChange,
 }: AskInboxPanelProps): ReactElement | null => {
   const [sessions, setSessions] = useState<PendingAskSession[]>([]);
@@ -319,7 +321,11 @@ export const AskInboxPanel = ({
     return null;
   }
 
-  if (sessions.length === 0 || !isOpen) {
+  if (!isOpen) {
+    return null;
+  }
+
+  if (sessions.length === 0 && !showWhenEmpty) {
     return null;
   }
 
@@ -337,165 +343,169 @@ export const AskInboxPanel = ({
         <span className="text-xs text-coda-text-secondary">{sessions.length} pending</span>
       </header>
 
-      <div className="space-y-3">
-        {sessions.map((session) => {
-          const askDrafts = draftsByAsk[session.askId] ?? {};
-          const note = notesByAsk[session.askId] ?? '';
-          const isSubmitting = submittingByAsk[session.askId] ?? false;
-          const submitError = submitErrorByAsk[session.askId];
-          const isDisabled = isSubmitting || session.isExpired;
+      {sessions.length === 0 ? (
+        <p className="text-xs text-coda-text-secondary">No pending asks.</p>
+      ) : (
+        <div className="space-y-3">
+          {sessions.map((session) => {
+            const askDrafts = draftsByAsk[session.askId] ?? {};
+            const note = notesByAsk[session.askId] ?? '';
+            const isSubmitting = submittingByAsk[session.askId] ?? false;
+            const submitError = submitErrorByAsk[session.askId];
+            const isDisabled = isSubmitting || session.isExpired;
 
-          return (
-            <article
-              key={session.askId}
-              className="rounded-coda-lg border border-coda-line-soft bg-[#f8f8f5] p-3"
-            >
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <p className="font-mono text-xs text-coda-text-secondary">{session.askId}</p>
-                <p className="text-xs text-coda-text-secondary">{formatExpiryText(session.expiresAtIso)}</p>
-              </div>
-
-              {session.isExpired && (
-                <p className="mb-2 rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
-                  This ask has expired. Submit and cancel are disabled.
-                </p>
-              )}
-
-              {session.request.questions.length > 4 && (
-                <p className="mb-2 rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-700">
-                  Soft cap notice: this ask contains more than 4 questions.
-                </p>
-              )}
-
-              <div className="space-y-4">
-                {session.request.questions.map((question) => {
-                  const draft = askDrafts[question.id] ?? createEmptyAnswerDraft();
-                  const radioName = `${session.askId}-${question.id}`;
-
-                  return (
-                    <fieldset key={question.id} className="space-y-2">
-                      <legend className="text-xs font-semibold text-coda-text-primary">
-                        {question.header}: {question.question}
-                      </legend>
-
-                      <div className="space-y-1.5">
-                        {question.options.map((option, optionIndex) => {
-                          const optionId = `${radioName}-option-${optionIndex}`;
-                          return (
-                            <label key={optionId} htmlFor={optionId} className="flex items-start gap-2">
-                              <input
-                                id={optionId}
-                                type="radio"
-                                name={radioName}
-                                checked={!draft.usedOther && draft.selectedIndex === optionIndex}
-                                disabled={isDisabled}
-                                onChange={() => {
-                                  setQuestionDraft(session.askId, question.id, () => ({
-                                    selectedIndex: optionIndex,
-                                    selectedLabel: option.label,
-                                    usedOther: false,
-                                    otherText: '',
-                                  }));
-                                }}
-                              />
-                              <span className="text-xs text-coda-text-primary">
-                                <strong className="font-medium">{option.label}</strong>
-                                <span className="block text-coda-text-secondary">{option.description}</span>
-                              </span>
-                            </label>
-                          );
-                        })}
-
-                        <label className="flex items-start gap-2">
-                          <input
-                            type="radio"
-                            name={radioName}
-                            checked={draft.usedOther}
-                            disabled={isDisabled}
-                            onChange={() => {
-                              setQuestionDraft(session.askId, question.id, (current) => ({
-                                ...current,
-                                selectedIndex: null,
-                                selectedLabel: OTHER_OPTION_LABEL,
-                                usedOther: true,
-                              }));
-                            }}
-                          />
-                          <span className="text-xs text-coda-text-primary">Other</span>
-                        </label>
-
-                        {draft.usedOther && (
-                          <textarea
-                            value={draft.otherText}
-                            disabled={isDisabled}
-                            onChange={(event) => {
-                              const nextValue = event.target.value;
-                              setQuestionDraft(session.askId, question.id, (current) => ({
-                                ...current,
-                                otherText: nextValue,
-                              }));
-                            }}
-                            className="min-h-[64px] w-full rounded border border-coda-line-soft bg-white px-2 py-1 text-xs text-coda-text-primary"
-                            placeholder="Provide a custom answer"
-                          />
-                        )}
-                      </div>
-                    </fieldset>
-                  );
-                })}
-              </div>
-
-              {session.request.note && (
-                <div className="mt-3 space-y-1">
-                  <label className="text-xs font-medium text-coda-text-primary" htmlFor={`note-${session.askId}`}>
-                    {session.request.note.label}
-                    {session.request.note.required ? ' (required)' : ''}
-                  </label>
-                  <textarea
-                    id={`note-${session.askId}`}
-                    value={note}
-                    disabled={isDisabled}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      setNotesByAsk((current) => ({
-                        ...current,
-                        [session.askId]: value,
-                      }));
-                    }}
-                    className="min-h-[72px] w-full rounded border border-coda-line-soft bg-white px-2 py-1 text-xs text-coda-text-primary"
-                    placeholder="Add optional context"
-                  />
+            return (
+              <article
+                key={session.askId}
+                className="rounded-coda-lg border border-coda-line-soft bg-[#f8f8f5] p-3"
+              >
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="font-mono text-xs text-coda-text-secondary">{session.askId}</p>
+                  <p className="text-xs text-coda-text-secondary">{formatExpiryText(session.expiresAtIso)}</p>
                 </div>
-              )}
 
-              {submitError && <p className="mt-2 text-xs text-red-700">{submitError}</p>}
+                {session.isExpired && (
+                  <p className="mb-2 rounded border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                    This ask has expired. Submit and cancel are disabled.
+                  </p>
+                )}
 
-              <div className="mt-3 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  disabled={isDisabled}
-                  onClick={() => {
-                    void handleCancel(session);
-                  }}
-                  className="rounded border border-coda-line-soft px-3 py-1 text-xs text-coda-text-secondary disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  disabled={isDisabled}
-                  onClick={() => {
-                    void handleSubmit(session);
-                  }}
-                  className="rounded bg-coda-text-primary px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
-                >
-                  Submit
-                </button>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+                {session.request.questions.length > 4 && (
+                  <p className="mb-2 rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-700">
+                    Soft cap notice: this ask contains more than 4 questions.
+                  </p>
+                )}
+
+                <div className="space-y-4">
+                  {session.request.questions.map((question) => {
+                    const draft = askDrafts[question.id] ?? createEmptyAnswerDraft();
+                    const radioName = `${session.askId}-${question.id}`;
+
+                    return (
+                      <fieldset key={question.id} className="space-y-2">
+                        <legend className="text-xs font-semibold text-coda-text-primary">
+                          {question.header}: {question.question}
+                        </legend>
+
+                        <div className="space-y-1.5">
+                          {question.options.map((option, optionIndex) => {
+                            const optionId = `${radioName}-option-${optionIndex}`;
+                            return (
+                              <label key={optionId} htmlFor={optionId} className="flex items-start gap-2">
+                                <input
+                                  id={optionId}
+                                  type="radio"
+                                  name={radioName}
+                                  checked={!draft.usedOther && draft.selectedIndex === optionIndex}
+                                  disabled={isDisabled}
+                                  onChange={() => {
+                                    setQuestionDraft(session.askId, question.id, () => ({
+                                      selectedIndex: optionIndex,
+                                      selectedLabel: option.label,
+                                      usedOther: false,
+                                      otherText: '',
+                                    }));
+                                  }}
+                                />
+                                <span className="text-xs text-coda-text-primary">
+                                  <strong className="font-medium">{option.label}</strong>
+                                  <span className="block text-coda-text-secondary">{option.description}</span>
+                                </span>
+                              </label>
+                            );
+                          })}
+
+                          <label className="flex items-start gap-2">
+                            <input
+                              type="radio"
+                              name={radioName}
+                              checked={draft.usedOther}
+                              disabled={isDisabled}
+                              onChange={() => {
+                                setQuestionDraft(session.askId, question.id, (current) => ({
+                                  ...current,
+                                  selectedIndex: null,
+                                  selectedLabel: OTHER_OPTION_LABEL,
+                                  usedOther: true,
+                                }));
+                              }}
+                            />
+                            <span className="text-xs text-coda-text-primary">Other</span>
+                          </label>
+
+                          {draft.usedOther && (
+                            <textarea
+                              value={draft.otherText}
+                              disabled={isDisabled}
+                              onChange={(event) => {
+                                const nextValue = event.target.value;
+                                setQuestionDraft(session.askId, question.id, (current) => ({
+                                  ...current,
+                                  otherText: nextValue,
+                                }));
+                              }}
+                              className="min-h-[64px] w-full rounded border border-coda-line-soft bg-white px-2 py-1 text-xs text-coda-text-primary"
+                              placeholder="Provide a custom answer"
+                            />
+                          )}
+                        </div>
+                      </fieldset>
+                    );
+                  })}
+                </div>
+
+                {session.request.note && (
+                  <div className="mt-3 space-y-1">
+                    <label className="text-xs font-medium text-coda-text-primary" htmlFor={`note-${session.askId}`}>
+                      {session.request.note.label}
+                      {session.request.note.required ? ' (required)' : ''}
+                    </label>
+                    <textarea
+                      id={`note-${session.askId}`}
+                      value={note}
+                      disabled={isDisabled}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setNotesByAsk((current) => ({
+                          ...current,
+                          [session.askId]: value,
+                        }));
+                      }}
+                      className="min-h-[72px] w-full rounded border border-coda-line-soft bg-white px-2 py-1 text-xs text-coda-text-primary"
+                      placeholder="Add optional context"
+                    />
+                  </div>
+                )}
+
+                {submitError && <p className="mt-2 text-xs text-red-700">{submitError}</p>}
+
+                <div className="mt-3 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    disabled={isDisabled}
+                    onClick={() => {
+                      void handleCancel(session);
+                    }}
+                    className="rounded border border-coda-line-soft px-3 py-1 text-xs text-coda-text-secondary disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isDisabled}
+                    onClick={() => {
+                      void handleSubmit(session);
+                    }}
+                    className="rounded bg-coda-text-primary px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

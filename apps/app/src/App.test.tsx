@@ -4,7 +4,7 @@ import type { DocDocument, DocSummary, ProjectSummary } from '@coda/core/contrac
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/plugin-dialog';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from './App';
@@ -328,6 +328,11 @@ describe('App docs viewer', () => {
     expect(viewerSurface?.className).toContain('h-full');
     expect(viewerSurface?.className).toContain('min-h-0');
     expect(viewerSurface?.className).toContain('overflow-y-auto');
+
+    const chatPanel = screen.getByRole('complementary', { name: 'Document chat panel' });
+    expect(chatPanel.id).toBe('app-doc-chat-panel');
+    expect(chatPanel.className).toContain('grid-rows-[auto_minmax(0,1fr)_auto]');
+    expect(screen.getByText('Select a document to preview chat context.')).toBeTruthy();
   });
 
   it('loads docs and allows selecting another document from the sidebar', async () => {
@@ -359,6 +364,27 @@ describe('App docs viewer', () => {
 
     await screen.findByRole('heading', { name: 'Execution Plan', level: 3 });
     expect(screen.getByText('Execution body')).toBeTruthy();
+  });
+
+  it('keeps chat panel visible and updates mock messages after document selection', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    const chatPanel = screen.getByRole('complementary', { name: 'Document chat panel' });
+    expect(within(chatPanel).getByText('Select a document to preview chat context.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    expect(
+      within(chatPanel).getByText(/Loaded "Core Beliefs"\. Ask actions stay disabled in this milestone UI\./)
+    ).toBeTruthy();
+    expect(
+      within(chatPanel).getByText('Summarize decisions and open risks from this document.')
+    ).toBeTruthy();
   });
 
   it('shows list error state when docs fetch fails', async () => {
@@ -798,6 +824,9 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
+    const docChatPanel = screen.getByRole('complementary', { name: 'Document chat panel' });
+    expect(docChatPanel.id).toBe('app-doc-chat-panel');
+
     const askPanelToggle = await screen.findByTestId('ask-panel-toggle-button');
     const askPanel = await screen.findByTestId('ask-inbox-panel');
     expect(askPanel.className).toContain('fixed');
@@ -812,6 +841,9 @@ describe('App docs viewer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
     fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(
+      within(docChatPanel).getByText(/Loaded "Core Beliefs"\. Ask actions stay disabled in this milestone UI\./)
+    ).toBeTruthy();
 
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
 
@@ -825,6 +857,7 @@ describe('App docs viewer', () => {
     expect(askPanelToggle.getAttribute('aria-expanded')).toBe('false');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('false');
     expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('16px');
+    expect(screen.getByRole('complementary', { name: 'Document chat panel' })).toBeTruthy();
     expect(screen.queryByRole('dialog')).toBeNull();
 
     fireEvent.click(askPanelToggle);
@@ -834,6 +867,7 @@ describe('App docs viewer', () => {
     expect(askPanelToggle.getAttribute('aria-expanded')).toBe('true');
     expect(askPanelToggle.getAttribute('aria-pressed')).toBe('true');
     expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('392px');
+    expect(screen.getByRole('complementary', { name: 'Document chat panel' })).toBeTruthy();
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 

@@ -45,10 +45,10 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
    - [x] Exit criteria: 문서 선택/읽기/찾기/ask 토글 기존 동작을 유지하면서 채팅 패널이 시각적으로 통합된다.
 
 4. **회귀 테스트 추가 및 업데이트**
-   - [ ] Action: `apps/app/src/App.test.tsx`에 채팅 패널 기본 렌더, 뷰어와의 공존, ask/find 기존 계약 유지 여부를 검증하는 케이스를 추가한다.
-   - [ ] Action: 필요하면 `ChatPanel` 전용 컴포넌트 테스트를 추가해 compound slot 구조가 깨질 때 테스트가 실패하도록 고정한다.
-   - [ ] Deliverables: 레이아웃/구조 회귀를 막는 테스트 커버리지.
-   - [ ] Exit criteria: 채팅 패널 추가 이후 기존 핵심 UX 계약(문서 읽기, find, ask sidebar)이 테스트로 보호된다.
+   - [x] Action: `apps/app/src/App.test.tsx`에 채팅 패널 기본 렌더, 뷰어와의 공존, ask/find 기존 계약 유지 여부를 검증하는 케이스를 추가한다.
+   - [x] Action: 필요하면 `ChatPanel` 전용 컴포넌트 테스트를 추가해 compound slot 구조가 깨질 때 테스트가 실패하도록 고정한다.
+   - [x] Deliverables: 레이아웃/구조 회귀를 막는 테스트 커버리지.
+   - [x] Exit criteria: 채팅 패널 추가 이후 기존 핵심 UX 계약(문서 읽기, find, ask sidebar)이 테스트로 보호된다.
 
 5. **검증 게이트 및 컴파운드 기록**
    - [ ] Action: 전체 품질 게이트(lint/typecheck/test/build/validate)와 Tauri 수동 스모크를 실행한다.
@@ -85,3 +85,4 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
 - 2026-02-19: Step 1 완료. 채팅 패널 UI-only 범위, 2열 레이아웃 규칙, 내부 스크롤/고정 오버레이 비회귀 계약을 문서화했다.
 - 2026-02-19: Step 2 완료. `ChatPanel` compound component(`Root/Header/Messages/Composer`)와 전용 컴포넌트 테스트를 추가했다.
 - 2026-02-19: Step 3 완료. `App` 중앙 콘텐츠를 뷰어+채팅 2열로 통합했고, ask 패널 토글에 따른 find 오버레이 오프셋(`16px`/`392px`) 계약을 유지했다.
+- 2026-02-19: Step 4 완료. `App` 회귀 테스트를 확장해 채팅 패널 공존과 ask/find 계약을 검증했고, `ChatPanel` 전용 테스트로 compound slot 구조를 고정했다.

@@ -1,7 +1,7 @@
 ---
 title: "Projects 사이드바 FolderPlus 프로젝트 추가 플로우"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, projects-sidebar, lucide, multi-project, config]
 milestone: M2
 ---
@@ -45,11 +45,11 @@ Projects 사이드바의 `Projects` 텍스트 오른쪽 끝에 `lucide-react`의
    - [x] Exit criteria: 사용자 시나리오(성공/중복/취소/경로 오류)에서 UI와 backend 상태가 서로 어긋나지 않는다.
 
 4. **회귀 테스트 + 품질 게이트 + Compound 문서화**
-   - [ ] Action: React 테스트(`App.test.tsx`)에 FolderPlus 버튼 노출/클릭/등록 성공/오류 상태 회귀를 추가한다.
-   - [ ] Action: Rust 테스트(`project_registry_tests.rs`, `project_runtime_tests.rs`)에 등록 경로 영속화/중복 거절/docs 누락 거절 케이스를 추가한다.
-   - [ ] Action: 완료 후 `docs/solutions/`에 문제-원인-예방을 기록하고 필요 시 아키텍처 문서에 등록 플로우 변경점을 반영한다.
-   - [ ] Deliverables: 자동화 테스트, 게이트 통과 로그, solution 문서.
-   - [ ] Exit criteria: 전체 게이트 통과 + 등록 플로우 핵심 회귀가 테스트로 고정된다.
+   - [x] Action: React 테스트(`App.test.tsx`)에 FolderPlus 버튼 노출/클릭/등록 성공/오류 상태 회귀를 추가한다.
+   - [x] Action: Rust 테스트(`project_registry_tests.rs`, `project_runtime_tests.rs`)에 등록 경로 영속화/중복 거절/docs 누락 거절 케이스를 추가한다.
+   - [x] Action: 완료 후 `docs/solutions/`에 문제-원인-예방을 기록하고 필요 시 아키텍처 문서에 등록 플로우 변경점을 반영한다.
+   - [x] Deliverables: 자동화 테스트, 게이트 통과 로그, solution 문서.
+   - [x] Exit criteria: 전체 게이트 통과 + 등록 플로우 핵심 회귀가 테스트로 고정된다.
 
 ### Step 1 Contract (implemented)
 
@@ -88,9 +88,10 @@ UI state transition table:
 ## Progress Log
 
 - 2026-02-19: planning target 수집. 요구사항을 "Projects 라벨 우측 FolderPlus 아이콘 + 클릭 시 프로젝트 추가 가능"으로 확정.
-- 2026-02-19: active plan/prior art 확인. `docs/plans/active/2026-02-19-feat-tauri-multi-project-management-plan.md`와 관련 solutions를 검토해 중복/재사용 포인트를 정리.
+- 2026-02-19: active plan/prior art 확인. `docs/plans/completed/2026-02-19-feat-tauri-multi-project-management-plan.md`와 관련 solutions를 검토해 중복/재사용 포인트를 정리.
 - 2026-02-19: 코드 플로우 확인. `ProjectsSidebar` 헤더에는 액션 버튼이 없고, App/Rust 양쪽 모두 프로젝트 등록 IPC 경로가 없음을 확인.
 - 2026-02-19: 외부 리서치 필요성 평가. 고위험 주제가 아니고 로컬 문맥이 충분해 계획 단계 외부 리서치는 생략.
 - 2026-02-19: step 1 완료. `ProjectsSidebar`에 FolderPlus 액션 버튼 + `addActionState/onRequestAddProject` 계약을 추가하고, 취소 포함 상태 전이 표를 plan 문서에 고정.
 - 2026-02-19: step 2 완료. `project_registration.rs` + `ProjectRegistryState::register_project_by_root_path` + `register_project` IPC를 추가해 canonicalize/`docs` 검증/중복 충돌 검사/원자적 global config write/BTree 정렬 기반 deterministic 저장/registry 재로딩을 구현.
 - 2026-02-19: step 3 완료. Tauri dialog plugin을 연결해 FolderPlus 클릭 → folder picker → `register_project` IPC를 구현하고, 성공 시 registry 재로딩/프로젝트 목록 동기화, 실패 시 `projectError` 노출, 취소 시 no-op 규칙을 고정. React 회귀 테스트(성공/취소/오류) 추가.
+- 2026-02-19: step 4 완료. Rust/React 회귀 테스트를 보강하고 solution 문서(`docs/solutions/2026-02-19-projects-sidebar-folder-plus-registration-flow.md`)와 architecture overview를 갱신. 품질 게이트(`pnpm lint/typecheck/test/build/validate`, `cargo test`, `pnpm --filter @coda/app test -- App.test.tsx`) 통과.

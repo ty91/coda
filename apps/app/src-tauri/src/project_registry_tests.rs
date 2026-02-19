@@ -1,6 +1,7 @@
 use super::{
     load_project_registry_from_paths, validate_project_removal, validate_project_selection,
 };
+use crate::project_registration::{build_project_registration_candidate, persist_registered_project};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -202,6 +203,63 @@ path = "{}"
     let removal_error = validate_project_removal(&registry, "alpha", "alpha")
         .expect_err("active project removal should fail");
     assert!(removal_error.contains("cannot remove active project 'alpha'"));
+
+    teardown(&temp_root);
+}
+
+#[test]
+fn persists_registered_project_with_deterministic_project_key_order() {
+    let temp_root = create_temp_root("persist-sort-order");
+    let home_root = temp_root.join("home");
+    let global_config = home_root.join(".coda/config.toml");
+
+    let workspace_a = create_workspace(&temp_root, "alpha-workspace");
+    let workspace_b = create_workspace(&temp_root, "beta-workspace");
+    let workspace_c = create_workspace(&temp_root, "gamma-workspace");
+    let local_config = workspace_a.join(".coda/config.toml");
+
+    write_file(
+        &global_config,
+        &format!(
+            r#"
+[projects.beta_workspace]
+path = "{}"
+
+[projects.alpha_workspace]
+path = "{}"
+"#,
+            workspace_b.display(),
+            workspace_a.display()
+        ),
+    );
+    write_file(&local_config, "");
+
+    let registry = load_project_registry_from_paths(&workspace_a, &global_config, &local_config)
+        .expect("registry should load");
+    let next_project = build_project_registration_candidate(
+        &registry,
+        &workspace_c.to_string_lossy(),
+    )
+    .expect("candidate should be derived");
+
+    persist_registered_project(&global_config, &next_project)
+        .expect("project should persist to global config");
+
+    let config_contents =
+        fs::read_to_string(&global_config).expect("global config should be readable");
+
+    let alpha_index = config_contents
+        .find("[projects.alpha_workspace]")
+        .expect("alpha entry should be present");
+    let beta_index = config_contents
+        .find("[projects.beta_workspace]")
+        .expect("beta entry should be present");
+    let gamma_index = config_contents
+        .find("[projects.gamma-workspace]")
+        .expect("gamma entry should be present");
+
+    assert!(alpha_index < beta_index);
+    assert!(beta_index < gamma_index);
 
     teardown(&temp_root);
 }

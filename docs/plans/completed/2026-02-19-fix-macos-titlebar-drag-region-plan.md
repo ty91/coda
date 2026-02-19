@@ -1,7 +1,7 @@
 ---
 title: "Restore macOS window drag via title-bar drag region"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, macos, titlebar, drag-region, bugfix, milestone-1]
 milestone: M1
 ---

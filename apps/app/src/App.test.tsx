@@ -170,7 +170,6 @@ describe('App docs viewer', () => {
 
     const sidebar = screen.getByLabelText('Documentation sidebar');
     const readerSurface = screen.getByTestId('viewer-drag-region').closest('section');
-    const refreshButton = screen.getByRole('button', { name: 'Refresh docs list' });
     const sidebarDragRegion = screen.getByTestId('sidebar-drag-region');
     const viewerDragRegion = screen.getByTestId('viewer-drag-region');
 
@@ -178,7 +177,7 @@ describe('App docs viewer', () => {
     expect(viewerDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
     expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(false);
-    expect(refreshButton.hasAttribute('data-tauri-drag-region')).toBe(false);
+    expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();
     expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(2);
   });
 
@@ -241,24 +240,13 @@ describe('App docs viewer', () => {
     expect(screen.queryByLabelText('Show hidden/template docs')).toBeNull();
   });
 
-  it('reloads docs when icon refresh control is clicked', async () => {
+  it('does not render manual docs refresh control', async () => {
     setupSuccessfulInvokeMock();
 
     render(<App />);
 
     await screen.findByRole('button', { name: 'Design Docs' });
-    expect(screen.getByRole('button', { name: 'Refresh docs list' })).toBeTruthy();
-
-    const getListDocSummaryCallCount = (): number =>
-      mockInvoke.mock.calls.filter(([command]) => command === 'list_doc_summaries').length;
-
-    expect(getListDocSummaryCallCount()).toBe(1);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Refresh docs list' }));
-
-    await waitFor(() => {
-      expect(getListDocSummaryCallCount()).toBe(2);
-    });
+    expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();
   });
 
   it('keeps ask floating sidebar hidden when no pending ask exists', async () => {

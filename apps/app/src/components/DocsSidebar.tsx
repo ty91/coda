@@ -1,5 +1,5 @@
 import type { DocId, DocSummary } from '@coda/core/contracts';
-import { Folder, FolderOpen, RefreshCw } from 'lucide-react';
+import { Folder, FolderOpen } from 'lucide-react';
 import type { CSSProperties, ReactElement } from 'react';
 
 import type { TreeFolderNode, TreeNode, TreeSectionNode } from '../docs-tree';
@@ -9,7 +9,6 @@ import {
   sidebarSectionClass,
   sidebarSectionHeaderClass,
   sidebarSurfaceClass,
-  sidebarIconButtonClass,
   treeRowClass,
 } from '../ui-classes';
 
@@ -20,7 +19,6 @@ type DocsSidebarProps = {
   expandedNodeKeys: Set<string>;
   listLoading: boolean;
   listError: string | null;
-  onRefresh: () => Promise<void>;
   onToggleNode: (nodeKey: string) => void;
   onSelectDoc: (docId: DocId) => void;
 };
@@ -137,7 +135,6 @@ export const DocsSidebar = ({
   expandedNodeKeys,
   listLoading,
   listError,
-  onRefresh,
   onToggleNode,
   onSelectDoc,
 }: DocsSidebarProps): ReactElement => {
@@ -154,23 +151,6 @@ export const DocsSidebar = ({
       />
       <header className="grid gap-[0.15rem] px-1">
         <p className={eyebrowClass}>Workspace</p>
-        <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            className={sidebarIconButtonClass}
-            onClick={() => void onRefresh()}
-            disabled={listLoading}
-            aria-label={listLoading ? 'Refreshing docs list' : 'Refresh docs list'}
-            title={listLoading ? 'Refreshing docs list' : 'Refresh docs list'}
-          >
-            <RefreshCw
-              size={15}
-              strokeWidth={2}
-              aria-hidden
-              className={listLoading ? 'animate-spin' : undefined}
-            />
-          </button>
-        </div>
       </header>
 
       {listLoading ? <p className={messageTextClass}>Loading markdown docs from `docs/`...</p> : null}

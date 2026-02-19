@@ -441,9 +441,6 @@ export const App = (): ReactElement => {
         expandedNodeKeys={expandedNodeKeys}
         listLoading={listLoading}
         listError={listError}
-        onRefresh={async (): Promise<void> => {
-          await loadDocSummariesQueued();
-        }}
         onToggleNode={onToggleNode}
         onSelectDoc={setSelectedDocId}
       />

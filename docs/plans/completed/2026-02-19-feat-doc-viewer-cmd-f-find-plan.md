@@ -1,7 +1,7 @@
 ---
 title: "Add Cmd+F in-document find to docs viewer"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, docs-viewer, keyboard-shortcut, find, milestone-1]
 milestone: M1
 ---
@@ -122,3 +122,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Step 6 app checks passed: `pnpm --filter @coda/app typecheck`, `pnpm --filter @coda/app test -- --runInBand`, `pnpm --filter @coda/app build`.
 - 2026-02-19: Step 6 manual smoke startup succeeded: `pnpm --filter @coda/app tauri dev` booted Vite (`http://localhost:1420/`) and launched `target/debug/coda-app`; in-window visual Cmd+F verification still requires direct user interaction.
 - 2026-02-19: Step 7 complete. Captured compound notes in `docs/solutions/2026-02-19-doc-viewer-cmd-f-in-document-find.md`; architecture/design doc updates were not required for this feature-scoped shortcut addition.
+- 2026-02-19: Plan moved to `docs/plans/completed/` and marked `completed`.

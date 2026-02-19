@@ -1,20 +1,14 @@
 import { isTauri } from '@tauri-apps/api/core';
 import { Effect, EffectState, getCurrentWindow, type Effects } from '@tauri-apps/api/window';
 
-export type MacOsWindowMaterial = 'hudWindow' | 'sidebar';
-
-export const DEFAULT_MACOS_WINDOW_MATERIAL: MacOsWindowMaterial = 'hudWindow';
-
-const EFFECT_BY_MATERIAL: Record<MacOsWindowMaterial, Effect> = {
-  hudWindow: Effect.HudWindow,
-  sidebar: Effect.Sidebar,
-};
+const HUD_WINDOW_EFFECT = Effect.HudWindow;
+const HUD_WINDOW_STATE = EffectState.Active;
+const HUD_WINDOW_RADIUS = 14;
 
 type RuntimeChecker = () => boolean;
 type EffectsApplier = (effects: Effects) => Promise<void>;
 
 type ApplyMacOsWindowEffectsOptions = {
-  material?: MacOsWindowMaterial;
   isTauriRuntime?: RuntimeChecker;
   applyEffects?: EffectsApplier;
 };
@@ -25,14 +19,13 @@ const applyCurrentWindowEffects = async (effects: Effects): Promise<void> => {
   await getCurrentWindow().setEffects(effects);
 };
 
-export const resolveMacOsWindowEffects = (material: MacOsWindowMaterial = DEFAULT_MACOS_WINDOW_MATERIAL): Effects => ({
-  effects: [EFFECT_BY_MATERIAL[material]],
-  state: EffectState.Active,
-  radius: 14,
+export const resolveMacOsWindowEffects = (): Effects => ({
+  effects: [HUD_WINDOW_EFFECT],
+  state: HUD_WINDOW_STATE,
+  radius: HUD_WINDOW_RADIUS,
 });
 
 export const applyMacOsWindowEffects = async ({
-  material = DEFAULT_MACOS_WINDOW_MATERIAL,
   isTauriRuntime: runtimeChecker = isTauriRuntime,
   applyEffects = applyCurrentWindowEffects,
 }: ApplyMacOsWindowEffectsOptions = {}): Promise<void> => {
@@ -40,5 +33,5 @@ export const applyMacOsWindowEffects = async ({
     return;
   }
 
-  await applyEffects(resolveMacOsWindowEffects(material));
+  await applyEffects(resolveMacOsWindowEffects());
 };

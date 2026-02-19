@@ -1,7 +1,7 @@
 ---
 title: "Tauri 문서 뷰어 우측 채팅 패널 UI 추가 (React compound component pattern)"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, docs-viewer, chat-panel, ui, compound-component, milestone-1]
 milestone: M1
 ---
@@ -81,9 +81,10 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
 - 2026-02-19: `docs/plans/active/`를 확인했고 동일 주제의 active plan은 없었다.
 - 2026-02-19: `docs/solutions/` prior art와 현재 코드(`apps/app/src/App.tsx`, `apps/app/src/components/DocViewerPanel.tsx`, `apps/app/src/App.test.tsx`)를 검토해 레이아웃/회귀 포인트를 정리했다.
 - 2026-02-19: 외부 리서치는 생략했다. 로컬 컨텍스트만으로 구현 경로가 충분히 명확하다.
-- 2026-02-19: 본 계획 문서를 `docs/plans/active/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`에 초안(draft)으로 작성했다.
+- 2026-02-19: 본 계획 문서를 active 경로에 초안(draft)으로 작성했다.
 - 2026-02-19: Step 1 완료. 채팅 패널 UI-only 범위, 2열 레이아웃 규칙, 내부 스크롤/고정 오버레이 비회귀 계약을 문서화했다.
 - 2026-02-19: Step 2 완료. `ChatPanel` compound component(`Root/Header/Messages/Composer`)와 전용 컴포넌트 테스트를 추가했다.
 - 2026-02-19: Step 3 완료. `App` 중앙 콘텐츠를 뷰어+채팅 2열로 통합했고, ask 패널 토글에 따른 find 오버레이 오프셋(`16px`/`392px`) 계약을 유지했다.
 - 2026-02-19: Step 4 완료. `App` 회귀 테스트를 확장해 채팅 패널 공존과 ask/find 계약을 검증했고, `ChatPanel` 전용 테스트로 compound slot 구조를 고정했다.
 - 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 모두 통과했다. `pnpm --filter @coda/app tauri dev`는 앱 구동까지 확인했으나, CLI 세션 제약으로 창 내부 수동 조작은 수행하지 못했다. 재사용 패턴은 `docs/solutions/2026-02-19-tauri-doc-viewer-right-chat-panel-compound-ui.md`에 기록했고 아키텍처 문서 업데이트는 불필요하다고 판단했다.
+- 2026-02-19: 사용자 GUI 수동 검증 완료 후 본 계획을 `docs/plans/completed/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`로 이동하고 상태를 `completed`로 확정했다.

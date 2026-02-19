@@ -42,4 +42,4 @@ The center container in `App` had a single-panel structure and no reusable chat 
 - `apps/app/src/components/ChatPanel.test.tsx`
 - `apps/app/src/App.tsx`
 - `apps/app/src/App.test.tsx`
-- `docs/plans/active/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`
+- `docs/plans/completed/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`

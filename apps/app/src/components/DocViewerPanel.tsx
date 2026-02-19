@@ -185,6 +185,8 @@ export const DocViewerPanel = ({
   const findInputRef = useRef<HTMLInputElement | null>(null);
   const readerArticleRef = useRef<HTMLElement | null>(null);
   const highlightedMatchesRef = useRef<HTMLElement[]>([]);
+  const lastHandledNextTokenRef = useRef<number>(0);
+  const lastHandledPreviousTokenRef = useRef<number>(0);
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
   const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
   const activeMatchPosition =
@@ -214,6 +216,8 @@ export const DocViewerPanel = ({
     const resetFindState = (): void => {
       clearFindHighlights(readerArticle);
       highlightedMatchesRef.current = [];
+      lastHandledNextTokenRef.current = 0;
+      lastHandledPreviousTokenRef.current = 0;
       onFindMatchCountChange(0);
       onActiveFindMatchIndexChange(null);
     };
@@ -249,10 +253,15 @@ export const DocViewerPanel = ({
   ]);
 
   useEffect(() => {
-    if (findNextRequestToken === 0 || highlightedMatchesRef.current.length === 0) {
+    if (
+      findNextRequestToken === 0 ||
+      findNextRequestToken === lastHandledNextTokenRef.current ||
+      highlightedMatchesRef.current.length === 0
+    ) {
       return;
     }
 
+    lastHandledNextTokenRef.current = findNextRequestToken;
     const currentIndex = activeFindMatchIndex ?? -1;
     const nextIndex =
       (currentIndex + 1 + highlightedMatchesRef.current.length) %
@@ -263,10 +272,15 @@ export const DocViewerPanel = ({
   }, [activeFindMatchIndex, findNextRequestToken, onActiveFindMatchIndexChange]);
 
   useEffect(() => {
-    if (findPreviousRequestToken === 0 || highlightedMatchesRef.current.length === 0) {
+    if (
+      findPreviousRequestToken === 0 ||
+      findPreviousRequestToken === lastHandledPreviousTokenRef.current ||
+      highlightedMatchesRef.current.length === 0
+    ) {
       return;
     }
 
+    lastHandledPreviousTokenRef.current = findPreviousRequestToken;
     const currentIndex = activeFindMatchIndex ?? 0;
     const previousIndex =
       (currentIndex - 1 + highlightedMatchesRef.current.length) %

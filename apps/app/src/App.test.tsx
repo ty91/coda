@@ -73,7 +73,7 @@ const visibleSummaries: DocSummary[] = [coreBeliefsSummary, executionPlanSummary
 const documents: Record<string, DocDocument> = {
   'design-docs/core-beliefs.md': {
     ...coreBeliefsSummary,
-    markdownBody: '## Core\n\nBeliefs body',
+    markdownBody: '## Core\n\nBeliefs body core core',
   },
   'plans/active/2026-02-18-exec.md': {
     ...executionPlanSummary,
@@ -159,7 +159,7 @@ describe('App docs viewer', () => {
     fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
 
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
-    expect(screen.getByText('Beliefs body')).toBeTruthy();
+    expect(screen.getByText(/Beliefs body/)).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
     fireEvent.click(screen.getByRole('button', { name: /active$/ }));
@@ -273,6 +273,82 @@ describe('App docs viewer', () => {
     });
   });
 
+  it('keeps rendered document visible while auto-refresh fetch is in flight', async () => {
+    mockIsTauri.mockReturnValue(true);
+    mockListen.mockResolvedValue(() => {});
+
+    let holdRefreshFetch = false;
+    let resolveRefreshFetch: ((value: DocDocument) => void) | null = null;
+
+    mockInvoke.mockImplementation(async (command, args) => {
+      if (command === 'list_doc_summaries') {
+        return visibleSummaries;
+      }
+
+      if (command === 'get_doc_document') {
+        const docId = (args as { docId: string } | undefined)?.docId;
+        if (!docId || !documents[docId]) {
+          throw new Error(`unknown document ${docId ?? 'undefined'}`);
+        }
+
+        if (docId === 'design-docs/core-beliefs.md' && holdRefreshFetch) {
+          return await new Promise<DocDocument>((resolve) => {
+            resolveRefreshFetch = resolve;
+          });
+        }
+
+        return documents[docId];
+      }
+
+      if (command === 'get_health_message') {
+        return { message: 'ok' };
+      }
+
+      throw new Error(`Unexpected command: ${command}`);
+    });
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    const docsChangedHandler = mockListen.mock.calls.find(
+      ([eventName]) => eventName === 'docs_changed'
+    )?.[1];
+    expect(docsChangedHandler).toBeTruthy();
+
+    holdRefreshFetch = true;
+    docsChangedHandler?.({
+      event: 'docs_changed',
+      id: 1,
+      payload: {
+        changedDocIds: ['design-docs/core-beliefs.md'],
+        removedDocIds: [],
+        kinds: ['modified'],
+        emittedAtIso: '2026-02-19T00:00:00Z',
+      },
+    });
+
+    await waitFor(() => {
+      expect(resolveRefreshFetch).toBeTruthy();
+    });
+
+    expect(screen.getByText(/Beliefs body core core/)).toBeTruthy();
+    expect(screen.queryByText('Loading selected document...')).toBeNull();
+
+    resolveRefreshFetch?.({
+      ...documents['design-docs/core-beliefs.md'],
+      markdownBody: '## Core\n\nBeliefs body updated',
+    });
+    holdRefreshFetch = false;
+
+    await waitFor(() => {
+      expect(screen.getByText(/Beliefs body updated/)).toBeTruthy();
+    });
+  });
+
   it('cleans up docs_changed listener on unmount', async () => {
     setupSuccessfulInvokeMock();
     const unlisten = vi.fn();
@@ -286,5 +362,78 @@ describe('App docs viewer', () => {
     view.unmount();
 
     expect(unlisten).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens find bar with cmd+f and navigates highlight matches', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    fireEvent.keyDown(window, { key: 'f', metaKey: true });
+
+    const findInput = await screen.findByTestId('viewer-find-input');
+    expect(document.activeElement).toBe(findInput);
+
+    fireEvent.change(findInput, { target: { value: 'core' } });
+
+    const findCounter = await screen.findByTestId('viewer-find-counter');
+    await waitFor(() => {
+      const counterValue = findCounter.textContent ?? '0/0';
+      expect(counterValue).not.toBe('0/0');
+      const [current, total] = counterValue.split('/').map((value) => Number(value));
+      expect(current).toBeGreaterThanOrEqual(1);
+      expect(total).toBeGreaterThan(1);
+    });
+
+    const beforeNext = findCounter.textContent;
+    fireEvent.click(screen.getByRole('button', { name: 'Next match' }));
+    await waitFor(() => {
+      expect(findCounter.textContent).not.toBe(beforeNext);
+    });
+
+    const beforePrevious = findCounter.textContent;
+    fireEvent.click(screen.getByRole('button', { name: 'Previous match' }));
+    await waitFor(() => {
+      expect(findCounter.textContent).not.toBe(beforePrevious);
+    });
+  });
+
+  it('shows no-match state and resets find state on document switch', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    fireEvent.keyDown(window, { key: 'f', ctrlKey: true });
+
+    const findInput = await screen.findByTestId('viewer-find-input');
+    fireEvent.change(findInput, { target: { value: 'no-match-value' } });
+
+    const findCounter = await screen.findByTestId('viewer-find-counter');
+    await waitFor(() => {
+      expect(findCounter.textContent).toBe('0/0');
+    });
+
+    const nextButton = screen.getByRole('button', { name: 'Next match' });
+    const previousButton = screen.getByRole('button', { name: 'Previous match' });
+    expect((nextButton as HTMLButtonElement).disabled).toBe(true);
+    expect((previousButton as HTMLButtonElement).disabled).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
+    fireEvent.click(screen.getByRole('button', { name: /active$/ }));
+    await screen.findByRole('button', { name: /Execution Plan/ });
+    fireEvent.click(screen.getByRole('button', { name: /Execution Plan/ }));
+
+    await screen.findByRole('heading', { name: 'Execution Plan', level: 3 });
+    expect(screen.queryByTestId('viewer-find-input')).toBeNull();
   });
 });

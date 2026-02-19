@@ -53,10 +53,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Find UI is usable via keyboard only and visually consistent with current viewer styling.
 
 5. **Add regression and edge-case tests**
-   - [ ] Action: Extend app tests for shortcut trigger, UI open/close, and no-regression of existing document selection flow.
-   - [ ] Action: Add tests for match counting and navigation behavior (including no-match and document-switch reset).
-   - [ ] Deliverables: Automated coverage that fails if shortcut wiring or in-document find behavior regresses.
-   - [ ] Exit criteria: Removing shortcut wiring or match-navigation logic causes targeted test failures.
+   - [x] Action: Extend app tests for shortcut trigger, UI open/close, and no-regression of existing document selection flow.
+   - [x] Action: Add tests for match counting and navigation behavior (including no-match and document-switch reset).
+   - [x] Deliverables: Automated coverage that fails if shortcut wiring or in-document find behavior regresses.
+   - [x] Exit criteria: Removing shortcut wiring or match-navigation logic causes targeted test failures.
 
 6. **Run full gate and manual smoke**
    - [ ] Action: Run full repository gate (`lint`, `typecheck`, `test`, `build`, `validate`).
@@ -117,3 +117,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Step 2 complete. Added app-level find state and keyboard shortcut boundary in `apps/app/src/App.tsx`, plus viewer-prop wiring and input focus handling in `apps/app/src/components/DocViewerPanel.tsx`.
 - 2026-02-19: Step 3 complete. Added DOM-order, case-insensitive highlight matching across metadata + markdown body, plus next/previous active-match traversal and scroll-into-view behavior in `DocViewerPanel`.
 - 2026-02-19: Step 4 complete. Added compact reader find bar UI with input, counter, prev/next, close controls, and keyboard-friendly ARIA wiring in `DocViewerPanel`.
+- 2026-02-19: Step 5 complete. Expanded `apps/app/src/App.test.tsx` with Cmd/Ctrl+F find coverage, counter navigation assertions, no-match disabled-state assertions, and doc-switch reset verification.

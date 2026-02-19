@@ -17,8 +17,6 @@ import {
   ancestorKeysForDoc,
   buildTreeSections,
 } from './docs-tree';
-const ANNOTATION_TODO_NOTE =
-  'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
 const FIND_QUERY_DEBOUNCE_MS = 150;
 const DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX = 16;
 const ASK_FLOATING_PANEL_WIDTH_PX = 360;

@@ -2,7 +2,7 @@ import type { DocDocument } from '@coda/core/contracts';
 import { useEffect, useRef, type CSSProperties, type ReactElement } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { eyebrowClass, headerRowClass, markdownContentClass, messageTextClass, panelSurfaceClass } from '../ui-classes';
+import { markdownContentClass, messageTextClass, panelSurfaceClass } from '../ui-classes';
 
 const FIND_MATCH_SELECTOR = 'mark[data-doc-find-match="true"]';
 const FIND_MATCH_ACTIVE_CLASS = 'bg-[#f4b944]';
@@ -190,7 +190,7 @@ export const DocViewerPanel = ({
   const lastHandledNextTokenRef = useRef<number>(0);
   const lastHandledPreviousTokenRef = useRef<number>(0);
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
-  const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
+  const showDocPanelStatus = documentLoading || Boolean(documentError);
   const activeMatchPosition =
     findMatchCount === 0 || activeFindMatchIndex === null ? '0/0' : `${activeFindMatchIndex + 1}/${findMatchCount}`;
   const findNavigationDisabled = findMatchCount === 0;
@@ -305,12 +305,6 @@ export const DocViewerPanel = ({
         data-testid="viewer-drag-region"
         aria-hidden
       />
-      <header className={headerRowClass}>
-        <div>
-          <p className={eyebrowClass}>Document</p>
-          <h2 className="mt-1 text-[1.02rem] font-semibold tracking-[-0.01em]">Reader</h2>
-        </div>
-      </header>
 
       {selectedDoc && findOpen ? (
         <div

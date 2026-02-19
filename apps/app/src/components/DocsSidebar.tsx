@@ -90,7 +90,7 @@ const renderTreeNode = (
 
   const isActive = node.summary.id === selectedDocId;
   const docButtonClass = isActive
-    ? `${treeRowClass} bg-[var(--color-coda-sidebar-row-active)] shadow-[inset_0_0_0_1px_#d0d0cd] hover:bg-[var(--color-coda-sidebar-row-active)]`
+    ? `${treeRowClass} !bg-[var(--color-coda-sidebar-row-hover)] hover:!bg-[var(--color-coda-sidebar-row-hover)]`
     : `${treeRowClass} hover:bg-[var(--color-coda-sidebar-row-hover)]`;
 
   return (

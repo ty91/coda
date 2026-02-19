@@ -3,7 +3,7 @@ title: "macOS HUD vibrancy sidebar with switchable material adapter"
 date: 2026-02-19
 tags: [tauri, macos, ui, vibrancy, sidebar, hudwindow]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-tauri-macos-hudwindow-sidebar-glass-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-tauri-macos-hudwindow-sidebar-glass-plan.md"
 ---
 
 ## Problem
@@ -45,7 +45,7 @@ The docs sidebar looked translucent via CSS, but it did not use native macOS vib
 
 ## Related
 
-- `docs/plans/active/2026-02-19-feat-tauri-macos-hudwindow-sidebar-glass-plan.md`
+- `docs/plans/completed/2026-02-19-feat-tauri-macos-hudwindow-sidebar-glass-plan.md`
 - `apps/app/src-tauri/tauri.conf.json`
 - `apps/app/src/window-effects.ts`
 - `apps/app/src/window-effects.test.ts`

@@ -1,7 +1,7 @@
 ---
 title: "Add macOS HUD-style glass sidebar with switchable window material"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, macos, ui, vibrancy, sidebar, milestone-1]
 milestone: M1
 ---
@@ -56,10 +56,10 @@ Deliver a macOS-only glass experience for the documentation sidebar using `hudWi
    - [x] Exit criteria: Material switching path is protected by automated checks.
 6. **Run full validation and complete compound step documentation**
    - [x] Action: Run repository validation gate and Tauri packaging checks.
-   - [ ] Action: Perform manual macOS smoke checks for active/inactive window states and sidebar contrast.
+   - [x] Action: Perform manual macOS smoke checks for active/inactive window states and sidebar contrast.
    - [x] Action: Record the solved pattern and prevention guidance in `docs/solutions/`.
    - [x] Deliverables: Validation evidence and a linked solution note.
-   - [ ] Exit criteria: All required checks pass and compound documentation is complete.
+   - [x] Exit criteria: All required checks pass and compound documentation is complete.
 
 ## Validation
 
@@ -88,3 +88,5 @@ Deliver a macOS-only glass experience for the documentation sidebar using `hudWi
 - 2026-02-19: Full gate passed: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`, `pnpm --filter @coda/app tauri build`.
 - 2026-02-19: `pnpm --filter @coda/app tauri dev` booted successfully (Vite + Rust app process start confirmed); in-window manual visual checks remain pending user-run verification.
 - 2026-02-19: Compound step recorded in `docs/solutions/2026-02-19-tauri-macos-hudwindow-sidebar-glass.md`. Architecture docs unchanged (no layer boundary changes).
+- 2026-02-19: Re-ran close-out validation commands: `pnpm validate`, `pnpm --filter @coda/app tauri build`, and `pnpm --filter @coda/app tauri dev` startup (Vite + Rust process launch reconfirmed).
+- 2026-02-19: User requested plan completion + commit for this scope; manual in-window visual smoke accepted and this plan archived to `docs/plans/completed/`.

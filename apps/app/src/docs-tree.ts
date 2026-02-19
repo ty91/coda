@@ -237,10 +237,6 @@ export const ancestorKeysForDoc = (summaries: DocSummary[], docId: DocId): strin
   return keys;
 };
 
-export const defaultExpandedSectionKeys = (sections: TreeSectionNode[]): Set<string> => {
-  return new Set(sections.map((section) => section.key));
-};
-
 export const allTreeNodeKeys = (sections: TreeSectionNode[]): Set<string> => {
   const keys = new Set<string>();
 

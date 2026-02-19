@@ -33,6 +33,7 @@ export const DocViewerPanel = ({
   annotationNote,
 }: DocViewerPanelProps): ReactElement => {
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
+  const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
 
   return (
     <section className={`${panelSurfaceClass} grid min-w-0 gap-4 px-4 pb-4 pt-11 max-[980px]:pt-4`}>
@@ -43,17 +44,18 @@ export const DocViewerPanel = ({
         </div>
       </header>
 
-      <div className="grid gap-3">
-        <p className={`${messageTextClass} rounded-coda-sm border border-dashed border-coda-line-strong bg-[#fafaf8] px-3 py-[0.65rem]`}>
-          {annotationNote}
-        </p>
+      {showDocPanelStatus ? (
+        <div className="grid gap-3">
+          {selectedDoc ? (
+            <p className={`${messageTextClass} rounded-coda-sm border border-dashed border-coda-line-strong bg-[#fafaf8] px-3 py-[0.65rem]`}>
+              {annotationNote}
+            </p>
+          ) : null}
 
-        {documentLoading ? <p className={messageTextClass}>Loading selected document...</p> : null}
-        {documentError ? <p className="text-[0.92rem] text-coda-error">{documentError}</p> : null}
-        {!documentLoading && !documentError && !selectedDoc ? (
-          <p className={messageTextClass}>Select a document from the sidebar to start reading.</p>
-        ) : null}
-      </div>
+          {documentLoading ? <p className={messageTextClass}>Loading selected document...</p> : null}
+          {documentError ? <p className="text-[0.92rem] text-coda-error">{documentError}</p> : null}
+        </div>
+      ) : null}
 
       {!documentLoading && !documentError && selectedDoc ? (
         <div className="min-w-0">

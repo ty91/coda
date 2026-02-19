@@ -8,7 +8,6 @@ import {
   allTreeNodeKeys,
   ancestorKeysForDoc,
   buildTreeSections,
-  defaultExpandedSectionKeys,
 } from './docs-tree';
 const ANNOTATION_TODO_NOTE =
   'TODO(M2): Add inline annotation + section approval controls per ux-specification section 2.2.';
@@ -57,7 +56,7 @@ export const App = (): ReactElement => {
           return currentId;
         }
 
-        return summaries[0]?.id ?? null;
+        return null;
       });
 
       if (summaries.length === 0) {
@@ -114,16 +113,9 @@ export const App = (): ReactElement => {
         }
       }
 
-      if (next.size === 0 && treeSections.length > 0) {
-        const defaultKeys = defaultExpandedSectionKeys(treeSections);
-        for (const key of defaultKeys) {
-          next.add(key);
-        }
-      }
-
       return areSameSet(current, next) ? current : next;
     });
-  }, [treeNodeKeys, treeSections]);
+  }, [treeNodeKeys]);
 
   useEffect(() => {
     if (!selectedDocId) {

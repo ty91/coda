@@ -135,7 +135,15 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
-    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    const designDocsButton = await screen.findByRole('button', { name: 'Design Docs' });
+    const plansButton = screen.getByRole('button', { name: 'Plans' });
+    const referencesButton = screen.getByRole('button', { name: 'References' });
+
+    expect(designDocsButton.getAttribute('aria-expanded')).toBe('false');
+    expect(plansButton.getAttribute('aria-expanded')).toBe('false');
+    expect(referencesButton.getAttribute('aria-expanded')).toBe('false');
+    expect(screen.queryByRole('heading', { level: 3 })).toBeNull();
+    expect(screen.queryByText('Select a document from the sidebar to start reading.')).toBeNull();
     expect(document.querySelector('[data-tauri-drag-region]')).toBeNull();
   });
 
@@ -144,9 +152,14 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
     expect(screen.getByText('Beliefs body')).toBeTruthy();
 
+    fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
     fireEvent.click(screen.getByRole('button', { name: /active$/ }));
     await screen.findByRole('button', { name: /Execution Plan/ });
     fireEvent.click(screen.getByRole('button', { name: /Execution Plan/ }));
@@ -176,7 +189,7 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
-    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    await screen.findByRole('button', { name: 'Design Docs' });
     expect(screen.queryByText('template')).toBeNull();
 
     fireEvent.click(screen.getByLabelText('Show hidden/template docs'));
@@ -184,7 +197,8 @@ describe('App docs viewer', () => {
     await waitFor(() => {
       expect(mockInvoke).toHaveBeenCalledWith('list_doc_summaries', { includeHidden: true });
     });
-    await screen.findByText('template');
+    fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
+    await screen.findByRole('button', { name: /template/ });
   });
 
   it('reloads docs when icon refresh control is clicked', async () => {
@@ -192,7 +206,7 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
-    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    await screen.findByRole('button', { name: 'Design Docs' });
     expect(screen.getByRole('button', { name: 'Refresh docs list' })).toBeTruthy();
 
     const getListDocSummaryCallCount = (): number =>
@@ -212,13 +226,14 @@ describe('App docs viewer', () => {
 
     render(<App />);
 
-    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    await screen.findByRole('button', { name: 'References' });
     expect(screen.queryByText('Slack API Reference')).toBeNull();
 
-    fireEvent.click(screen.getByText('api'));
+    fireEvent.click(screen.getByRole('button', { name: 'References' }));
+    fireEvent.click(screen.getByRole('button', { name: 'api' }));
 
-    await screen.findByText('Slack API Reference');
-    fireEvent.click(screen.getByText('Slack API Reference'));
+    await screen.findByRole('button', { name: /Slack API Reference/ });
+    fireEvent.click(screen.getByRole('button', { name: /Slack API Reference/ }));
 
     await screen.findByRole('heading', { name: 'Slack API Reference', level: 3 });
     expect(screen.getByText('Slack reference body')).toBeTruthy();

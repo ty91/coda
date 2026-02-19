@@ -109,3 +109,4 @@ milestone: M1
 - 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 모두 통과했다.
 - 2026-02-19: 수동 Tauri 스모크 시도(`pnpm --filter @coda/app tauri dev`)는 `Error: Port 1420 is already in use`로 차단되어 ask 실제 창 상호작용 검증은 환경 정리 후 재시도 필요하다.
 - 2026-02-19: 컴파운드 기록으로 `docs/solutions/2026-02-19-ask-queue-floating-right-sidebar-conditional-visibility.md`를 추가했다. 아키텍처 문서 업데이트는 불필요했다(레이어 경계 변경 없음).
+- 2026-02-19: 사용자 환경에서 `tauri dev` 재실행 후 수동 ask 왕복 스모크를 완료했다. `coda ask --json --id ui-manual-smoke` 요청이 UI에서 정상 노출/제출되었고 CLI가 `status: answered` JSON으로 해제되는 것을 확인했다.

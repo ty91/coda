@@ -85,7 +85,32 @@ const documents: Record<string, DocDocument> = {
   },
 };
 
-const setupSuccessfulInvokeMock = (): void => {
+const pendingAskSessionsFixture: Array<Record<string, unknown>> = [
+  {
+    askId: 'ask-1',
+    request: {
+      questions: [
+        {
+          header: 'Scope',
+          id: 'scope_choice',
+          question: 'Choose scope?',
+          options: [
+            { label: 'Ship now (Recommended)', description: 'Fast path' },
+            { label: 'Expand', description: 'Broad path' },
+          ],
+        },
+      ],
+    },
+    requestedAtIso: '2026-02-19T14:00:00Z',
+    timeoutMs: 0,
+    expiresAtIso: null,
+    isExpired: false,
+  },
+];
+
+const setupSuccessfulInvokeMock = (
+  pendingAskSessions: Array<Record<string, unknown>> = []
+): void => {
   mockIsTauri.mockReturnValue(true);
   mockListen.mockResolvedValue(() => {});
 
@@ -108,7 +133,7 @@ const setupSuccessfulInvokeMock = (): void => {
     }
 
     if (command === 'list_pending_ask_sessions') {
-      return [];
+      return pendingAskSessions;
     }
 
     if (command === 'submit_ask_response') {
@@ -141,10 +166,10 @@ describe('App docs viewer', () => {
     expect(referencesButton.getAttribute('aria-expanded')).toBe('false');
     expect(screen.queryByRole('heading', { level: 3 })).toBeNull();
     expect(screen.queryByText('Select a document from the sidebar to start reading.')).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Reader', level: 2 })).toBeNull();
 
     const sidebar = screen.getByLabelText('Documentation sidebar');
-    const readerHeading = screen.getByRole('heading', { name: 'Reader', level: 2 });
-    const readerSurface = readerHeading.closest('section');
+    const readerSurface = screen.getByTestId('viewer-drag-region').closest('section');
     const refreshButton = screen.getByRole('button', { name: 'Refresh docs list' });
     const sidebarDragRegion = screen.getByTestId('sidebar-drag-region');
     const viewerDragRegion = screen.getByTestId('viewer-drag-region');
@@ -164,10 +189,14 @@ describe('App docs viewer', () => {
 
     await screen.findByRole('button', { name: 'Design Docs' });
     fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
-    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    const coreBeliefsButton = screen.getByRole('button', { name: /Core Beliefs/ });
+    fireEvent.click(coreBeliefsButton);
 
     await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
     expect(screen.getByText(/Beliefs body/)).toBeTruthy();
+    expect(coreBeliefsButton.className).toContain('!bg-[var(--color-coda-sidebar-row-hover)]');
+    expect(coreBeliefsButton.className).not.toContain('shadow-[inset_0_0_0_1px_#d0d0cd]');
+    expect(screen.queryByText(/TODO\(M2\): Add inline annotation/)).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
     fireEvent.click(screen.getByRole('button', { name: /active$/ }));
@@ -230,6 +259,15 @@ describe('App docs viewer', () => {
     await waitFor(() => {
       expect(getListDocSummaryCallCount()).toBe(2);
     });
+  });
+
+  it('keeps ask floating sidebar hidden when no pending ask exists', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
   });
 
   it('expands nested folders and loads nested documents from the tree', async () => {
@@ -417,7 +455,8 @@ describe('App docs viewer', () => {
     const previousButton = screen.getByRole('button', { name: 'Previous match' });
     expect(document.activeElement).toBe(findInput);
     expect(findOverlay.className).toContain('fixed');
-    expect(findOverlay.className).toContain('right-4');
+    expect(findOverlay.className).toContain('right-[var(--viewer-find-right-offset)]');
+    expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('16px');
 
     fireEvent.change(findInput, { target: { value: 'core' } });
 
@@ -441,6 +480,27 @@ describe('App docs viewer', () => {
     await waitFor(() => {
       expect(findCounter.textContent).not.toBe(beforePrevious);
     });
+  });
+
+  it('shows floating ask sidebar and shifts find overlay left when pending ask exists', async () => {
+    setupSuccessfulInvokeMock(pendingAskSessionsFixture);
+
+    render(<App />);
+
+    const askPanel = await screen.findByTestId('ask-inbox-panel');
+    expect(askPanel.className).toContain('fixed');
+    expect(askPanel.className).toContain('right-4');
+    expect(askPanel.className).toContain('w-[22.5rem]');
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    fireEvent.keyDown(window, { key: 'f', metaKey: true });
+
+    const findOverlay = await screen.findByTestId('viewer-find-overlay');
+    expect(findOverlay.style.getPropertyValue('--viewer-find-right-offset')).toBe('392px');
   });
 
   it('debounces find matching until 150ms after typing', async () => {

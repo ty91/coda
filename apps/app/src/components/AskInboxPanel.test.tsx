@@ -90,12 +90,78 @@ const setupInvokeWithSessions = (sessions: PendingAskSession[]): void => {
 };
 
 afterEach(() => {
+  vi.useRealTimers();
   mockInvoke.mockReset();
   mockIsTauri.mockReset();
   cleanup();
 });
 
 describe('AskInboxPanel', () => {
+  it('does not render panel when no pending asks exist', async () => {
+    mockIsTauri.mockReturnValue(true);
+    setupInvokeWithSessions([]);
+
+    render(<AskInboxPanel />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+    });
+  });
+
+  it('reveals panel when a pending ask arrives after initial empty poll', async () => {
+    mockIsTauri.mockReturnValue(true);
+    const onPendingCountChange = vi.fn();
+    let listCallCount = 0;
+
+    mockInvoke.mockImplementation(async (command) => {
+      if (command === 'list_pending_ask_sessions') {
+        listCallCount += 1;
+        return listCallCount === 1 ? [] : [buildSession()];
+      }
+      if (command === 'submit_ask_response') {
+        return null;
+      }
+      throw new Error(`Unexpected command: ${command}`);
+    });
+
+    render(<AskInboxPanel onPendingCountChange={onPendingCountChange} />);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+    });
+
+    await screen.findByTestId('ask-inbox-panel', {}, { timeout: 3000 });
+
+    expect(onPendingCountChange).toHaveBeenCalledWith(0);
+    expect(onPendingCountChange).toHaveBeenCalledWith(1);
+  });
+
+  it('keeps panel hidden when pending queue load fails', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      mockIsTauri.mockReturnValue(true);
+
+      mockInvoke.mockImplementation(async (command) => {
+        if (command === 'list_pending_ask_sessions') {
+          throw new Error('queue down');
+        }
+        if (command === 'submit_ask_response') {
+          return null;
+        }
+        throw new Error(`Unexpected command: ${command}`);
+      });
+
+      render(<AskInboxPanel />);
+
+      await waitFor(() => {
+        expect(warnSpy).toHaveBeenCalled();
+        expect(screen.queryByTestId('ask-inbox-panel')).toBeNull();
+      });
+    } finally {
+      warnSpy.mockRestore();
+    }
+  });
+
   it('submits answered payload with option and other selections plus note', async () => {
     const session = buildSession({
       request: {
@@ -180,8 +246,6 @@ describe('AskInboxPanel', () => {
         other_text: 'Medium risk due dependency',
       },
     ]);
-
-    await screen.findByText('No pending asks.');
   });
 
   it('shows soft-cap warning for asks with more than 4 questions but still renders them', async () => {

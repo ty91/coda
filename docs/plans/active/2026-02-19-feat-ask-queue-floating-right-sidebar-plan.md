@@ -47,10 +47,10 @@ milestone: M1
    - [x] Exit criteria: ask 패널 표시 여부가 문서 본문 폭/세로 흐름을 밀지 않고 독립적으로 동작하며, ask 표시 시 find 오버레이가 겹치지 않는다.
 
 4. **회귀 테스트 갱신**
-   - [ ] Action: `AskInboxPanel` 테스트를 "빈 큐 문구 노출"에서 "빈 큐/로딩/에러 미노출" 계약으로 전환하고, pending 발생 시 렌더링 복귀를 검증한다.
-   - [ ] Action: `App` 수준 테스트에 플로팅 배치 신호(클래스/위치), 기본 미노출 동작, ask 표시 시 find 오버레이 좌측 이동 신호를 추가한다.
-   - [ ] Deliverables: ask visibility + floating placement 회귀 테스트.
-   - [ ] Exit criteria: 노출 조건 또는 배치가 회귀하면 테스트가 실패한다.
+   - [x] Action: `AskInboxPanel` 테스트를 "빈 큐 문구 노출"에서 "빈 큐/로딩/에러 미노출" 계약으로 전환하고, pending 발생 시 렌더링 복귀를 검증한다.
+   - [x] Action: `App` 수준 테스트에 플로팅 배치 신호(클래스/위치), 기본 미노출 동작, ask 표시 시 find 오버레이 좌측 이동 신호를 추가한다.
+   - [x] Deliverables: ask visibility + floating placement 회귀 테스트.
+   - [x] Exit criteria: 노출 조건 또는 배치가 회귀하면 테스트가 실패한다.
 
 5. **게이트 검증 및 컴파운드 기록**
    - [ ] Action: lint/typecheck/test/build/validate 전체 게이트를 실행하고 수동 Tauri 스모크(ask 생성→노출→submit/cancel→자동 숨김)를 수행한다.
@@ -105,3 +105,4 @@ milestone: M1
 - 2026-02-19: Step 1 완료. `UI Contract` 섹션에 노출/배치/find offset/stacking 계약을 고정하고 Step 1 체크박스를 완료 처리했다.
 - 2026-02-19: Step 2 완료. `apps/app/src/components/AskInboxPanel.tsx`를 조건부 렌더링으로 전환해 pending ask가 없거나 큐 로드 실패 시 패널을 렌더링하지 않도록 조정했고, 폴링 기반 세션 동기화는 유지했다.
 - 2026-02-19: Step 3 완료. `apps/app/src/App.tsx`에서 ask 패널을 우측 고정 플로팅으로 이동하고 pending ask 개수 기반 find 오버레이 우측 오프셋 계산을 추가했다. `apps/app/src/components/DocViewerPanel.tsx`는 CSS variable 기반 우측 오프셋을 적용해 ask 노출 시 find를 좌측으로 밀도록 변경했다.
+- 2026-02-19: Step 4 완료. `apps/app/src/components/AskInboxPanel.test.tsx`에 빈 큐/에러 미노출 및 pending 전환 재노출 회귀를 추가했고, `apps/app/src/App.test.tsx`에 ask 플로팅 표시/기본 미노출/find 오프셋(`16px`/`392px`) 검증을 추가했다.

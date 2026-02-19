@@ -39,10 +39,10 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
    - [x] Exit criteria: `App`에서 하위 슬롯을 조합해 패널을 표현할 수 있고, 단일 거대 컴포넌트로 회귀하지 않는다.
 
 3. **`App` 중앙 레이아웃에 우측 채팅 패널 통합**
-   - [ ] Action: `apps/app/src/App.tsx`에서 `DocViewerPanel` 단일 배치를 2열 구조로 바꾸고, 좌측 문서 뷰어 가독성을 유지하는 우측 패널 폭을 적용한다.
-   - [ ] Action: 기존 ask 토글 및 find 오버레이 오프셋 계약(`16px`/`392px`)이 유지되는지 확인하고, 필요 시 최소 조정만 수행한다.
-   - [ ] Deliverables: 문서 뷰어 우측에 항상 보이는 채팅 패널 UI와 안정적인 내부 스크롤 레이아웃.
-   - [ ] Exit criteria: 문서 선택/읽기/찾기/ask 토글 기존 동작을 유지하면서 채팅 패널이 시각적으로 통합된다.
+   - [x] Action: `apps/app/src/App.tsx`에서 `DocViewerPanel` 단일 배치를 2열 구조로 바꾸고, 좌측 문서 뷰어 가독성을 유지하는 우측 패널 폭을 적용한다.
+   - [x] Action: 기존 ask 토글 및 find 오버레이 오프셋 계약(`16px`/`392px`)이 유지되는지 확인하고, 필요 시 최소 조정만 수행한다.
+   - [x] Deliverables: 문서 뷰어 우측에 항상 보이는 채팅 패널 UI와 안정적인 내부 스크롤 레이아웃.
+   - [x] Exit criteria: 문서 선택/읽기/찾기/ask 토글 기존 동작을 유지하면서 채팅 패널이 시각적으로 통합된다.
 
 4. **회귀 테스트 추가 및 업데이트**
    - [ ] Action: `apps/app/src/App.test.tsx`에 채팅 패널 기본 렌더, 뷰어와의 공존, ask/find 기존 계약 유지 여부를 검증하는 케이스를 추가한다.
@@ -84,3 +84,4 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
 - 2026-02-19: 본 계획 문서를 `docs/plans/active/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`에 초안(draft)으로 작성했다.
 - 2026-02-19: Step 1 완료. 채팅 패널 UI-only 범위, 2열 레이아웃 규칙, 내부 스크롤/고정 오버레이 비회귀 계약을 문서화했다.
 - 2026-02-19: Step 2 완료. `ChatPanel` compound component(`Root/Header/Messages/Composer`)와 전용 컴포넌트 테스트를 추가했다.
+- 2026-02-19: Step 3 완료. `App` 중앙 콘텐츠를 뷰어+채팅 2열로 통합했고, ask 패널 토글에 따른 find 오버레이 오프셋(`16px`/`392px`) 계약을 유지했다.

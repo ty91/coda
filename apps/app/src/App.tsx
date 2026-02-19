@@ -11,9 +11,18 @@ import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { open as openDirectoryDialog } from '@tauri-apps/plugin-dialog';
 import { MessageCircleQuestionMark, PanelLeft } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactElement,
+} from 'react';
 
 import { AskInboxPanel } from './components/AskInboxPanel';
+import { ChatPanel, type ChatPanelMessage } from './components/ChatPanel';
 import { DocViewerPanel } from './components/DocViewerPanel';
 import { DocsSidebar } from './components/DocsSidebar';
 import { ProjectsSidebar, type ProjectAddActionState } from './components/ProjectsSidebar';
@@ -25,8 +34,10 @@ const DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX = 16;
 const ASK_FLOATING_PANEL_WIDTH_PX = 360;
 const ASK_FLOATING_PANEL_RIGHT_OFFSET_PX = 16;
 const FIND_OVERLAY_PANEL_GAP_PX = 16;
+const DOC_CHAT_PANEL_WIDTH_PX = 320;
 const ASK_SIDEBAR_PANEL_ID = 'app-ask-sidebar-panel';
 const PROJECT_SIDEBAR_PANEL_ID = 'app-project-sidebar-panel';
+const DOC_CHAT_PANEL_ID = 'app-doc-chat-panel';
 const ASK_SIDEBAR_PANEL_CLASS_NAME =
   'fixed right-4 top-12 z-40 max-h-[calc(100vh-3.5rem)] w-[22.5rem] overflow-auto';
 
@@ -127,6 +138,31 @@ export const App = (): ReactElement => {
   const findOverlayRightOffsetPx = isAskPanelVisible
     ? ASK_FLOATING_PANEL_WIDTH_PX + ASK_FLOATING_PANEL_RIGHT_OFFSET_PX + FIND_OVERLAY_PANEL_GAP_PX
     : DEFAULT_FIND_OVERLAY_RIGHT_OFFSET_PX;
+  const docsContentLayoutStyle = {
+    ['--doc-chat-panel-width' as string]: `${DOC_CHAT_PANEL_WIDTH_PX}px`,
+  } as CSSProperties;
+  const mockChatMessages = useMemo<ChatPanelMessage[]>(() => {
+    if (!selectedDoc) {
+      return [];
+    }
+
+    return [
+      {
+        id: `${selectedDoc.id}-assistant-context`,
+        role: 'assistant',
+        author: 'Coda',
+        body: `Loaded "${selectedDoc.displayTitle}". Ask actions stay disabled in this milestone UI.`,
+        timestampLabel: 'context',
+      },
+      {
+        id: `${selectedDoc.id}-user-preview`,
+        role: 'user',
+        author: 'You',
+        body: 'Summarize decisions and open risks from this document.',
+        timestampLabel: 'draft',
+      },
+    ];
+  }, [selectedDoc]);
 
   const shellClassName = isProjectSidebarOpen
     ? 'grid h-screen grid-cols-[minmax(176px,220px)_minmax(250px,292px)_minmax(0,1fr)] items-stretch gap-3 overflow-hidden pl-3 pr-0 pb-0 pt-0 animate-[shell-enter_200ms_ease-out]'
@@ -720,26 +756,44 @@ export const App = (): ReactElement => {
           </div>
         </header>
 
-        <DocViewerPanel
-          selectedDoc={selectedDoc}
-          documentLoading={documentLoading}
-          documentError={documentError}
-          findOverlayRightOffsetPx={findOverlayRightOffsetPx}
-          findOpen={findOpen}
-          findInputQuery={findInputQuery}
-          findSearchQuery={findSearchQuery}
-          findMatchCount={findMatchCount}
-          activeFindMatchIndex={activeFindMatchIndex}
-          findInputFocusToken={findInputFocusToken}
-          findNextRequestToken={findNextRequestToken}
-          findPreviousRequestToken={findPreviousRequestToken}
-          onFindQueryChange={setFindInputQuery}
-          onFindClose={closeFind}
-          onFindRequestNext={requestFindNext}
-          onFindRequestPrevious={requestFindPrevious}
-          onFindMatchCountChange={setFindMatchCount}
-          onActiveFindMatchIndexChange={setActiveFindMatchIndex}
-        />
+        <div
+          className="grid min-h-0 min-w-0 gap-3 pr-3 [grid-template-columns:minmax(0,1fr)_var(--doc-chat-panel-width)]"
+          style={docsContentLayoutStyle}
+        >
+          <DocViewerPanel
+            selectedDoc={selectedDoc}
+            documentLoading={documentLoading}
+            documentError={documentError}
+            findOverlayRightOffsetPx={findOverlayRightOffsetPx}
+            findOpen={findOpen}
+            findInputQuery={findInputQuery}
+            findSearchQuery={findSearchQuery}
+            findMatchCount={findMatchCount}
+            activeFindMatchIndex={activeFindMatchIndex}
+            findInputFocusToken={findInputFocusToken}
+            findNextRequestToken={findNextRequestToken}
+            findPreviousRequestToken={findPreviousRequestToken}
+            onFindQueryChange={setFindInputQuery}
+            onFindClose={closeFind}
+            onFindRequestNext={requestFindNext}
+            onFindRequestPrevious={requestFindPrevious}
+            onFindMatchCountChange={setFindMatchCount}
+            onActiveFindMatchIndexChange={setActiveFindMatchIndex}
+          />
+
+          <ChatPanel.Root panelId={DOC_CHAT_PANEL_ID} ariaLabel="Document chat panel">
+            <ChatPanel.Header
+              title="Document Chat"
+              description="Reader-side chat preview. Send and IPC are intentionally disabled in M1."
+              statusLabel="UI placeholder"
+            />
+            <ChatPanel.Messages
+              items={mockChatMessages}
+              emptyLabel="Select a document to preview chat context."
+            />
+            <ChatPanel.Composer />
+          </ChatPanel.Root>
+        </div>
       </section>
 
       <AskInboxPanel

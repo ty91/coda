@@ -74,6 +74,17 @@ A human can approve/reject a plan through three channels:
 
 All three channels converge on the same Plan Manager API. The first approval wins (no double-approval needed).
 
+### Agent Ask Channel (M1 Runtime Contract)
+
+For interactive, non-plan decisions during agent execution, Coda now provides a dedicated `coda ask` channel:
+
+1. The agent pipes a structured JSON request to `coda ask` over stdin.
+2. The CLI forwards that request to the local Unix socket at `~/.coda/runtime/ask.sock`.
+3. The Tauri backend exposes pending asks to the UI and accepts submit/cancel actions.
+4. The UI returns a structured response over the same session, and the blocked CLI resumes immediately.
+
+This keeps human-in-the-loop prompts in a single local trust boundary (CLI + desktop app), while preserving machine-parseable request/response contracts for agent subprocess orchestration.
+
 ### Decision Points Requiring Human Judgment
 
 | Decision Point | Trigger | Default Behavior if No Response |

@@ -211,10 +211,10 @@ milestone: M1
    - [x] Exit criteria: 기존 명령 회귀 없이 전체 ask 흐름이 동작한다.
 
 7. **컴파운드 문서화 완료**
-   - [ ] Action: 다중 질문 ask 패턴/실수/예방 전략을 `docs/solutions/`에 기록한다.
-   - [ ] Action: human-in-loop 계약 변경점이 있으면 관련 설계 문서를 갱신한다.
-   - [ ] Deliverables: 신규 solution 문서 + 링크 업데이트.
-   - [ ] Exit criteria: 후속 기능에서 재사용 가능한 지식이 남는다.
+   - [x] Action: 다중 질문 ask 패턴/실수/예방 전략을 `docs/solutions/`에 기록한다.
+   - [x] Action: human-in-loop 계약 변경점이 있으면 관련 설계 문서를 갱신한다.
+   - [x] Deliverables: 신규 solution 문서 + 링크 업데이트.
+   - [x] Exit criteria: 후속 기능에서 재사용 가능한 지식이 남는다.
 
 ## 검증
 
@@ -262,3 +262,4 @@ milestone: M1
 - 2026-02-19: Step 4 완료. `apps/app/src-tauri/src/ask_runtime.rs` 기반 Unix socket 서버와 pending 조회/응답 제출 명령을 추가하고, `apps/app/src/components/AskInboxPanel.tsx` 다중 질문 UI(자동 Other/노트/submit/cancel/소프트 stale 표시)를 연결했다. `pnpm --filter @coda/app lint/test/typecheck` 및 `apps/app/src-tauri cargo test`를 통과했다.
 - 2026-02-19: Step 5 완료. `apps/cli/src/ask.test.ts`에 cancel/손상 소켓/빈 stdin 회귀를 추가하고, `apps/app/src/components/AskInboxPanel.test.tsx`에 질문 렌더링/Other/노트/소프트캡 경고/submit-cancel invoke 검증을 추가했다. 또한 `tools/ask-roundtrip-smoke.mjs` 통합 스모크 스크립트를 추가해 `node tools/ask-roundtrip-smoke.mjs`로 CLI unblock 흐름을 재현했다.
 - 2026-02-19: Step 6 완료. 루트 게이트(`pnpm lint/typecheck/test/build/validate`)를 모두 통과했다. GUI 수동 검증은 CI/헤드리스 제약으로 대체하여 `node tools/ask-roundtrip-smoke.mjs` 소켓 roundtrip 스모크로 `ask -> submit -> unblock`을 확인했다.
+- 2026-02-19: Step 7 완료. `docs/solutions/2026-02-19-cli-ask-unix-socket-bridge.md`에 패턴/실수 예방을 기록하고, HITL 계약 변경을 `docs/design-docs/ADR-006-human-in-loop.md`에 반영했다.

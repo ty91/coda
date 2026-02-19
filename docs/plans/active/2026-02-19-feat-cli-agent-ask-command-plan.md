@@ -184,11 +184,11 @@ milestone: M1
    - [x] Exit criteria: 잘못된 요청은 런타임 진입 전에 코드 `2`로 실패한다.
 
 3. **CLI 블로킹 런타임 구현 (`apps/cli`)**
-   - [ ] Action: `ask` 명령 등록 및 stdin JSON 입력 파싱(EOF까지 읽기)을 추가한다.
-   - [ ] Action: Unix socket 연결/요청 전송/응답 대기, timeout/cancel/interrupt 처리 루프를 구현한다.
-   - [ ] Action: 기본 텍스트 출력과 JSON 출력 포맷을 구현한다.
-   - [ ] Deliverables: 다중 질문 블로킹 `coda ask` + help 텍스트.
-   - [ ] Exit criteria: 유효 Tauri 응답이 도착할 때만 명령이 해제된다.
+   - [x] Action: `ask` 명령 등록 및 stdin JSON 입력 파싱(EOF까지 읽기)을 추가한다.
+   - [x] Action: Unix socket 연결/요청 전송/응답 대기, timeout/cancel/interrupt 처리 루프를 구현한다.
+   - [x] Action: 기본 텍스트 출력과 JSON 출력 포맷을 구현한다.
+   - [x] Deliverables: 다중 질문 블로킹 `coda ask` + help 텍스트.
+   - [x] Exit criteria: 유효 Tauri 응답이 도착할 때만 명령이 해제된다.
 
 4. **Tauri 백엔드/프런트엔드 질문 패널 구현 (`apps/app`)**
    - [ ] Action: ask socket 서버 초기화, pending ask 조회/응답 제출 Tauri 명령을 추가한다.
@@ -257,3 +257,4 @@ milestone: M1
 - 2026-02-19: CLI help 텍스트 초안에 stdin 파이프 사용 예시를 추가했다.
 - 2026-02-19: Step 1 완료. Ask I/O 계약 표와 상태 전이 매트릭스를 문서에 고정했다.
 - 2026-02-19: Step 2 완료. `packages/core/src/contracts.ts`, `packages/core/src/validation.ts`, `packages/core/src/validation.test.ts`에 ask 타입/검증/회귀 테스트를 추가했고 `pnpm --filter @coda/core test/typecheck/build`를 통과했다.
+- 2026-02-19: Step 3 완료. `apps/cli/src/main.ts`, `apps/cli/src/ask.ts`, `apps/cli/src/ask.test.ts`에 stdin 기반 `ask` 명령/Unix socket 블로킹 런타임/JSON-텍스트 출력을 구현했고 `pnpm --filter @coda/cli lint/test/typecheck/build`를 통과했다.

@@ -4,6 +4,8 @@ import { SCAFFOLD_STATUS } from '@coda/core/contracts';
 import { parseNonEmptyDescription, parseStatusOptions } from '@coda/core/validation';
 import { Command, CommanderError } from 'commander';
 
+import { CliExit, runAskCommand } from './ask.js';
+
 const EXIT_SUCCESS = 0;
 const EXIT_VALIDATION_ERROR = 2;
 const EXIT_RUNTIME_ERROR = 1;
@@ -63,6 +65,26 @@ const registerStatusCommand = (program: Command): void => {
     });
 };
 
+const registerAskCommand = (program: Command): void => {
+  program
+    .command('ask')
+    .description('request structured user input from Tauri UI')
+    .option('--id <value>', 'correlation id (max 64 chars, [A-Za-z0-9._:-]+)')
+    .option('--timeout-ms <value>', 'timeout in milliseconds (default: 0 means wait forever)', '0')
+    .option('--json', 'emit JSON output')
+    .addHelpText(
+      'after',
+      `
+Examples:
+  echo '{"questions":[...]}' | coda ask
+  cat ./fixtures/ask/multi-question.json | coda ask --json
+  cat ./fixtures/ask/multi-question-timeout.json | coda ask --timeout-ms 30000`
+    )
+    .action(async (rawOptions: { id?: string; timeoutMs?: string; json?: boolean }) => {
+      await runAskCommand(rawOptions, { stdin: process.stdin, stdout: writeStdout });
+    });
+};
+
 const createProgram = (): Command => {
   const program = new Command();
 
@@ -73,6 +95,7 @@ const createProgram = (): Command => {
   registerDescriptionCommand(program, 'review', 'run scaffold review workflow');
   registerStubCommand(program, 'compound', 'capture scaffold learnings');
   registerStatusCommand(program);
+  registerAskCommand(program);
 
   return program;
 };
@@ -85,6 +108,13 @@ const run = async (): Promise<number> => {
     await program.parseAsync(process.argv);
     return EXIT_SUCCESS;
   } catch (error: unknown) {
+    if (error instanceof CliExit) {
+      if (error.message.length > 0) {
+        writeStderr(`error: ${error.message}`);
+      }
+      return error.exitCode;
+    }
+
     if (error instanceof CommanderError) {
       if (error.code === 'commander.helpDisplayed') {
         return EXIT_SUCCESS;

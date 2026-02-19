@@ -33,10 +33,10 @@ milestone: M1
    - [x] Exit criteria: 구현/테스트가 동일 범위를 기준으로 평가 가능하다.
 
 2. **공용 UI 클래스 토큰을 13px + font-normal 기준으로 재정렬**
-   - [ ] Action: `apps/app/src/ui-classes.ts`의 사이드바 관련 클래스(`sidebarSectionHeaderClass`, `treeRowClass`, `eyebrowClass`, `messageTextClass` 계열)를 13px(`text-[0.8125rem]`) + `font-normal` 기준으로 정리한다.
-   - [ ] Action: 의미상 굵기 강조가 꼭 필요한 예외가 있다면 근거를 남기고 최소화한다.
-   - [ ] Deliverables: 사이드바 텍스트 토큰 일원화.
-   - [ ] Exit criteria: 사이드바 텍스트 클래스에서 `font-medium`/`font-semibold` 의존이 제거되거나 명시적 예외로 한정된다.
+   - [x] Action: `apps/app/src/ui-classes.ts`의 사이드바 관련 클래스(`sidebarSectionHeaderClass`, `treeRowClass`, `eyebrowClass`, `messageTextClass` 계열)를 13px(`text-[0.8125rem]`) + `font-normal` 기준으로 정리한다.
+   - [x] Action: 의미상 굵기 강조가 꼭 필요한 예외가 있다면 근거를 남기고 최소화한다.
+   - [x] Deliverables: 사이드바 텍스트 토큰 일원화.
+   - [x] Exit criteria: 사이드바 텍스트 클래스에서 `font-medium`/`font-semibold` 의존이 제거되거나 명시적 예외로 한정된다.
 
 3. **컴포넌트 내 인라인 텍스트 클래스 정합성 정리**
    - [ ] Action: `apps/app/src/components/DocsSidebar.tsx`의 직접 지정 타이포그래피(예: 문서 제목 span 등)를 공용 토큰 기준과 맞춘다.
@@ -87,6 +87,7 @@ milestone: M1
 - 2026-02-19: 외부 리서치는 생략했다. 로컬 컨텍스트만으로 실행 가능한 계획 수립이 가능하다고 판단했다.
 - 2026-02-19: 범위 확정. 사용자 확인에 따라 이번 타이포그래피 통일 대상은 `DocsSidebar`로 한정한다.
 - 2026-02-19: Step 1 완료. `Scope Contract` 표로 포함/비포함 대상을 고정해 구현/테스트 기준을 명문화했다.
+- 2026-02-19: Step 2 완료. `apps/app/src/ui-classes.ts`의 사이드바 텍스트 토큰을 `0.8125rem` + `font-normal`로 정렬하고, 범위 외 영향 방지를 위해 `sidebarMessageTextClass`를 분리했다.
 
 ## Assumptions / Open Questions
 

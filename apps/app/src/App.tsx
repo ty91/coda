@@ -433,7 +433,7 @@ export const App = (): ReactElement => {
   }, []);
 
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(250px,292px)_minmax(0,1fr)] items-start gap-3 pl-3 pr-0 pb-3 pt-0 animate-[shell-enter_200ms_ease-out] max-[980px]:grid-cols-1 max-[980px]:p-2">
+    <main className="grid min-h-screen grid-cols-[minmax(250px,292px)_minmax(0,1fr)] items-stretch gap-3 pl-3 pr-0 pb-0 pt-0 animate-[shell-enter_200ms_ease-out] max-[980px]:grid-cols-1 max-[980px]:p-2">
       <DocsSidebar
         summaries={docSummaries}
         treeSections={treeSections}
@@ -445,7 +445,7 @@ export const App = (): ReactElement => {
         onSelectDoc={setSelectedDocId}
       />
 
-      <section className="grid min-w-0 gap-3">
+      <section className="grid min-h-0 min-w-0">
         <DocViewerPanel
           selectedDoc={selectedDoc}
           documentLoading={documentLoading}

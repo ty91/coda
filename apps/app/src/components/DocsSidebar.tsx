@@ -1,4 +1,5 @@
 import type { DocId, DocSummary } from '@coda/core/contracts';
+import { RefreshCw } from 'lucide-react';
 import type { CSSProperties, ReactElement } from 'react';
 
 import type { TreeFolderNode, TreeNode, TreeSectionNode } from '../docs-tree';
@@ -8,6 +9,7 @@ import {
   sidebarSectionClass,
   sidebarSectionHeaderClass,
   sidebarSurfaceClass,
+  sidebarIconButtonClass,
   sidebarUtilityButtonClass,
   sidebarUtilityGroupClass,
   treeRowClass,
@@ -149,29 +151,34 @@ export const DocsSidebar = ({
 }: DocsSidebarProps): ReactElement => {
   return (
     <aside
-      className={`${sidebarSurfaceClass} sticky top-3 grid max-h-[calc(100vh-1.5rem)] gap-3 overflow-auto p-3 max-[980px]:static max-[980px]:max-h-none`}
+      className={`${sidebarSurfaceClass} sticky top-0 grid max-h-[100vh] gap-3 overflow-auto px-3 pb-3 pt-11 max-[980px]:static max-[980px]:max-h-none max-[980px]:p-3`}
       aria-label="Documentation sidebar"
     >
       <header className="grid gap-[0.15rem] px-1">
         <p className={eyebrowClass}>Workspace</p>
-        <h2 className="text-[0.98rem] font-semibold tracking-[-0.01em] text-[var(--color-coda-sidebar-text)]">
-          Docs Tree
-        </h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-[0.98rem] font-semibold tracking-[-0.01em] text-[var(--color-coda-sidebar-text)]">
+            Docs Tree
+          </h2>
+          <button
+            type="button"
+            className={sidebarIconButtonClass}
+            onClick={() => void onRefresh()}
+            disabled={listLoading}
+            aria-label={listLoading ? 'Refreshing docs list' : 'Refresh docs list'}
+            title={listLoading ? 'Refreshing docs list' : 'Refresh docs list'}
+          >
+            <RefreshCw
+              size={15}
+              strokeWidth={2}
+              aria-hidden
+              className={listLoading ? 'animate-spin' : undefined}
+            />
+          </button>
+        </div>
       </header>
 
       <div className={sidebarUtilityGroupClass}>
-        <button
-          type="button"
-          className={sidebarUtilityButtonClass}
-          onClick={() => void onRefresh()}
-          disabled={listLoading}
-        >
-          <span>Refresh list</span>
-          <span className="text-[0.66rem] font-semibold tracking-[0.08em] text-[var(--color-coda-sidebar-label)] uppercase">
-            {listLoading ? 'Busy' : 'Run'}
-          </span>
-        </button>
-
         <label className={`${sidebarUtilityButtonClass} cursor-pointer`} htmlFor="include-hidden-toggle">
           <span className="inline-flex items-center gap-2">
             <input

@@ -130,6 +130,15 @@ afterEach(() => {
 });
 
 describe('App docs viewer', () => {
+  it('does not render an extra title overlay strip layer', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(document.querySelector('[data-tauri-drag-region]')).toBeNull();
+  });
+
   it('loads docs and allows selecting another document from the sidebar', async () => {
     setupSuccessfulInvokeMock();
 
@@ -176,6 +185,26 @@ describe('App docs viewer', () => {
       expect(mockInvoke).toHaveBeenCalledWith('list_doc_summaries', { includeHidden: true });
     });
     await screen.findByText('template');
+  });
+
+  it('reloads docs when icon refresh control is clicked', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(screen.getByRole('button', { name: 'Refresh docs list' })).toBeTruthy();
+
+    const getListDocSummaryCallCount = (): number =>
+      mockInvoke.mock.calls.filter(([command]) => command === 'list_doc_summaries').length;
+
+    expect(getListDocSummaryCallCount()).toBe(1);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh docs list' }));
+
+    await waitFor(() => {
+      expect(getListDocSummaryCallCount()).toBe(2);
+    });
   });
 
   it('expands nested folders and loads nested documents from the tree', async () => {

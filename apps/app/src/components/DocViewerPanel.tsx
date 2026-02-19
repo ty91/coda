@@ -35,7 +35,7 @@ export const DocViewerPanel = ({
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
 
   return (
-    <section className={`${panelSurfaceClass} grid min-w-0 gap-4 p-4`}>
+    <section className={`${panelSurfaceClass} grid min-w-0 gap-4 px-4 pb-4 pt-11 max-[980px]:pt-4`}>
       <header className={headerRowClass}>
         <div>
           <p className={eyebrowClass}>Document</p>

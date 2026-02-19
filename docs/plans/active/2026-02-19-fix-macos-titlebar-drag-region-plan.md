@@ -15,6 +15,7 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
 - Current window config uses `hiddenTitle: true` + `titleBarStyle: "Overlay"` (`apps/app/src-tauri/tauri.conf.json:17`, `apps/app/src-tauri/tauri.conf.json:18`).
 - Current React shell fills the top region but does not define a Tauri drag region (`apps/app/src/App.tsx:158`).
 - Existing regression test currently asserts drag region is absent (`apps/app/src/App.test.tsx:147`), which likely codified the current broken behavior.
+- Latest manual report: double-click on top bar still toggles maximize/restore, but drag-to-move still fails. This indicates native titlebar handling exists, while drag hit-target mapping in web content remains wrong.
 - Prior title-bar cleanup intentionally removed extra overlay strip and kept single-layer shell (`docs/solutions/2026-02-19-tauri-macos-transparent-titlebar-hidden-title.md:23`).
 - Official Tauri docs confirm custom/overlay title bars need explicit drag-region markup and caution around interactive children:
   - https://v2.tauri.app/learn/window-customization/
@@ -40,23 +41,23 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
    - [x] Deliverables: Root-cause statement + chosen contract documented in this plan progress log.
    - [x] Exit criteria: One fix direction selected with clear drag/non-drag boundaries.
 
-3. **Implement drag-region and interaction boundaries**
-   - [x] Action: Add `data-tauri-drag-region` only where intended drag should be possible, and mark interactive controls as non-drag where required by Tauri behavior.
-   - [x] Action: Keep existing UX/layout decisions (single-layer shell, no duplicated header block) unless root-cause proof requires adjustment.
-   - [x] Deliverables: Updated app shell/component markup and any minimal style adjustments.
-   - [ ] Exit criteria: Drag works in designated zones and controls remain clickable/selectable.
+3. **Realign drag hit-targets to direct elements**
+   - [x] Action: Replace container-level drag attributes with explicit top drag strips that users directly click/drag.
+   - [x] Action: Keep interactive controls outside drag strip hit areas to avoid accidental drag on clicks.
+   - [x] Deliverables: Dedicated sidebar/reader drag-strip markup with clear boundaries.
+   - [ ] Exit criteria: Drag starts reliably from strip areas while controls remain fully interactive.
 
-4. **Add regression coverage for this bug**
-   - [x] Action: Replace/adjust the current assertion that enforces no drag region, and add tests that assert drag-region element presence and safe interaction boundaries.
-   - [x] Action: Add at least one test that fails without the fix (bug reproduction guard).
+4. **Update regression coverage for direct-hit drag placement**
+   - [x] Action: Replace current drag-region assertions with tests that target dedicated drag strips.
+   - [x] Action: Add a guard that fails if drag attributes are moved back to ineffective container-only placement.
    - [x] Deliverables: Updated tests in app UI test suite.
-   - [x] Exit criteria: Test suite fails on drag-region removal regression and passes with fix.
+   - [x] Exit criteria: Tests encode direct-hit placement and prevent this regression pattern.
 
 5. **Run full gate + manual verification and compound docs**
    - [x] Action: Run full repo gate (`pnpm validate`) and app checks.
    - [ ] Action: Run Tauri manual smoke to confirm real window dragging in dev app.
-   - [x] Action: Record solution/pattern/prevention in `docs/solutions/` per compound step.
-   - [x] Deliverables: Validation evidence + new solution note.
+   - [x] Action: Update solution/pattern/prevention doc with final direct-hit fix path.
+   - [x] Deliverables: Validation evidence + refreshed solution note.
    - [ ] Exit criteria: Gate green, manual drag confirmed, compounding docs complete.
 
 ## Validation
@@ -92,3 +93,9 @@ When the user drags the top title-bar area, the Tauri window moves reliably agai
 - 2026-02-19: Validation passed: `pnpm --filter @coda/app test -- App.test.tsx`, `pnpm --filter @coda/app lint`, `pnpm --filter @coda/app typecheck`, `pnpm --filter @coda/app build`, `pnpm validate`.
 - 2026-02-19: Started `pnpm --filter @coda/app tauri dev` successfully (Vite + Rust app boot); direct manual drag confirmation remains pending user interaction in the running app window.
 - 2026-02-19: Compound step documented in `docs/solutions/2026-02-19-tauri-overlay-titlebar-drag-region.md`.
+- 2026-02-19: User-reported behavior update: title-bar double-click maximize/restore works, but drag-to-move still fails; this confirms native titlebar exists but drag hit-target placement is still incorrect.
+- 2026-02-19: Reworked drag-region placement to direct-hit top strips (`data-tauri-drag-region`) in sidebar and reader panels; removed ineffective container-level drag attributes.
+- 2026-02-19: Updated regression test to assert dedicated drag-strip elements and to guard against container-only drag attribute placement regressions.
+- 2026-02-19: Targeted regression suite passed with new drag-strip checks: `pnpm --filter @coda/app test -- App.test.tsx`.
+- 2026-02-19: Full gate re-run passed after direct-hit strip changes: `pnpm validate`.
+- 2026-02-19: Manual Tauri smoke currently blocked by dev-server conflict while starting `pnpm --filter @coda/app tauri dev`: `Error: Port 1420 is already in use`.

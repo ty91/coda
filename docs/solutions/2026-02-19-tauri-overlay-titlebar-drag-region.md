@@ -11,26 +11,28 @@ After switching to an overlay macOS title bar, users could no longer drag the wi
 
 ## Root Cause
 
-The window was configured with `titleBarStyle: "Overlay"` and `hiddenTitle: true`, but the React UI defined no `data-tauri-drag-region`.
-Under Tauri overlay/custom title bar behavior, dragging only works in elements explicitly marked as drag regions.
-An existing test also asserted that no drag region should exist, which locked in the broken state.
+The window was configured with `titleBarStyle: "Overlay"` and `hiddenTitle: true`, so drag behavior depended on explicit web-content drag regions.
+Initial patching added `data-tauri-drag-region` to large container elements only, but users mostly mouse-down on child content. In practice, container-only placement did not provide reliable drag hit targets.
+Manual symptom confirmed this: top-bar double-click maximize/restore still worked, but drag-to-move did not.
 
 ## Solution
 
-- Added `data-tauri-drag-region` to the existing top-safe container surfaces:
-  - `apps/app/src/components/DocsSidebar.tsx`
-  - `apps/app/src/components/DocViewerPanel.tsx`
-- Kept the single-layer shell design and avoided adding a separate visual title strip.
+- Removed container-level drag attributes from sidebar/reader root containers.
+- Added dedicated direct-hit top drag strips (`data-tauri-drag-region`) in the existing safe top area for:
+  - `apps/app/src/components/DocsSidebar.tsx` (`sidebar-drag-region`)
+  - `apps/app/src/components/DocViewerPanel.tsx` (`viewer-drag-region`)
+- Kept the single-layer shell design and used absolute strips in existing top padding, so no extra visual title strip was introduced.
 - Updated regression coverage in `apps/app/src/App.test.tsx`:
-  - Assert sidebar and reader surfaces are marked as drag regions.
+  - Assert dedicated drag-strip elements are marked as drag regions.
+  - Assert sidebar and reader containers are not drag regions (guard against ineffective container-only placement).
   - Assert interactive controls (for example, refresh button) are not marked as drag regions.
   - Assert exactly two drag-region elements are rendered.
 
 ## Prevention
 
 - For any Tauri window using overlay/custom title bars, treat drag-region markup as a required checklist item.
-- Keep at least one UI test that fails if drag-region attributes are removed.
-- Prefer adding drag regions on existing non-interactive top-safe containers before introducing new overlay layers.
+- Keep at least one UI test that fails if drag-region attributes are removed or moved to container-only placement.
+- Prefer dedicated, directly-clickable non-interactive drag strips over broad container-level attributes.
 
 ## Related
 

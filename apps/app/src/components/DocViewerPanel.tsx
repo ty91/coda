@@ -37,9 +37,14 @@ export const DocViewerPanel = ({
 
   return (
     <section
-      className={`${panelSurfaceClass} grid min-w-0 gap-4 px-4 pb-4 pt-11 max-[980px]:pt-4`}
-      data-tauri-drag-region
+      className={`${panelSurfaceClass} relative grid min-w-0 gap-4 px-4 pb-4 pt-11 max-[980px]:pt-4`}
     >
+      <div
+        className="absolute inset-x-0 top-0 h-11 max-[980px]:hidden"
+        data-tauri-drag-region
+        data-testid="viewer-drag-region"
+        aria-hidden
+      />
       <header className={headerRowClass}>
         <div>
           <p className={eyebrowClass}>Document</p>

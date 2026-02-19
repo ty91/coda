@@ -126,9 +126,13 @@ describe('App docs viewer', () => {
     const readerHeading = screen.getByRole('heading', { name: 'Reader', level: 2 });
     const readerSurface = readerHeading.closest('section');
     const refreshButton = screen.getByRole('button', { name: 'Refresh docs list' });
+    const sidebarDragRegion = screen.getByTestId('sidebar-drag-region');
+    const viewerDragRegion = screen.getByTestId('viewer-drag-region');
 
-    expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(true);
-    expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(sidebarDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(viewerDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
+    expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(false);
+    expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(refreshButton.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(2);
   });

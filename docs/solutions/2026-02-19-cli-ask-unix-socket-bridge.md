@@ -3,7 +3,7 @@ title: "Bridge coda ask between CLI and Tauri via Unix socket"
 date: 2026-02-19
 tags: [cli, app, human-in-loop, ask-command, unix-socket, milestone-1]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-cli-agent-ask-command-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-cli-agent-ask-command-plan.md"
 ---
 
 ## Problem

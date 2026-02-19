@@ -1,7 +1,7 @@
 ---
 title: "CLI `coda ask` 다중 질문 UI 브리지 추가"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [cli, human-in-loop, ask-command, agent-runtime, milestone-1]
 milestone: M1
 ---
@@ -263,3 +263,4 @@ milestone: M1
 - 2026-02-19: Step 5 완료. `apps/cli/src/ask.test.ts`에 cancel/손상 소켓/빈 stdin 회귀를 추가하고, `apps/app/src/components/AskInboxPanel.test.tsx`에 질문 렌더링/Other/노트/소프트캡 경고/submit-cancel invoke 검증을 추가했다. 또한 `tools/ask-roundtrip-smoke.mjs` 통합 스모크 스크립트를 추가해 `node tools/ask-roundtrip-smoke.mjs`로 CLI unblock 흐름을 재현했다.
 - 2026-02-19: Step 6 완료. 루트 게이트(`pnpm lint/typecheck/test/build/validate`)를 모두 통과했다. GUI 수동 검증은 CI/헤드리스 제약으로 대체하여 `node tools/ask-roundtrip-smoke.mjs` 소켓 roundtrip 스모크로 `ask -> submit -> unblock`을 확인했다.
 - 2026-02-19: Step 7 완료. `docs/solutions/2026-02-19-cli-ask-unix-socket-bridge.md`에 패턴/실수 예방을 기록하고, HITL 계약 변경을 `docs/design-docs/ADR-006-human-in-loop.md`에 반영했다.
+- 2026-02-19: 사용자 요청으로 plan 완료 처리. `docs/plans/completed/2026-02-19-feat-cli-agent-ask-command-plan.md`로 이동하고 상태를 `completed`로 갱신했다.

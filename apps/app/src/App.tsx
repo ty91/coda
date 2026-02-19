@@ -619,6 +619,10 @@ export const App = (): ReactElement => {
         loading={projectLoading}
         error={projectError}
         isOpen={isProjectSidebarOpen}
+        addActionState="idle"
+        onRequestAddProject={() => {
+          void 0;
+        }}
         onSelectProject={(projectId) => {
           void handleProjectSelection(projectId);
         }}

@@ -1,8 +1,10 @@
 import type { ProjectId, ProjectSummary } from '@coda/core/contracts';
-import { FolderKanban } from 'lucide-react';
+import { FolderKanban, FolderPlus } from 'lucide-react';
 import type { ReactElement } from 'react';
 
 import { eyebrowClass, sidebarMessageTextClass, sidebarSurfaceClass } from '../ui-classes';
+
+export type ProjectAddActionState = 'idle' | 'selecting' | 'registering';
 
 type ProjectsSidebarProps = {
   panelId: string;
@@ -11,6 +13,8 @@ type ProjectsSidebarProps = {
   loading: boolean;
   error: string | null;
   isOpen: boolean;
+  addActionState: ProjectAddActionState;
+  onRequestAddProject: () => void;
   onSelectProject: (projectId: ProjectId) => void;
 };
 
@@ -21,11 +25,21 @@ export const ProjectsSidebar = ({
   loading,
   error,
   isOpen,
+  addActionState,
+  onRequestAddProject,
   onSelectProject,
 }: ProjectsSidebarProps): ReactElement | null => {
   if (!isOpen) {
     return null;
   }
+
+  const addButtonLabel =
+    addActionState === 'registering'
+      ? 'Adding project...'
+      : addActionState === 'selecting'
+        ? 'Selecting project folder...'
+        : 'Add project';
+  const isAddButtonDisabled = addActionState !== 'idle';
 
   return (
     <aside
@@ -40,8 +54,24 @@ export const ProjectsSidebar = ({
         data-testid="projects-sidebar-drag-region"
         aria-hidden
       />
-      <header className="grid gap-[0.15rem] px-1">
+      <header className="flex items-center justify-between gap-2 px-1">
         <p className={eyebrowClass}>Projects</p>
+        <button
+          type="button"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-coda-line-soft bg-[#f5f5f3] text-coda-text-secondary transition-colors hover:bg-[#ecece9] hover:text-coda-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f8f89] disabled:cursor-wait disabled:opacity-65"
+          aria-label={addButtonLabel}
+          title={addButtonLabel}
+          disabled={isAddButtonDisabled}
+          onClick={onRequestAddProject}
+          data-testid="projects-add-button"
+        >
+          <FolderPlus
+            size={14}
+            strokeWidth={2}
+            className={addActionState === 'idle' ? undefined : 'animate-pulse'}
+            aria-hidden
+          />
+        </button>
       </header>
 
       {loading ? <p className={sidebarMessageTextClass}>Loading registered projects...</p> : null}

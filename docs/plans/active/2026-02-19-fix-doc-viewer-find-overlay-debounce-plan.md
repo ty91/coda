@@ -34,10 +34,10 @@ milestone: M1
    - [x] Exit criteria: 구현 전에 테스트 가능한 acceptance 조건이 문서화된다.
 
 2. **찾기 UI를 우측 상단 absolute 오버레이로 재배치**
-   - [ ] Action: `DocViewerPanel`에서 찾기 컨테이너를 absolute top-right 오버레이로 이동하고, reader 본문과 시각 충돌이 없도록 spacing/z-index를 조정한다.
-   - [ ] Action: drag region 및 기존 header와 충돌하지 않도록 위치를 조정하고 모바일 레이아웃에서 가독성을 유지한다.
-   - [ ] Deliverables: 문서 뷰어 우상단 오버레이 find UI.
-   - [ ] Exit criteria: Cmd/Ctrl+F 시 find UI가 레이아웃 밀림 없이 우상단 오버레이로 표시된다.
+   - [x] Action: `DocViewerPanel`에서 찾기 컨테이너를 absolute top-right 오버레이로 이동하고, reader 본문과 시각 충돌이 없도록 spacing/z-index를 조정한다.
+   - [x] Action: drag region 및 기존 header와 충돌하지 않도록 위치를 조정하고 모바일 레이아웃에서 가독성을 유지한다.
+   - [x] Deliverables: 문서 뷰어 우상단 오버레이 find UI.
+   - [x] Exit criteria: Cmd/Ctrl+F 시 find UI가 레이아웃 밀림 없이 우상단 오버레이로 표시된다.
 
 3. **디바운스 검색 파이프라인 추가**
    - [ ] Action: 입력 즉시 상태와 검색 실행 상태를 분리하고, 검색 실행 상태는 150ms 디바운스 타이머를 통해 갱신한다.
@@ -93,3 +93,4 @@ milestone: M1
 - 2026-02-19: 코드 흐름(`apps/app/src/App.tsx`, `apps/app/src/components/DocViewerPanel.tsx`, `apps/app/src/App.test.tsx`)을 기준으로 구현/검증 단계를 작성했다.
 - 2026-02-19: 디바운스 지연 시간 결정을 확정했다(150ms).
 - 2026-02-19: Step 1 완료. 오버레이 배치/반응형/키보드/150ms debounce 계약을 `Interaction Contract`로 고정했다.
+- 2026-02-19: Step 2 완료. `DocViewerPanel` find UI를 absolute 우상단 오버레이로 이동하고 mobile 폭 대응을 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.

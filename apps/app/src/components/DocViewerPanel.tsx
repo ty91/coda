@@ -308,7 +308,10 @@ export const DocViewerPanel = ({
       </header>
 
       {selectedDoc && findOpen ? (
-        <div className="grid gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2">
+        <div
+          className="absolute top-12 right-4 left-auto z-20 grid w-[min(31rem,calc(100%-2rem))] gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2 shadow-[0_10px_20px_-14px_rgba(0,0,0,0.45)] max-[980px]:top-2 max-[980px]:right-2 max-[980px]:left-2 max-[980px]:w-auto"
+          data-testid="viewer-find-overlay"
+        >
           <label className="text-[0.7rem] font-semibold tracking-[0.1em] text-coda-text-muted uppercase" htmlFor="reader-find-input">
             Find In Document
           </label>

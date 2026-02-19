@@ -3,6 +3,15 @@ export type CompoundCommand = 'plan' | 'work' | 'review' | 'compound' | 'status'
 export type AgentReadiness = 'ready' | 'degraded';
 
 export type DocId = string;
+export type ProjectId = string;
+
+export type ProjectSummary = {
+  projectId: ProjectId;
+  displayName: string;
+  rootPath: string;
+  docsPath: string;
+  hasLocalOverride: boolean;
+};
 
 export type DocMetadata = {
   id: DocId;
@@ -31,6 +40,7 @@ export const DOCS_CHANGED_EVENT = 'docs_changed';
 export type DocsChangeKind = 'modified' | 'created' | 'removed' | 'renamed' | 'other';
 
 export type DocsChangedEventPayload = {
+  projectId: ProjectId;
   changedDocIds: DocId[];
   removedDocIds: DocId[];
   kinds: DocsChangeKind[];

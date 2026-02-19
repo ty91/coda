@@ -52,12 +52,12 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
    - [x] Exit criteria: 프로젝트 A/B를 빠르게 전환해도 잘못된 프로젝트 문서가 갱신되지 않고 이벤트 라우팅이 섞이지 않는다.
 
 4. **Tauri UI: 프로젝트 전환 UX + 상태 분리**
-   - [ ] Action: 문서 사이드바의 왼쪽에 프로젝트 사이드바(프로젝트 리스트/선택 상태)를 신설하고, 메인 레이아웃을 3-패널(프로젝트/문서/뷰어) 기준으로 재구성한다.
-   - [ ] Action: 신호등 버튼 오른쪽 titlebar 영역에 `PanelLeft` 아이콘 토글 버튼을 추가해 프로젝트 사이드바 열기/닫기를 제어한다(접근성 속성: `aria-controls`, `aria-expanded`, `aria-pressed`).
-   - [ ] Action: 프로젝트 선택 시 문서 목록/선택 문서/find 상태를 프로젝트 단위로 초기화 또는 캐시 전략에 따라 복원한다.
-   - [ ] Action: ask 패널/알림 경로에 활성 프로젝트 컨텍스트를 표시하거나 필터링 규칙을 정의해 사용자 혼동을 줄인다.
-   - [ ] Deliverables: 프로젝트 사이드바 컴포넌트, titlebar 토글 버튼, 프로젝트별 view-state 관리, 전환 UX 회귀 테스트.
-   - [ ] Exit criteria: 프로젝트 전환 후 이전 프로젝트 문서/오류/검색 상태가 섞이지 않고, 토글 버튼으로 프로젝트 사이드바 가시성이 안정적으로 제어된다.
+   - [x] Action: 문서 사이드바의 왼쪽에 프로젝트 사이드바(프로젝트 리스트/선택 상태)를 신설하고, 메인 레이아웃을 3-패널(프로젝트/문서/뷰어) 기준으로 재구성한다.
+   - [x] Action: 신호등 버튼 오른쪽 titlebar 영역에 `PanelLeft` 아이콘 토글 버튼을 추가해 프로젝트 사이드바 열기/닫기를 제어한다(접근성 속성: `aria-controls`, `aria-expanded`, `aria-pressed`).
+   - [x] Action: 프로젝트 선택 시 문서 목록/선택 문서/find 상태를 프로젝트 단위로 초기화 또는 캐시 전략에 따라 복원한다.
+   - [x] Action: ask 패널/알림 경로에 활성 프로젝트 컨텍스트를 표시하거나 필터링 규칙을 정의해 사용자 혼동을 줄인다.
+   - [x] Deliverables: 프로젝트 사이드바 컴포넌트, titlebar 토글 버튼, 프로젝트별 view-state 관리, 전환 UX 회귀 테스트.
+   - [x] Exit criteria: 프로젝트 전환 후 이전 프로젝트 문서/오류/검색 상태가 섞이지 않고, 토글 버튼으로 프로젝트 사이드바 가시성이 안정적으로 제어된다.
 
 5. **테스트 전략 + 품질 게이트 + 문서화(Compound)**
    - [ ] Action: Rust 테스트에 프로젝트 레지스트리 validation, 활성 프로젝트 전환, watcher event `project_id` 라우팅 회귀를 추가한다.
@@ -88,8 +88,9 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: step 1 완료. `project_registry` 도메인 계약(`project_id`, root path, display name, local override precedence)을 구현하고 등록/선택/삭제/invalid path 시나리오를 Rust 테스트로 고정.
 - 2026-02-19: step 2 완료. `ProjectRegistryState`와 `list_projects/get_active_project/set_active_project` IPC를 추가하고 docs IPC가 활성 프로젝트 root/docs 경로를 사용하도록 전환. 활성 프로젝트 state(`~/.coda/app-state.toml`) 복원 회귀 테스트 추가.
 - 2026-02-19: step 3 완료. watcher 전략을 "활성 프로젝트 단일 감시"로 확정. 프로젝트 전환 시 기존 watcher thread를 stop+join 후 새 watcher를 시작하도록 lifecycle을 재구성하고 `docs_changed` payload에 `project_id`를 포함.
+- 2026-02-19: step 4 완료. 좌측 프로젝트 사이드바 + `PanelLeft` 토글을 추가하고 프로젝트 전환 IPC를 UI에 연결. 프로젝트별 선택 문서/폴더 확장 상태 캐시를 적용해 전환 시 상태 섞임을 방지하고, 헤더에 활성 프로젝트 badge를 표시해 ask 맥락 혼동을 줄임.
 
 ## Assumptions / Open Questions
 
 - Assumption: 다중 프로젝트 등록 소스는 우선 글로벌 설정(`~/.coda/config.toml`)이 기본이며, 활성 프로젝트 포인터만 앱 런타임 상태로 관리한다.
-- Open question: ask 세션이 향후 프로젝트 컨텍스트를 강제해야 하는지(현재 ask payload에는 프로젝트 식별자가 없음) 정책 결정 필요.
+- Open question: ask 세션 payload에 `project_id`를 추가해 강제 라우팅할지(현재는 UI에 활성 프로젝트 컨텍스트 badge만 표시) 추후 정책 결정 필요.

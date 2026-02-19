@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import type { DocDocument, DocSummary } from '@coda/core/contracts';
+import type { DocDocument, DocSummary, ProjectSummary } from '@coda/core/contracts';
 import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -73,7 +73,47 @@ const slackReferenceSummary: DocSummary = {
 
 const visibleSummaries: DocSummary[] = [coreBeliefsSummary, executionPlanSummary, slackReferenceSummary];
 
-const documents: Record<string, DocDocument> = {
+const betaStrategySummary: DocSummary = {
+  id: 'plans/active/2026-02-19-beta-strategy.md',
+  fileName: '2026-02-19-beta-strategy.md',
+  docPath: 'plans/active/2026-02-19-beta-strategy.md',
+  relativePath: 'docs/plans/active/2026-02-19-beta-strategy.md',
+  section: 'plans',
+  title: 'Beta Strategy',
+  displayTitle: 'Beta Strategy',
+  date: '2026-02-19',
+  status: 'draft',
+  tags: ['beta'],
+  milestone: 'M2',
+  isTemplate: false,
+  isHidden: false,
+};
+
+const alphaProject: ProjectSummary = {
+  projectId: 'alpha',
+  displayName: 'Alpha',
+  rootPath: '/tmp/alpha',
+  docsPath: '/tmp/alpha/docs',
+  hasLocalOverride: false,
+};
+
+const betaProject: ProjectSummary = {
+  projectId: 'beta',
+  displayName: 'Beta',
+  rootPath: '/tmp/beta',
+  docsPath: '/tmp/beta/docs',
+  hasLocalOverride: false,
+};
+
+const projectFixtures: ProjectSummary[] = [alphaProject, betaProject];
+
+const docsByProject: Record<string, DocSummary[]> = {
+  alpha: visibleSummaries,
+  beta: [betaStrategySummary],
+};
+
+const documentsByProject: Record<string, Record<string, DocDocument>> = {
+  alpha: {
   'design-docs/core-beliefs.md': {
     ...coreBeliefsSummary,
     markdownBody: '## Core\n\nBeliefs body core core',
@@ -85,6 +125,13 @@ const documents: Record<string, DocDocument> = {
   'references/api/slack.md': {
     ...slackReferenceSummary,
     markdownBody: '## Slack\n\nSlack reference body',
+  },
+  },
+  beta: {
+    'plans/active/2026-02-19-beta-strategy.md': {
+      ...betaStrategySummary,
+      markdownBody: '## Beta\n\nBeta strategy body',
+    },
   },
 };
 
@@ -116,15 +163,36 @@ const setupSuccessfulInvokeMock = (
 ): void => {
   mockIsTauri.mockReturnValue(true);
   mockListen.mockResolvedValue(() => {});
+  let activeProjectId = 'alpha';
 
   mockInvoke.mockImplementation(async (command, args) => {
+    if (command === 'list_projects') {
+      return projectFixtures;
+    }
+
+    if (command === 'get_active_project') {
+      return projectFixtures.find((project) => project.projectId === activeProjectId) ?? alphaProject;
+    }
+
+    if (command === 'set_active_project') {
+      const projectId = (args as { projectId: string } | undefined)?.projectId;
+      if (!projectId || !projectFixtures.some((project) => project.projectId === projectId)) {
+        throw new Error(`unknown project ${projectId ?? 'undefined'}`);
+      }
+
+      activeProjectId = projectId;
+      return projectFixtures.find((project) => project.projectId === projectId) ?? alphaProject;
+    }
+
     if (command === 'list_doc_summaries') {
       expect(args).toBeUndefined();
-      return visibleSummaries;
+      return docsByProject[activeProjectId] ?? [];
     }
 
     if (command === 'get_doc_document') {
       const docId = (args as { docId: string } | undefined)?.docId;
+      const documents = documentsByProject[activeProjectId] ?? {};
+
       if (!docId || !documents[docId]) {
         throw new Error(`unknown document ${docId ?? 'undefined'}`);
       }
@@ -172,18 +240,22 @@ describe('App docs viewer', () => {
     expect(screen.queryByRole('heading', { name: 'Reader', level: 2 })).toBeNull();
 
     const sidebar = screen.getByLabelText('Documentation sidebar');
+    const projectsSidebar = screen.getByLabelText('Projects sidebar');
     const readerSurface = screen.getByTestId('viewer-drag-region').closest('section');
+    const projectsSidebarDragRegion = screen.getByTestId('projects-sidebar-drag-region');
     const sidebarDragRegion = screen.getByTestId('sidebar-drag-region');
     const centerHeaderDragRegion = screen.getByTestId('center-header-drag-region');
     const viewerDragRegion = screen.getByTestId('viewer-drag-region');
 
+    expect(projectsSidebarDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
     expect(sidebarDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
     expect(centerHeaderDragRegion.hasAttribute('data-tauri-drag-region')).toBe(true);
     expect(viewerDragRegion.hasAttribute('data-tauri-drag-region')).toBe(false);
+    expect(projectsSidebar.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(sidebar.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(readerSurface?.hasAttribute('data-tauri-drag-region')).toBe(false);
     expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();
-    expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(2);
+    expect(document.querySelectorAll('[data-tauri-drag-region]')).toHaveLength(3);
   });
 
   it('uses fixed 100vh shell and internal pane scrolling containers', async () => {
@@ -249,7 +321,22 @@ describe('App docs viewer', () => {
   });
 
   it('shows list error state when docs fetch fails', async () => {
+    let activeProjectId = 'alpha';
+
     mockInvoke.mockImplementation(async (command) => {
+      if (command === 'list_projects') {
+        return projectFixtures;
+      }
+
+      if (command === 'get_active_project') {
+        return projectFixtures.find((project) => project.projectId === activeProjectId) ?? alphaProject;
+      }
+
+      if (command === 'set_active_project') {
+        activeProjectId = 'alpha';
+        return alphaProject;
+      }
+
       if (command === 'list_doc_summaries') {
         throw new Error('list failed');
       }
@@ -289,6 +376,58 @@ describe('App docs viewer', () => {
 
     await screen.findByRole('button', { name: 'Design Docs' });
     expect(screen.queryByRole('button', { name: 'Refresh docs list' })).toBeNull();
+  });
+
+  it('toggles projects sidebar from header PanelLeft control', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    const toggleButton = screen.getByTestId('project-sidebar-toggle-button');
+    expect(toggleButton.getAttribute('aria-controls')).toBe('app-project-sidebar-panel');
+    expect(toggleButton.getAttribute('aria-expanded')).toBe('true');
+    expect(toggleButton.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('projects-sidebar')).toBeTruthy();
+
+    fireEvent.click(toggleButton);
+    expect(toggleButton.getAttribute('aria-expanded')).toBe('false');
+    expect(toggleButton.getAttribute('aria-pressed')).toBe('false');
+    expect(screen.queryByTestId('projects-sidebar')).toBeNull();
+
+    fireEvent.click(toggleButton);
+    expect(toggleButton.getAttribute('aria-expanded')).toBe('true');
+    expect(toggleButton.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('projects-sidebar')).toBeTruthy();
+  });
+
+  it('switches projects and restores per-project selected document state', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Beta' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('active-project-badge').textContent).toBe('Beta');
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Plans' }));
+    fireEvent.click(screen.getByRole('button', { name: 'active' }));
+    fireEvent.click(screen.getByRole('button', { name: /Beta Strategy/ }));
+    await screen.findByRole('heading', { name: 'Beta Strategy', level: 3 });
+    expect(screen.getByText('Beta strategy body')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Alpha' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('active-project-badge').textContent).toBe('Alpha');
+    });
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+    expect(screen.getByText(/Beliefs body core core/)).toBeTruthy();
   });
 
   it('opens ask panel empty state via header toggle when no pending ask exists', async () => {
@@ -363,6 +502,7 @@ describe('App docs viewer', () => {
       event: 'docs_changed',
       id: 1,
       payload: {
+        projectId: 'alpha',
         changedDocIds: ['design-docs/core-beliefs.md'],
         removedDocIds: [],
         kinds: ['modified'],
@@ -382,14 +522,31 @@ describe('App docs viewer', () => {
 
     let holdRefreshFetch = false;
     const pendingRefreshResolvers: Array<(value: DocDocument) => void> = [];
+    let activeProjectId = 'alpha';
 
     mockInvoke.mockImplementation(async (command, args) => {
+      if (command === 'list_projects') {
+        return projectFixtures;
+      }
+
+      if (command === 'get_active_project') {
+        return projectFixtures.find((project) => project.projectId === activeProjectId) ?? alphaProject;
+      }
+
+      if (command === 'set_active_project') {
+        const projectId = (args as { projectId: string } | undefined)?.projectId ?? 'alpha';
+        activeProjectId = projectId;
+        return projectFixtures.find((project) => project.projectId === projectId) ?? alphaProject;
+      }
+
       if (command === 'list_doc_summaries') {
-        return visibleSummaries;
+        return docsByProject[activeProjectId] ?? [];
       }
 
       if (command === 'get_doc_document') {
         const docId = (args as { docId: string } | undefined)?.docId;
+        const documents = documentsByProject[activeProjectId] ?? {};
+
         if (!docId || !documents[docId]) {
           throw new Error(`unknown document ${docId ?? 'undefined'}`);
         }
@@ -435,6 +592,7 @@ describe('App docs viewer', () => {
       event: 'docs_changed',
       id: 1,
       payload: {
+        projectId: 'alpha',
         changedDocIds: ['design-docs/core-beliefs.md'],
         removedDocIds: [],
         kinds: ['modified'],
@@ -454,7 +612,7 @@ describe('App docs viewer', () => {
       throw new Error('refresh fetch resolver was not set');
     }
 
-    const refreshedDoc = documents['design-docs/core-beliefs.md'];
+    const refreshedDoc = documentsByProject.alpha?.['design-docs/core-beliefs.md'];
     if (!refreshedDoc) {
       throw new Error('missing core beliefs document fixture');
     }

@@ -14,8 +14,8 @@
     "windows": [
       {
         "title": "Coda Mission Control",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 820,
         "resizable": true,
         "fullscreen": false,
         "transparent": true

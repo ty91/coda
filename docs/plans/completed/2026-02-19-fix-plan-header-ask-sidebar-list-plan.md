@@ -1,7 +1,7 @@
 ---
 title: "앱 헤더 ask 아이콘: 모달 대신 우측 사이드바 질문 리스트로 재구현"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, ask-queue, ui, sidebar, modal, regression, milestone-1]
 milestone: M1
 ---
@@ -53,10 +53,10 @@ milestone: M1
    - [x] Exit criteria: 모달이 다시 연결되면 테스트가 실패한다.
 
 5. **게이트 검증 + 컴파운드 기록**
-   - [ ] Action: lint/typecheck/tests/build/validate 전체 게이트를 실행하고, `tauri dev` 수동 스모크로 ask 아이콘 -> 우측 사이드바 질문 리스트 플로우를 확인한다.
-   - [ ] Action: 완료 후 `docs/solutions/`에 문제/원인/예방 전략을 기록하고, 필요 시 디자인 문서를 갱신한다.
-   - [ ] Deliverables: 통과 로그 + 신규 solution 문서.
-   - [ ] Exit criteria: 게이트 통과와 함께 동일 회귀를 막는 재사용 가능한 지식이 남는다.
+   - [x] Action: lint/typecheck/tests/build/validate 전체 게이트를 실행하고, `tauri dev` 수동 스모크로 ask 아이콘 -> 우측 사이드바 질문 리스트 플로우를 확인한다.
+   - [x] Action: 완료 후 `docs/solutions/`에 문제/원인/예방 전략을 기록하고, 필요 시 디자인 문서를 갱신한다.
+   - [x] Deliverables: 통과 로그 + 신규 solution 문서.
+   - [x] Exit criteria: 게이트 통과와 함께 동일 회귀를 막는 재사용 가능한 지식이 남는다.
 
 ## Validation
 
@@ -80,6 +80,7 @@ milestone: M1
 - 2026-02-19: Step 2 완료. `App.tsx` ask 토글 버튼에 `aria-controls`/`aria-expanded`를 연결하고 패널 고정 레이아웃 상수를 명시했으며, `AskInboxPanel`은 `role="complementary"` + 패널 id/라벨 계약을 받도록 정리했다.
 - 2026-02-19: Step 3 완료. `App.tsx`에서 ask 리스트 렌더 경로가 `AskInboxPanel` 1회 사용으로 유지됨을 확인했고, `pnpm --filter @coda/app test -- AskInboxPanel.test.tsx`로 polling/pending count/submit/cancel 계약 회귀가 없음을 재검증했다.
 - 2026-02-19: Step 4 완료. `App.test.tsx`에 ask 토글의 sidebar DOM + dialog 부재(`queryByRole('dialog')`) 검증을 추가했고, `AskInboxPanel.test.tsx`에 `isOpen=false` 상태에서도 pending count 콜백이 유지되는 회귀 케이스를 추가했다.
+- 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 모두 통과했다. `pnpm --filter @coda/app tauri dev`는 dev server 포트 `1420` 충돌로 종료되어 수동 스모크는 사용자 환경에서 재확인이 필요하다.
 
 ## Assumptions / Open Questions
 

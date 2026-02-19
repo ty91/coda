@@ -34,30 +34,12 @@
   body,
   #root {
     min-height: 100%;
+    background: transparent;
   }
 
   body {
     margin: 0;
     color: var(--color-coda-text-primary);
-    background:
-      radial-gradient(circle at 10% 10%, #ffffffd9 0%, #f1f1ee 38%, transparent 60%),
-      radial-gradient(circle at 90% 0%, #ecece8 0%, transparent 50%),
-      linear-gradient(160deg, #f0f0ed 0%, #e9e9e5 48%, #efefec 100%);
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.2;
-    background-image: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 42px,
-      #ffffff14 42px,
-      #ffffff14 43px
-    );
   }
 }
 

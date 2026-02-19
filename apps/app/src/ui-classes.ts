@@ -1,5 +1,8 @@
 export const panelSurfaceClass =
-  'rounded-coda-lg border border-coda-line-soft bg-linear-to-br from-coda-surface to-coda-surface-strong shadow-coda-soft backdrop-blur-[8px]';
+  'rounded-coda-lg border border-coda-line-soft bg-[#fffffff0] shadow-coda-soft backdrop-blur-[6px]';
+
+export const sidebarSurfaceClass =
+  'rounded-coda-lg border border-[#c9c9c3cc] bg-[#f4f4ef9e] shadow-coda-hard backdrop-blur-[18px]';
 
 export const headerRowClass = 'flex items-start justify-between gap-3';
 

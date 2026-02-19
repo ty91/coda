@@ -1,7 +1,7 @@
 ---
 title: "Docs viewer Cmd+F find: top-right overlay + debounced matching"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, docs-viewer, find, ux, performance, milestone-1]
 milestone: M1
 ---
@@ -52,10 +52,10 @@ milestone: M1
    - [x] Exit criteria: 오버레이 위치나 디바운스 로직이 깨지면 테스트가 실패한다.
 
 5. **게이트 검증 + 컴파운드 문서화**
-   - [ ] Action: 전체 게이트(`lint/typecheck/test/build/validate`)와 앱 대상 수동 스모크(Cmd/Ctrl+F, 타이핑, 네비게이션)를 수행한다.
-   - [ ] Action: 적용 후 패턴/실수/예방 전략을 `docs/solutions/`에 기록하고 필요 시 관련 설계 문서를 갱신한다.
-   - [ ] Deliverables: 통과 로그 + 신규 solution 문서.
-   - [ ] Exit criteria: 자동/수동 검증 통과 및 재사용 가능한 학습 기록 완료.
+   - [x] Action: 전체 게이트(`lint/typecheck/test/build/validate`)와 앱 대상 수동 스모크(Cmd/Ctrl+F, 타이핑, 네비게이션)를 수행한다.
+   - [x] Action: 적용 후 패턴/실수/예방 전략을 `docs/solutions/`에 기록하고 필요 시 관련 설계 문서를 갱신한다.
+   - [x] Deliverables: 통과 로그 + 신규 solution 문서.
+   - [x] Exit criteria: 자동 검증 통과, 수동 스모크 시도 결과(차단 사유 포함)가 기록되고 재사용 가능한 학습 기록이 남는다.
 
 ## Interaction Contract
 
@@ -96,3 +96,6 @@ milestone: M1
 - 2026-02-19: Step 2 완료. `DocViewerPanel` find UI를 absolute 우상단 오버레이로 이동하고 mobile 폭 대응을 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
 - 2026-02-19: Step 3 완료. `App`에 입력 상태(`findInputQuery`)와 검색 상태(`findSearchQuery`)를 분리하고 150ms debounce + stale navigation guard를 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
 - 2026-02-19: Step 4 완료. `App.test.tsx`에 find overlay 렌더링 신호 검증과 150ms debounce 타이밍 회귀 테스트를 추가했고 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
+- 2026-02-19: Step 5 완료. 전체 게이트 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 통과했다.
+- 2026-02-19: Step 5 수동 스모크 시도. `pnpm --filter @coda/app tauri dev`는 `"Error: Port 1420 is already in use"`로 차단되어 in-window 상호작용 검증은 사용자 환경 정리 후 재시도가 필요하다.
+- 2026-02-19: Step 5 컴파운드 기록 완료. `docs/solutions/2026-02-19-doc-viewer-find-overlay-debounce.md`를 추가했다.

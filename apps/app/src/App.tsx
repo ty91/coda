@@ -185,7 +185,7 @@ export const App = (): ReactElement => {
   }, []);
 
   return (
-    <main className="grid min-h-screen grid-cols-[minmax(280px,340px)_minmax(0,1fr)] items-start gap-4 p-4 animate-[shell-enter_200ms_ease-out] max-[980px]:grid-cols-1 max-[980px]:p-3">
+    <main className="grid min-h-screen grid-cols-[minmax(250px,292px)_minmax(0,1fr)] items-start gap-3 p-3 animate-[shell-enter_200ms_ease-out] max-[980px]:grid-cols-1 max-[980px]:p-2">
       <DocsSidebar
         summaries={docSummaries}
         treeSections={treeSections}
@@ -200,14 +200,14 @@ export const App = (): ReactElement => {
         onSelectDoc={setSelectedDocId}
       />
 
-      <section className="grid min-w-0 gap-4">
+      <section className="grid min-w-0 gap-3">
         <header
           className={`${panelSurfaceClass} ${headerRowClass} p-4 max-[980px]:flex-col max-[980px]:items-stretch`}
         >
           <div>
             <p className={eyebrowClass}>Milestone 1</p>
             <h1 className="mt-1 text-[clamp(1.3rem,1.8vw,1.85rem)] font-semibold tracking-[-0.02em]">{APP_TITLE}</h1>
-            <p className={subtleTextClass}>Monochrome docs command center with a structured navigation tree.</p>
+            <p className={subtleTextClass}>Structured docs workspace with compact thread-like navigation.</p>
           </div>
 
           <div

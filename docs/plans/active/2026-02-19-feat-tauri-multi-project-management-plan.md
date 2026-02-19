@@ -34,10 +34,10 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 ## Approach
 
 1. **다중 프로젝트 도메인 계약 정의 (Config/Service 경계)**
-   - [ ] Action: 프로젝트 식별자(`project_id`), 루트 경로, 표시 이름, 활성 프로젝트 개념을 정의하고 유효성 규칙(경로 존재, `docs/` 존재, 중복 ID/경로 금지)을 명문화한다.
-   - [ ] Action: 저장 위치 우선순위를 `~/.coda/config.toml`(글로벌 등록) + 프로젝트 로컬 override로 설계하고 충돌 규칙을 결정한다.
-   - [ ] Deliverables: 프로젝트 레지스트리 스키마 초안, validation 규칙, 오류 메시지 계약.
-   - [ ] Exit criteria: "등록/선택/삭제/유효하지 않은 경로" 시나리오별 기대 동작이 테스트 가능한 문장으로 고정된다.
+   - [x] Action: 프로젝트 식별자(`project_id`), 루트 경로, 표시 이름, 활성 프로젝트 개념을 정의하고 유효성 규칙(경로 존재, `docs/` 존재, 중복 ID/경로 금지)을 명문화한다.
+   - [x] Action: 저장 위치 우선순위를 `~/.coda/config.toml`(글로벌 등록) + 프로젝트 로컬 override로 설계하고 충돌 규칙을 결정한다.
+   - [x] Deliverables: 프로젝트 레지스트리 스키마 초안, validation 규칙, 오류 메시지 계약.
+   - [x] Exit criteria: "등록/선택/삭제/유효하지 않은 경로" 시나리오별 기대 동작이 테스트 가능한 문장으로 고정된다.
 
 2. **Rust backend: 프로젝트 레지스트리 + IPC 확장**
    - [ ] Action: `list_projects`, `set_active_project`, `get_active_project` IPC를 추가하고 기존 docs IPC(`list_doc_summaries`, `get_doc_document`)를 활성 프로젝트 컨텍스트 기반으로 해석하도록 분리한다.
@@ -85,6 +85,7 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: 코드 플로우 확인. 단일 workspace 고정 경로 해석(`apps/app/src-tauri/src/plan_viewer.rs`)과 단일 docs watcher(`apps/app/src-tauri/src/docs_watcher.rs`)가 다중 프로젝트 확장의 핵심 제약임을 정리.
 - 2026-02-19: 외부 리서치 필요성 판단. high-risk 주제가 아니고 로컬 문맥이 충분해 이번 계획 단계에서는 생략 결정.
 - 2026-02-19: 사용자 UX 요구 반영. 프로젝트 사이드바를 문서 사이드바 왼쪽에 배치하고, 신호등 오른쪽 `PanelLeft` 버튼으로 토글하는 레이아웃 요구를 Plan step 4에 고정.
+- 2026-02-19: step 1 완료. `project_registry` 도메인 계약(`project_id`, root path, display name, local override precedence)을 구현하고 등록/선택/삭제/invalid path 시나리오를 Rust 테스트로 고정.
 
 ## Assumptions / Open Questions
 

@@ -3,6 +3,7 @@ use serde::Serialize;
 mod ask_runtime;
 mod docs_watcher;
 mod plan_viewer;
+mod project_registry;
 
 #[derive(Serialize)]
 struct HealthMessage {

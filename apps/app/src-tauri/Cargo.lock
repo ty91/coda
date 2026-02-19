@@ -564,6 +564,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-notification",
  "time",
+ "toml 0.8.2",
 ]
 
 [[package]]

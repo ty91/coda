@@ -48,6 +48,49 @@ export type StatusSnapshot = {
   checkedAtIso: string;
 };
 
+export const ASK_RESPONSE_SOURCE = 'tauri-ui';
+
+export type AskOption = {
+  label: string;
+  description: string;
+};
+
+export type AskQuestion = {
+  header: string;
+  id: string;
+  question: string;
+  options: AskOption[];
+};
+
+export type AskNote = {
+  label: string;
+  required: boolean;
+};
+
+export type AskRequestBatch = {
+  questions: AskQuestion[];
+  note?: AskNote | undefined;
+};
+
+export type AskResponseStatus = 'answered' | 'cancelled' | 'expired';
+
+export type AskAnswer = {
+  id: string;
+  selected_label: string;
+  selected_index: number | null;
+  used_other: boolean;
+  other_text: string | null;
+};
+
+export type AskResponseBatch = {
+  ask_id: string;
+  answers: AskAnswer[];
+  note: string | null;
+  status: AskResponseStatus;
+  answered_at_iso: string | null;
+  source: typeof ASK_RESPONSE_SOURCE;
+};
+
 export const SCAFFOLD_STATUS: StatusSnapshot = {
   projectName: 'coda',
   milestone: 'm1-scaffold',

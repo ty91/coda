@@ -177,11 +177,11 @@ milestone: M1
    - [x] Exit criteria: CLI, Tauri, core가 같은 스키마를 공유한다.
 
 2. **공유 타입/검증 계층 구현 (`@coda/core`)**
-   - [ ] Action: `AskRequestBatch`, `AskQuestion`, `AskOption`, `AskResponseBatch` 타입 추가.
-   - [ ] Action: zod 스키마로 필드 길이, id 유일성, 옵션 최소 개수, 권장안 표기 규칙(선택)을 검증한다.
-   - [ ] Action: 손상 JSON/제약 위반 케이스 회귀 테스트를 추가한다.
-   - [ ] Deliverables: core export 갱신 + 테스트 통과.
-   - [ ] Exit criteria: 잘못된 요청은 런타임 진입 전에 코드 `2`로 실패한다.
+   - [x] Action: `AskRequestBatch`, `AskQuestion`, `AskOption`, `AskResponseBatch` 타입 추가.
+   - [x] Action: zod 스키마로 필드 길이, id 유일성, 옵션 최소 개수, 권장안 표기 규칙(선택)을 검증한다.
+   - [x] Action: 손상 JSON/제약 위반 케이스 회귀 테스트를 추가한다.
+   - [x] Deliverables: core export 갱신 + 테스트 통과.
+   - [x] Exit criteria: 잘못된 요청은 런타임 진입 전에 코드 `2`로 실패한다.
 
 3. **CLI 블로킹 런타임 구현 (`apps/cli`)**
    - [ ] Action: `ask` 명령 등록 및 stdin JSON 입력 파싱(EOF까지 읽기)을 추가한다.
@@ -256,3 +256,4 @@ milestone: M1
 - 2026-02-19: CLI 입력 계약을 단순화했다. `--questions-json/--questions-file` 플래그를 제거하고 stdin JSON 파이프 입력으로 통일했다.
 - 2026-02-19: CLI help 텍스트 초안에 stdin 파이프 사용 예시를 추가했다.
 - 2026-02-19: Step 1 완료. Ask I/O 계약 표와 상태 전이 매트릭스를 문서에 고정했다.
+- 2026-02-19: Step 2 완료. `packages/core/src/contracts.ts`, `packages/core/src/validation.ts`, `packages/core/src/validation.test.ts`에 ask 타입/검증/회귀 테스트를 추가했고 `pnpm --filter @coda/core test/typecheck/build`를 통과했다.

@@ -347,7 +347,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="cursor-pointer rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
               onClick={onFindRequestPrevious}
               disabled={findNavigationDisabled}
               aria-label="Previous match"
@@ -358,7 +358,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="cursor-pointer rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-55"
               onClick={onFindRequestNext}
               disabled={findNavigationDisabled}
               aria-label="Next match"
@@ -377,7 +377,7 @@ export const DocViewerPanel = ({
 
             <button
               type="button"
-              className="cursor-pointer rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary"
+              className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.74rem] font-medium text-coda-text-secondary"
               onClick={onFindClose}
               aria-label="Close find"
               title="Close find"

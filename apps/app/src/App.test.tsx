@@ -415,13 +415,9 @@ describe('App docs viewer', () => {
     const findOverlay = screen.getByTestId('viewer-find-overlay');
     const nextButton = screen.getByRole('button', { name: 'Next match' });
     const previousButton = screen.getByRole('button', { name: 'Previous match' });
-    const closeButton = screen.getByRole('button', { name: 'Close find' });
     expect(document.activeElement).toBe(findInput);
     expect(findOverlay.className).toContain('fixed');
     expect(findOverlay.className).toContain('right-4');
-    expect(nextButton.className).toContain('cursor-pointer');
-    expect(previousButton.className).toContain('cursor-pointer');
-    expect(closeButton.className).toContain('cursor-pointer');
 
     fireEvent.change(findInput, { target: { value: 'core' } });
 

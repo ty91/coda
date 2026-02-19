@@ -372,12 +372,11 @@ export const AskInboxPanel = (): ReactElement | null => {
                         {question.options.map((option, optionIndex) => {
                           const optionId = `${radioName}-option-${optionIndex}`;
                           return (
-                            <label key={optionId} htmlFor={optionId} className="flex cursor-pointer items-start gap-2">
+                            <label key={optionId} htmlFor={optionId} className="flex items-start gap-2">
                               <input
                                 id={optionId}
                                 type="radio"
                                 name={radioName}
-                                className="cursor-pointer disabled:cursor-not-allowed"
                                 checked={!draft.usedOther && draft.selectedIndex === optionIndex}
                                 disabled={isDisabled}
                                 onChange={() => {
@@ -397,11 +396,10 @@ export const AskInboxPanel = (): ReactElement | null => {
                           );
                         })}
 
-                        <label className="flex cursor-pointer items-start gap-2">
+                        <label className="flex items-start gap-2">
                           <input
                             type="radio"
                             name={radioName}
-                            className="cursor-pointer disabled:cursor-not-allowed"
                             checked={draft.usedOther}
                             disabled={isDisabled}
                             onChange={() => {
@@ -439,7 +437,7 @@ export const AskInboxPanel = (): ReactElement | null => {
 
               {session.request.note && (
                 <div className="mt-3 space-y-1">
-                  <label className="cursor-pointer text-xs font-medium text-coda-text-primary" htmlFor={`note-${session.askId}`}>
+                  <label className="text-xs font-medium text-coda-text-primary" htmlFor={`note-${session.askId}`}>
                     {session.request.note.label}
                     {session.request.note.required ? ' (required)' : ''}
                   </label>
@@ -469,7 +467,7 @@ export const AskInboxPanel = (): ReactElement | null => {
                   onClick={() => {
                     void handleCancel(session);
                   }}
-                  className="cursor-pointer rounded border border-coda-line-soft px-3 py-1 text-xs text-coda-text-secondary disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded border border-coda-line-soft px-3 py-1 text-xs text-coda-text-secondary disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -479,7 +477,7 @@ export const AskInboxPanel = (): ReactElement | null => {
                   onClick={() => {
                     void handleSubmit(session);
                   }}
-                  className="cursor-pointer rounded bg-coda-text-primary px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded bg-coda-text-primary px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
                 >
                   Submit
                 </button>

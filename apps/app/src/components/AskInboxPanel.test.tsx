@@ -96,25 +96,6 @@ afterEach(() => {
 });
 
 describe('AskInboxPanel', () => {
-  it('applies pointer cursor classes on clickable controls', async () => {
-    mockIsTauri.mockReturnValue(true);
-    setupInvokeWithSessions([buildSession()]);
-
-    render(<AskInboxPanel />);
-
-    await screen.findByText('ask-1');
-
-    const submitButton = screen.getByRole('button', { name: 'Submit' });
-    const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-    const firstRadio = screen.getByRole('radio', { name: /Ship now \(Recommended\)/ });
-    const firstOptionLabel = screen.getByText('Ship now (Recommended)').closest('label');
-
-    expect(submitButton.className).toContain('cursor-pointer');
-    expect(cancelButton.className).toContain('cursor-pointer');
-    expect(firstRadio.className).toContain('cursor-pointer');
-    expect(firstOptionLabel?.className).toContain('cursor-pointer');
-  });
-
   it('submits answered payload with option and other selections plus note', async () => {
     const session = buildSession({
       request: {

@@ -37,6 +37,20 @@
     box-sizing: border-box;
   }
 
+  :where(
+    button:not(:disabled),
+    [role='button']:not([aria-disabled='true']),
+    a[href],
+    input[type='button']:not(:disabled),
+    input[type='submit']:not(:disabled),
+    input[type='reset']:not(:disabled),
+    input[type='radio']:not(:disabled),
+    input[type='checkbox']:not(:disabled),
+    label
+  ) {
+    cursor: pointer;
+  }
+
   html,
   body,
   #root {

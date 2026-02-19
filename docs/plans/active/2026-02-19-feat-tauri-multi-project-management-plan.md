@@ -40,10 +40,10 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
    - [x] Exit criteria: "등록/선택/삭제/유효하지 않은 경로" 시나리오별 기대 동작이 테스트 가능한 문장으로 고정된다.
 
 2. **Rust backend: 프로젝트 레지스트리 + IPC 확장**
-   - [ ] Action: `list_projects`, `set_active_project`, `get_active_project` IPC를 추가하고 기존 docs IPC(`list_doc_summaries`, `get_doc_document`)를 활성 프로젝트 컨텍스트 기반으로 해석하도록 분리한다.
-   - [ ] Action: 단일 루트 계산(`workspace_root_path`) 의존을 제거하고 "활성 프로젝트 루트"를 주입받는 Repo 계층 유틸로 교체한다.
-   - [ ] Deliverables: 프로젝트 레지스트리 로더, 활성 프로젝트 상태 저장, 프로젝트 컨텍스트 기반 docs 조회 경로.
-   - [ ] Exit criteria: 앱 재시작 후 활성 프로젝트가 복원되고, 프로젝트 전환 시 서로 다른 `docs/` 목록이 IPC에서 반환된다.
+   - [x] Action: `list_projects`, `set_active_project`, `get_active_project` IPC를 추가하고 기존 docs IPC(`list_doc_summaries`, `get_doc_document`)를 활성 프로젝트 컨텍스트 기반으로 해석하도록 분리한다.
+   - [x] Action: 단일 루트 계산(`workspace_root_path`) 의존을 제거하고 "활성 프로젝트 루트"를 주입받는 Repo 계층 유틸로 교체한다.
+   - [x] Deliverables: 프로젝트 레지스트리 로더, 활성 프로젝트 상태 저장, 프로젝트 컨텍스트 기반 docs 조회 경로.
+   - [x] Exit criteria: 앱 재시작 후 활성 프로젝트가 복원되고, 프로젝트 전환 시 서로 다른 `docs/` 목록이 IPC에서 반환된다.
 
 3. **Watcher 아키텍처 재구성 (프로젝트별 isolation)**
    - [ ] Action: docs watcher를 활성 프로젝트 단일 감시 또는 등록 프로젝트 다중 감시 중 하나로 명시 선택하고, 이벤트 payload에 `project_id`를 포함한다.
@@ -86,6 +86,7 @@ Tauri 앱이 단일 저장소 고정 경로가 아니라 "등록된 여러 프�
 - 2026-02-19: 외부 리서치 필요성 판단. high-risk 주제가 아니고 로컬 문맥이 충분해 이번 계획 단계에서는 생략 결정.
 - 2026-02-19: 사용자 UX 요구 반영. 프로젝트 사이드바를 문서 사이드바 왼쪽에 배치하고, 신호등 오른쪽 `PanelLeft` 버튼으로 토글하는 레이아웃 요구를 Plan step 4에 고정.
 - 2026-02-19: step 1 완료. `project_registry` 도메인 계약(`project_id`, root path, display name, local override precedence)을 구현하고 등록/선택/삭제/invalid path 시나리오를 Rust 테스트로 고정.
+- 2026-02-19: step 2 완료. `ProjectRegistryState`와 `list_projects/get_active_project/set_active_project` IPC를 추가하고 docs IPC가 활성 프로젝트 root/docs 경로를 사용하도록 전환. 활성 프로젝트 state(`~/.coda/app-state.toml`) 복원 회귀 테스트 추가.
 
 ## Assumptions / Open Questions
 

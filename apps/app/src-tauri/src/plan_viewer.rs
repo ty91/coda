@@ -1,10 +1,11 @@
+use crate::project_runtime::ProjectRegistryState;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
+use tauri::State;
 
 const DOC_FILE_EXTENSION: &str = "md";
 const FRONTMATTER_DELIMITER: &str = "---";
-const DOCS_PATH_SEGMENTS: [&str; 1] = ["docs"];
 
 #[derive(Debug, Deserialize)]
 struct DocFrontmatter {
@@ -62,35 +63,29 @@ pub struct DocDocument {
 }
 
 #[tauri::command]
-pub fn list_doc_summaries(include_hidden: Option<bool>) -> Result<Vec<DocSummary>, String> {
-    let (workspace_root, docs_root) = resolve_workspace_paths()?;
-    list_doc_summaries_from_root(&workspace_root, &docs_root, include_hidden.unwrap_or(false))
+pub fn list_doc_summaries(
+    state: State<'_, ProjectRegistryState>,
+    include_hidden: Option<bool>,
+) -> Result<Vec<DocSummary>, String> {
+    let active_project = state.active_project_context()?;
+    list_doc_summaries_from_root(
+        &active_project.root_path,
+        &active_project.docs_path,
+        include_hidden.unwrap_or(false),
+    )
 }
 
 #[tauri::command]
-pub fn get_doc_document(doc_id: String) -> Result<DocDocument, String> {
-    let (workspace_root, docs_root) = resolve_workspace_paths()?;
-    get_doc_document_from_root(&workspace_root, &docs_root, &doc_id)
-}
-
-fn resolve_workspace_paths() -> Result<(PathBuf, PathBuf), String> {
-    let workspace_root = workspace_root_path()?;
-    let docs_root = DOCS_PATH_SEGMENTS
-        .iter()
-        .fold(workspace_root.clone(), |current, segment| {
-            current.join(segment)
-        });
-
-    Ok((workspace_root, docs_root))
-}
-
-fn workspace_root_path() -> Result<PathBuf, String> {
-    let manifest_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    manifest_path
-        .ancestors()
-        .nth(3)
-        .map(Path::to_path_buf)
-        .ok_or_else(|| "failed to resolve workspace root".to_string())
+pub fn get_doc_document(
+    doc_id: String,
+    state: State<'_, ProjectRegistryState>,
+) -> Result<DocDocument, String> {
+    let active_project = state.active_project_context()?;
+    get_doc_document_from_root(
+        &active_project.root_path,
+        &active_project.docs_path,
+        &doc_id,
+    )
 }
 
 fn list_doc_summaries_from_root(

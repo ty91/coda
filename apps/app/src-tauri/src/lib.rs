@@ -4,6 +4,7 @@ mod ask_runtime;
 mod docs_watcher;
 mod plan_viewer;
 mod project_registry;
+mod project_runtime;
 
 #[derive(Serialize)]
 struct HealthMessage {
@@ -20,12 +21,18 @@ fn get_health_message(project_name: String) -> HealthMessage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let ask_runtime_state = ask_runtime::AskRuntimeState::new();
+    let project_registry_state = project_runtime::ProjectRegistryState::new()
+        .expect("failed to initialize project registry runtime");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .manage(ask_runtime_state.clone())
+        .manage(project_registry_state.clone())
         .invoke_handler(tauri::generate_handler![
             get_health_message,
+            project_runtime::list_projects,
+            project_runtime::get_active_project,
+            project_runtime::set_active_project,
             plan_viewer::list_doc_summaries,
             plan_viewer::get_doc_document,
             ask_runtime::list_pending_ask_sessions,

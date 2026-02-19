@@ -51,10 +51,10 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
    - [x] Exit criteria: 채팅 패널 추가 이후 기존 핵심 UX 계약(문서 읽기, find, ask sidebar)이 테스트로 보호된다.
 
 5. **검증 게이트 및 컴파운드 기록**
-   - [ ] Action: 전체 품질 게이트(lint/typecheck/test/build/validate)와 Tauri 수동 스모크를 실행한다.
-   - [ ] Action: 변경에서 재사용 가능한 UI 패턴(React compound component 적용 방식, 레이아웃 예방 규칙)을 `docs/solutions/`에 기록하고 아키텍처 문서 업데이트 필요성을 평가한다.
-   - [ ] Deliverables: 통과 로그, 수동 확인 결과, 신규 solution 문서(필요 시).
-   - [ ] Exit criteria: 자동/수동 검증 근거가 남고, 후속 채팅 기능 구현에 재사용 가능한 기준이 축적된다.
+   - [x] Action: 전체 품질 게이트(lint/typecheck/test/build/validate)와 Tauri 수동 스모크를 실행한다.
+   - [x] Action: 변경에서 재사용 가능한 UI 패턴(React compound component 적용 방식, 레이아웃 예방 규칙)을 `docs/solutions/`에 기록하고 아키텍처 문서 업데이트 필요성을 평가한다.
+   - [x] Deliverables: 통과 로그, 수동 확인 결과, 신규 solution 문서(필요 시).
+   - [x] Exit criteria: 자동/수동 검증 근거가 남고, 후속 채팅 기능 구현에 재사용 가능한 기준이 축적된다.
 
 ## Validation
 
@@ -86,3 +86,4 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
 - 2026-02-19: Step 2 완료. `ChatPanel` compound component(`Root/Header/Messages/Composer`)와 전용 컴포넌트 테스트를 추가했다.
 - 2026-02-19: Step 3 완료. `App` 중앙 콘텐츠를 뷰어+채팅 2열로 통합했고, ask 패널 토글에 따른 find 오버레이 오프셋(`16px`/`392px`) 계약을 유지했다.
 - 2026-02-19: Step 4 완료. `App` 회귀 테스트를 확장해 채팅 패널 공존과 ask/find 계약을 검증했고, `ChatPanel` 전용 테스트로 compound slot 구조를 고정했다.
+- 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate`를 모두 통과했다. `pnpm --filter @coda/app tauri dev`는 앱 구동까지 확인했으나, CLI 세션 제약으로 창 내부 수동 조작은 수행하지 못했다. 재사용 패턴은 `docs/solutions/2026-02-19-tauri-doc-viewer-right-chat-panel-compound-ui.md`에 기록했고 아키텍처 문서 업데이트는 불필요하다고 판단했다.

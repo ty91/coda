@@ -32,48 +32,55 @@ export const DocViewerPanel = ({
   documentError,
   annotationNote,
 }: DocViewerPanelProps): ReactElement => {
+  const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
+
   return (
-    <section className={`${panelSurfaceClass} grid min-w-0 gap-3 p-4`}>
+    <section className={`${panelSurfaceClass} grid min-w-0 gap-4 p-4`}>
       <header className={headerRowClass}>
         <div>
           <p className={eyebrowClass}>Document</p>
           <h2 className="mt-1 text-[1.02rem] font-semibold tracking-[-0.01em]">Reader</h2>
         </div>
       </header>
-      <p className={`${messageTextClass} rounded-coda-sm border border-dashed border-coda-line-strong bg-[#fafaf8] px-3 py-[0.65rem]`}>
-        {annotationNote}
-      </p>
 
-      {documentLoading ? <p className={messageTextClass}>Loading selected document...</p> : null}
-      {documentError ? <p className="text-[0.92rem] text-coda-error">{documentError}</p> : null}
-      {!documentLoading && !documentError && !selectedDoc ? (
-        <p className={messageTextClass}>Select a document from the sidebar to start reading.</p>
-      ) : null}
+      <div className="grid gap-3">
+        <p className={`${messageTextClass} rounded-coda-sm border border-dashed border-coda-line-strong bg-[#fafaf8] px-3 py-[0.65rem]`}>
+          {annotationNote}
+        </p>
+
+        {documentLoading ? <p className={messageTextClass}>Loading selected document...</p> : null}
+        {documentError ? <p className="text-[0.92rem] text-coda-error">{documentError}</p> : null}
+        {!documentLoading && !documentError && !selectedDoc ? (
+          <p className={messageTextClass}>Select a document from the sidebar to start reading.</p>
+        ) : null}
+      </div>
 
       {!documentLoading && !documentError && selectedDoc ? (
-        <article className="rounded-coda-md border border-coda-line-soft bg-[#fcfcfb] p-4">
-          <header>
-            <h3 className="mb-3 text-[1.28rem] font-semibold tracking-[-0.015em]">{selectedDoc.displayTitle}</h3>
-            {metadataRows(selectedDoc).length > 0 ? (
-              <dl className="mt-1 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-[0.55rem]">
-                {metadataRows(selectedDoc).map((row) => (
-                  <div key={row.label} className="rounded-coda-sm border border-coda-line-soft bg-coda-surface-strong px-[0.55rem] py-[0.45rem]">
-                    <dt className="text-[0.68rem] font-normal tracking-[0.11em] text-coda-text-muted uppercase">
-                      {row.label}
-                    </dt>
-                    <dd className="mt-1 text-[0.88rem] leading-[1.45] text-coda-text-primary">
-                      {row.label === 'Path' ? <code className="font-mono text-[0.88rem]">{row.value}</code> : row.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
-          </header>
+        <div className="min-w-0">
+          <article className="mx-auto w-full max-w-[832px] rounded-coda-lg border border-[#d6d6d1] bg-[#fcfcfbf2] px-5 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10">
+            <header>
+              <h3 className="mb-4 text-[1.55rem] font-semibold tracking-[-0.02em]">{selectedDoc.displayTitle}</h3>
+              {docMetadataRows.length > 0 ? (
+                <dl className="mb-6 grid gap-2 rounded-coda-md border border-coda-line-soft bg-[#f5f5f3] p-4 text-[0.88rem]">
+                  {docMetadataRows.map((row) => (
+                    <div key={row.label} className="grid grid-cols-[78px_1fr] items-baseline gap-2">
+                      <dt className="text-[0.66rem] font-semibold tracking-[0.11em] text-coda-text-muted uppercase">
+                        {row.label}
+                      </dt>
+                      <dd className="text-[0.88rem] leading-[1.5] text-coda-text-primary">
+                        {row.label === 'Path' ? <code className="font-mono text-[0.82rem]">{row.value}</code> : row.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
+            </header>
 
-          <div className={markdownContentClass}>
-            <Markdown remarkPlugins={[remarkGfm]}>{selectedDoc.markdownBody}</Markdown>
-          </div>
-        </article>
+            <div className={markdownContentClass}>
+              <Markdown remarkPlugins={[remarkGfm]}>{selectedDoc.markdownBody}</Markdown>
+            </div>
+          </article>
+        </div>
       ) : null}
     </section>
   );

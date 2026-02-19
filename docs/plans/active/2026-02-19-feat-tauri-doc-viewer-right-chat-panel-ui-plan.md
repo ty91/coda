@@ -33,10 +33,10 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
    - [x] Exit criteria: 팀이 동일하게 이해할 수 있는 "UI-only" 계약과 비회귀 조건이 문서화된다.
 
 2. **React compound component pattern 기반 `ChatPanel` 컴포넌트 추가**
-   - [ ] Action: `apps/app/src/components/`에 `ChatPanel` 컴포넌트를 추가하고 `ChatPanel.Root`, `ChatPanel.Header`, `ChatPanel.Messages`, `ChatPanel.Composer`(또는 동등 구조)로 역할을 분리한다.
-   - [ ] Action: 초기 상태는 mock/정적 데이터 기반으로 구성하고, IPC/상태 머신/실제 전송 로직은 연결하지 않는다.
-   - [ ] Deliverables: 독립 렌더 가능한 채팅 패널 UI 컴포넌트와 compound component API.
-   - [ ] Exit criteria: `App`에서 하위 슬롯을 조합해 패널을 표현할 수 있고, 단일 거대 컴포넌트로 회귀하지 않는다.
+   - [x] Action: `apps/app/src/components/`에 `ChatPanel` 컴포넌트를 추가하고 `ChatPanel.Root`, `ChatPanel.Header`, `ChatPanel.Messages`, `ChatPanel.Composer`(또는 동등 구조)로 역할을 분리한다.
+   - [x] Action: 초기 상태는 mock/정적 데이터 기반으로 구성하고, IPC/상태 머신/실제 전송 로직은 연결하지 않는다.
+   - [x] Deliverables: 독립 렌더 가능한 채팅 패널 UI 컴포넌트와 compound component API.
+   - [x] Exit criteria: `App`에서 하위 슬롯을 조합해 패널을 표현할 수 있고, 단일 거대 컴포넌트로 회귀하지 않는다.
 
 3. **`App` 중앙 레이아웃에 우측 채팅 패널 통합**
    - [ ] Action: `apps/app/src/App.tsx`에서 `DocViewerPanel` 단일 배치를 2열 구조로 바꾸고, 좌측 문서 뷰어 가독성을 유지하는 우측 패널 폭을 적용한다.
@@ -83,3 +83,4 @@ Tauri 앱의 문서 뷰어 컨테이너 우측에 간단한 채팅 패널 UI를 
 - 2026-02-19: 외부 리서치는 생략했다. 로컬 컨텍스트만으로 구현 경로가 충분히 명확하다.
 - 2026-02-19: 본 계획 문서를 `docs/plans/active/2026-02-19-feat-tauri-doc-viewer-right-chat-panel-ui-plan.md`에 초안(draft)으로 작성했다.
 - 2026-02-19: Step 1 완료. 채팅 패널 UI-only 범위, 2열 레이아웃 규칙, 내부 스크롤/고정 오버레이 비회귀 계약을 문서화했다.
+- 2026-02-19: Step 2 완료. `ChatPanel` compound component(`Root/Header/Messages/Composer`)와 전용 컴포넌트 테스트를 추가했다.

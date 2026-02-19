@@ -18,12 +18,7 @@
         "height": 600,
         "resizable": true,
         "fullscreen": false,
-        "transparent": true,
-        "windowEffects": {
-          "effects": ["hudWindow"],
-          "state": "active",
-          "radius": 14
-        }
+        "transparent": true
       }
     ],
     "security": {

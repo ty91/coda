@@ -36,7 +36,7 @@ Deliver a macOS-only glass experience for the documentation sidebar using `hudWi
    - [x] Exit criteria: Changing from `hudWindow` to `sidebar` requires editing one value only.
 2. **Enable macOS vibrancy prerequisites in Tauri config**
    - [x] Action: Update `apps/app/src-tauri/tauri.conf.json` to enable `app.macosPrivateApi`.
-   - [x] Action: Make the main window transparent and define baseline `windowEffects` values compatible with macOS usage.
+   - [x] Action: Make the main window transparent and define baseline effect values through the runtime adapter.
    - [x] Deliverables: Config changes that satisfy Tauri requirements for native visual effects.
    - [x] Exit criteria: App launches on macOS with no configuration errors related to transparency or effects.
 3. **Implement runtime window-effect adapter for switchable material**
@@ -81,7 +81,7 @@ Deliver a macOS-only glass experience for the documentation sidebar using `hudWi
 - 2026-02-19: Local context reviewed in current app shell/sidebar and Tauri config; prior Tailwind/UI solution notes checked for reuse.
 - 2026-02-19: External Tauri references validated for `transparent`, `windowEffects`, `macOSPrivateApi`, and effect material options before drafting this plan.
 - 2026-02-19: Added material abstraction module `apps/app/src/window-effects.ts` with `hudWindow | sidebar` contract and startup adapter call in `apps/app/src/main.tsx`; changing material now requires a single constant edit.
-- 2026-02-19: Updated `apps/app/src-tauri/tauri.conf.json` with `app.macOSPrivateApi`, `transparent`, and baseline `windowEffects` (`hudWindow`, `active`, radius `14`).
+- 2026-02-19: Updated `apps/app/src-tauri/tauri.conf.json` with `app.macOSPrivateApi` and `transparent`; effect material/runtime state now sourced from `apps/app/src/window-effects.ts` for single-point switching.
 - 2026-02-19: Tauri Rust dependency now enables `macos-private-api` feature in `apps/app/src-tauri/Cargo.toml` to support transparent window APIs on macOS.
 - 2026-02-19: Tuned glass/readability layering by introducing `sidebarSurfaceClass`, updating sidebar section surfaces, and making global page background transparent for native vibrancy visibility.
 - 2026-02-19: Added regression tests in `apps/app/src/window-effects.test.ts`; verified with `pnpm --filter @coda/app test`, `pnpm --filter @coda/app typecheck`, and `pnpm --filter @coda/app build`.

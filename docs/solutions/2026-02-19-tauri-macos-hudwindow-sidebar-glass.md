@@ -21,11 +21,11 @@ The docs sidebar looked translucent via CSS, but it did not use native macOS vib
 - Enabled macOS vibrancy prerequisites in `apps/app/src-tauri/tauri.conf.json`:
   - `app.macOSPrivateApi: true`
   - `windows[0].transparent: true`
-  - `windows[0].windowEffects` with `hudWindow`, `active`, `radius: 14`
 - Added `apps/app/src/window-effects.ts`:
   - `MacOsWindowMaterial` contract: `hudWindow | sidebar`
   - single default selector: `DEFAULT_MACOS_WINDOW_MATERIAL = 'hudWindow'`
   - runtime adapter to apply resolved effects via `getCurrentWindow().setEffects(...)`
+  - single source of material/effect values (no duplicate effect in Tauri config)
 - Hooked adapter in one bootstrap call site: `apps/app/src/main.tsx`.
 - Tuned visual layering:
   - Added `sidebarSurfaceClass` in `apps/app/src/ui-classes.ts`

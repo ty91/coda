@@ -3,7 +3,7 @@ title: "Ask queue right-floating sidebar with pending-only visibility"
 date: 2026-02-19
 tags: [tauri, app, ask-queue, sidebar, find-overlay, regression]
 status: "active"
-related_plan: "docs/plans/active/2026-02-19-feat-ask-queue-floating-right-sidebar-plan.md"
+related_plan: "docs/plans/completed/2026-02-19-feat-ask-queue-floating-right-sidebar-plan.md"
 ---
 
 ## Problem
@@ -40,4 +40,4 @@ Ask queue UI rendered inline below the reader and showed empty/loading/error sta
 - `apps/app/src/components/DocViewerPanel.tsx`
 - `apps/app/src/components/AskInboxPanel.test.tsx`
 - `apps/app/src/App.test.tsx`
-- `docs/plans/active/2026-02-19-feat-ask-queue-floating-right-sidebar-plan.md`
+- `docs/plans/completed/2026-02-19-feat-ask-queue-floating-right-sidebar-plan.md`

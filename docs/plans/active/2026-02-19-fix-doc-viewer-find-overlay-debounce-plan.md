@@ -46,10 +46,10 @@ milestone: M1
    - [x] Exit criteria: 연속 타이핑 시 매 키스트로크마다 하이라이트 재계산이 발생하지 않는다.
 
 4. **회귀 테스트 보강**
-   - [ ] Action: 기존 find 테스트에 오버레이 렌더링 조건(클래스/배치 신호) 검증을 추가한다.
-   - [ ] Action: fake timers 기반 테스트를 추가해 디바운스 이전에는 매치 카운터가 갱신되지 않고, 지연 후 갱신됨을 검증한다.
-   - [ ] Deliverables: 오버레이/디바운스 회귀 테스트.
-   - [ ] Exit criteria: 오버레이 위치나 디바운스 로직이 깨지면 테스트가 실패한다.
+   - [x] Action: 기존 find 테스트에 오버레이 렌더링 조건(클래스/배치 신호) 검증을 추가한다.
+   - [x] Action: 디바운스 타이밍 회귀 테스트를 추가해 150ms 이전에는 매치 카운터가 갱신되지 않고, 지연 후 갱신됨을 검증한다.
+   - [x] Deliverables: 오버레이/디바운스 회귀 테스트.
+   - [x] Exit criteria: 오버레이 위치나 디바운스 로직이 깨지면 테스트가 실패한다.
 
 5. **게이트 검증 + 컴파운드 문서화**
    - [ ] Action: 전체 게이트(`lint/typecheck/test/build/validate`)와 앱 대상 수동 스모크(Cmd/Ctrl+F, 타이핑, 네비게이션)를 수행한다.
@@ -95,3 +95,4 @@ milestone: M1
 - 2026-02-19: Step 1 완료. 오버레이 배치/반응형/키보드/150ms debounce 계약을 `Interaction Contract`로 고정했다.
 - 2026-02-19: Step 2 완료. `DocViewerPanel` find UI를 absolute 우상단 오버레이로 이동하고 mobile 폭 대응을 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
 - 2026-02-19: Step 3 완료. `App`에 입력 상태(`findInputQuery`)와 검색 상태(`findSearchQuery`)를 분리하고 150ms debounce + stale navigation guard를 추가했으며 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.
+- 2026-02-19: Step 4 완료. `App.test.tsx`에 find overlay 렌더링 신호 검증과 150ms debounce 타이밍 회귀 테스트를 추가했고 `pnpm --filter @coda/app test -- App.test.tsx`를 통과했다.

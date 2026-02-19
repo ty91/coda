@@ -107,6 +107,14 @@ const setupSuccessfulInvokeMock = (): void => {
       return { message: 'ok' };
     }
 
+    if (command === 'list_pending_ask_sessions') {
+      return [];
+    }
+
+    if (command === 'submit_ask_response') {
+      return null;
+    }
+
     throw new Error(`Unexpected command: ${command}`);
   });
 };
@@ -178,6 +186,15 @@ describe('App docs viewer', () => {
       if (command === 'get_health_message') {
         return { message: 'ok' };
       }
+
+      if (command === 'list_pending_ask_sessions') {
+        return [];
+      }
+
+      if (command === 'submit_ask_response') {
+        return null;
+      }
+
       throw new Error(`Unexpected command: ${command}`);
     });
 
@@ -304,6 +321,14 @@ describe('App docs viewer', () => {
         return { message: 'ok' };
       }
 
+      if (command === 'list_pending_ask_sessions') {
+        return [];
+      }
+
+      if (command === 'submit_ask_response') {
+        return null;
+      }
+
       throw new Error(`Unexpected command: ${command}`);
     });
 
@@ -387,7 +412,10 @@ describe('App docs viewer', () => {
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
 
     const findInput = await screen.findByTestId('viewer-find-input');
+    const findOverlay = screen.getByTestId('viewer-find-overlay');
     expect(document.activeElement).toBe(findInput);
+    expect(findOverlay.className).toContain('absolute');
+    expect(findOverlay.className).toContain('right-4');
 
     fireEvent.change(findInput, { target: { value: 'core' } });
 
@@ -410,6 +438,35 @@ describe('App docs viewer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Previous match' }));
     await waitFor(() => {
       expect(findCounter.textContent).not.toBe(beforePrevious);
+    });
+  });
+
+  it('debounces find matching until 150ms after typing', async () => {
+    setupSuccessfulInvokeMock();
+
+    render(<App />);
+
+    await screen.findByRole('button', { name: 'Design Docs' });
+    fireEvent.click(screen.getByRole('button', { name: 'Design Docs' }));
+    fireEvent.click(screen.getByRole('button', { name: /Core Beliefs/ }));
+    await screen.findByRole('heading', { name: 'Core Beliefs', level: 3 });
+
+    fireEvent.keyDown(window, { key: 'f', metaKey: true });
+
+    const findInput = await screen.findByTestId('viewer-find-input');
+    const findCounter = await screen.findByTestId('viewer-find-counter');
+    expect(findCounter.textContent).toBe('0/0');
+
+    fireEvent.change(findInput, { target: { value: 'core' } });
+    expect(findCounter.textContent).toBe('0/0');
+
+    await new Promise<void>((resolve) => {
+      window.setTimeout(resolve, 120);
+    });
+    expect(findCounter.textContent).toBe('0/0');
+
+    await waitFor(() => {
+      expect(findCounter.textContent).not.toBe('0/0');
     });
   });
 

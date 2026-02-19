@@ -1,7 +1,7 @@
 ---
 title: "Tauri ask panel 헤더 아이콘 토글 도입"
 date: 2026-02-19
-status: draft
+status: completed
 tags: [tauri, app, ask-queue, ui, header, toggle, lucide, milestone-1]
 milestone: M1
 ---
@@ -50,10 +50,10 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
    - [x] Exit criteria: 토글 동작, 접근성 이름, 오프셋 규칙이 깨지면 테스트가 실패한다.
 
 5. **전체 게이트 및 컴파운드 기록**
-   - [ ] Action: lint/typecheck/test/build/validate 전체 게이트와 Tauri 수동 스모크를 실행한다.
-   - [ ] Action: 변경 결과와 예방 패턴을 `docs/solutions/`에 기록하고 아키텍처 영향 여부를 확인한다.
-   - [ ] Deliverables: 통과 로그와 신규 solution 문서.
-   - [ ] Exit criteria: 전체 게이트 통과 + 후속 ask UI 변경에 재사용 가능한 지식이 남는다.
+   - [x] Action: lint/typecheck/test/build/validate 전체 게이트와 Tauri 수동 스모크를 실행한다.
+   - [x] Action: 변경 결과와 예방 패턴을 `docs/solutions/`에 기록하고 아키텍처 영향 여부를 확인한다.
+   - [x] Deliverables: 통과 로그와 신규 solution 문서.
+   - [x] Exit criteria: 전체 게이트 통과 + 후속 ask UI 변경에 재사용 가능한 지식이 남는다.
 
 ## Validation
 
@@ -77,3 +77,6 @@ Tauri 앱의 ask 패널을 중앙 컨테이너 헤더의 Lucide `message-circle-
 - 2026-02-19: Step 2 완료. `apps/app/src/App.tsx` 중앙 컨테이너에 헤더 액션 행을 추가하고 Lucide `MessageCircleQuestionMark` 아이콘 버튼(`data-testid=\"ask-panel-toggle-button\"`)을 배치했다. 아이콘 버튼은 항상 렌더링되며 `aria-label`/`aria-pressed` 기반 토글 입력이 동작한다.
 - 2026-02-19: Step 3 완료. `apps/app/src/App.tsx`에서 `isAskPanelVisible`(`pendingAskCount > 0 && isAskPanelOpen`) 기준으로 ask 패널/찾기 오프셋을 연동했고, pending ask `0 -> >0` 전환 시 자동 open 복귀를 추가했다. `apps/app/src/components/AskInboxPanel.tsx`에 `isOpen` prop을 추가해 컴포넌트 마운트는 유지하면서 패널 표시만 제어했다.
 - 2026-02-19: Step 4 완료. `apps/app/src/App.test.tsx`에 헤더 아이콘 상시 노출/disabled 상태(무 pending), pending 상태에서 토글 open/close 및 find 오버레이 오프셋 `392px <-> 16px` 전환 검증을 추가했다.
+- 2026-02-19: Step 5 완료. `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm validate` 전체 게이트를 통과했다.
+- 2026-02-19: Step 5 완료. `pnpm --filter @coda/app tauri dev` 수동 스모크는 `Error: Port 1420 is already in use`로 실행 차단되어 인-윈도우 토글 상호작용 확인은 사용자 환경 정리 후 재실행이 필요하다.
+- 2026-02-19: Step 5 완료. 컴파운드 기록으로 `docs/solutions/2026-02-19-tauri-ask-panel-header-toggle.md`를 추가했다. 아키텍처 문서 업데이트는 불필요했다(레이어 경계 변경 없음).

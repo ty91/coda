@@ -188,7 +188,7 @@ export const DocsSidebar = ({
             const sectionExpanded = expandedNodeKeys.has(section.key);
 
             return (
-              <section className="overflow-hidden rounded-coda-md border border-[#d5d5d0] bg-[#fafaf7d6]" key={section.key}>
+              <section className="overflow-hidden rounded-coda-md border border-[#d5d5d0e0] bg-[#fafaf7ee]" key={section.key}>
                 <button
                   type="button"
                   className="flex min-h-[2.15rem] w-full items-center gap-2 rounded-none border-0 bg-transparent px-[0.65rem] py-[0.55rem] text-left font-semibold tracking-[0.01em] hover:bg-[#f2f2ef]"

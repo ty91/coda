@@ -1,5 +1,5 @@
 import type { DocDocument } from '@coda/core/contracts';
-import type { ReactElement } from 'react';
+import { useEffect, useRef, type ReactElement } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { eyebrowClass, headerRowClass, markdownContentClass, messageTextClass, panelSurfaceClass } from '../ui-classes';
@@ -9,6 +9,15 @@ type DocViewerPanelProps = {
   documentLoading: boolean;
   documentError: string | null;
   annotationNote: string;
+  findOpen: boolean;
+  findQuery: string;
+  findMatchCount: number;
+  activeFindMatchIndex: number | null;
+  findInputFocusToken: number;
+  onFindQueryChange: (value: string) => void;
+  onFindClose: () => void;
+  onFindMatchCountChange: (value: number) => void;
+  onActiveFindMatchIndexChange: (value: number | null) => void;
 };
 
 const metadataValue = (value: string | null): string => value ?? '';
@@ -31,9 +40,48 @@ export const DocViewerPanel = ({
   documentLoading,
   documentError,
   annotationNote,
+  findOpen,
+  findQuery,
+  findMatchCount,
+  activeFindMatchIndex,
+  findInputFocusToken,
+  onFindQueryChange,
+  onFindClose,
+  onFindMatchCountChange,
+  onActiveFindMatchIndexChange,
 }: DocViewerPanelProps): ReactElement => {
+  const findInputRef = useRef<HTMLInputElement | null>(null);
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
   const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
+
+  useEffect(() => {
+    if (!findOpen) {
+      return;
+    }
+
+    const findInput = findInputRef.current;
+    if (!findInput) {
+      return;
+    }
+
+    findInput.focus();
+    findInput.select();
+  }, [findInputFocusToken, findOpen]);
+
+  useEffect(() => {
+    if (!findOpen || !selectedDoc || findQuery.trim().length > 0) {
+      return;
+    }
+
+    onFindMatchCountChange(0);
+    onActiveFindMatchIndexChange(null);
+  }, [
+    findOpen,
+    findQuery,
+    onActiveFindMatchIndexChange,
+    onFindMatchCountChange,
+    selectedDoc,
+  ]);
 
   return (
     <section
@@ -51,6 +99,38 @@ export const DocViewerPanel = ({
           <h2 className="mt-1 text-[1.02rem] font-semibold tracking-[-0.01em]">Reader</h2>
         </div>
       </header>
+
+      {selectedDoc && findOpen ? (
+        <div className="flex items-center gap-2 rounded-coda-sm border border-coda-line-soft bg-[#f5f5f3] px-3 py-2">
+          <label
+            className="text-[0.7rem] font-semibold tracking-[0.1em] text-coda-text-muted uppercase"
+            htmlFor="reader-find-input"
+          >
+            Find
+          </label>
+          <input
+            id="reader-find-input"
+            ref={findInputRef}
+            className="min-w-0 flex-1 rounded-[0.45rem] border border-coda-line-strong bg-[#fff] px-2 py-[0.35rem] text-[0.88rem] text-coda-text-primary"
+            type="text"
+            value={findQuery}
+            onChange={(event) => onFindQueryChange(event.target.value)}
+            aria-label="Find in document"
+            data-testid="viewer-find-input"
+          />
+          <button
+            type="button"
+            className="rounded-[0.45rem] border border-coda-line-soft px-2 py-[0.32rem] text-[0.72rem] font-medium text-coda-text-secondary"
+            onClick={onFindClose}
+            aria-label="Close find"
+          >
+            Close
+          </button>
+          <span className="min-w-[3rem] text-right text-[0.74rem] text-coda-text-muted" aria-live="polite">
+            {findMatchCount === 0 || activeFindMatchIndex === null ? '0/0' : `${activeFindMatchIndex + 1}/${findMatchCount}`}
+          </span>
+        </div>
+      ) : null}
 
       {showDocPanelStatus ? (
         <div className="grid gap-3">

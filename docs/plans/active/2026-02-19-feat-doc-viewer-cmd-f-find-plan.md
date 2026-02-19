@@ -35,10 +35,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Implementation and tests can assert deterministic behavior without UX ambiguity.
 
 2. **Add find state and keyboard boundary in app layer**
-   - [ ] Action: Add docs-viewer find state ownership in `App` (query, match count, active match index, open/closed state).
-   - [ ] Action: Register and clean up keyboard handlers so shortcut capture is limited to viewer context and does not break normal input fields.
-   - [ ] Deliverables: Stable app-level find state transitions wired into the viewer panel props.
-   - [ ] Exit criteria: Pressing shortcut reliably opens the find UI and focuses the query input without affecting unrelated controls.
+   - [x] Action: Add docs-viewer find state ownership in `App` (query, match count, active match index, open/closed state).
+   - [x] Action: Register and clean up keyboard handlers so shortcut capture is limited to viewer context and does not break normal input fields.
+   - [x] Deliverables: Stable app-level find state transitions wired into the viewer panel props.
+   - [x] Exit criteria: Pressing shortcut reliably opens the find UI and focuses the query input without affecting unrelated controls.
 
 3. **Implement in-document matching + active-match navigation**
    - [ ] Action: Add match discovery/highlighting over the reader content with case-insensitive text matching for markdown body and frontmatter metadata rows.
@@ -114,3 +114,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: External research explicitly skipped because local code and docs context are sufficient for this low-risk UI feature plan.
 - 2026-02-19: Scope decision updated by user: in-document find must include markdown body and frontmatter-derived metadata (not body-only).
 - 2026-02-19: Step 1 complete. Interaction contract locked for shortcut, key navigation, search scope (body + metadata), empty/no-match behavior, and doc-switch reset semantics.
+- 2026-02-19: Step 2 complete. Added app-level find state and keyboard shortcut boundary in `apps/app/src/App.tsx`, plus viewer-prop wiring and input focus handling in `apps/app/src/components/DocViewerPanel.tsx`.

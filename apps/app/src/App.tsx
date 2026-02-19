@@ -5,7 +5,7 @@ import {
   type DocSummary,
   type DocsChangedEventPayload,
 } from '@coda/core/contracts';
-import { invoke } from '@tauri-apps/api/core';
+import { invoke, isTauri } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
@@ -73,6 +73,8 @@ export const App = (): ReactElement => {
   const [findMatchCount, setFindMatchCount] = useState<number>(0);
   const [activeFindMatchIndex, setActiveFindMatchIndex] = useState<number | null>(null);
   const [findInputFocusToken, setFindInputFocusToken] = useState<number>(0);
+  const [findNextRequestToken, setFindNextRequestToken] = useState<number>(0);
+  const [findPreviousRequestToken, setFindPreviousRequestToken] = useState<number>(0);
 
   const treeSections = useMemo(() => buildTreeSections(docSummaries), [docSummaries]);
   const treeNodeKeys = useMemo(() => allTreeNodeKeys(treeSections), [treeSections]);
@@ -188,6 +190,10 @@ export const App = (): ReactElement => {
   );
 
   useEffect(() => {
+    if (!isTauri()) {
+      return;
+    }
+
     let unlisten: (() => void) | null = null;
     let cleanupRequested = false;
 
@@ -274,6 +280,8 @@ export const App = (): ReactElement => {
     setFindQuery('');
     setFindMatchCount(0);
     setActiveFindMatchIndex(null);
+    setFindNextRequestToken(0);
+    setFindPreviousRequestToken(0);
   }, [selectedDocId]);
 
   const openFind = useCallback((): void => {
@@ -281,11 +289,21 @@ export const App = (): ReactElement => {
     setFindInputFocusToken((current) => current + 1);
   }, []);
 
+  const requestFindNext = useCallback((): void => {
+    setFindNextRequestToken((current) => current + 1);
+  }, []);
+
+  const requestFindPrevious = useCallback((): void => {
+    setFindPreviousRequestToken((current) => current + 1);
+  }, []);
+
   const closeFind = useCallback((): void => {
     setFindOpen(false);
     setFindQuery('');
     setFindMatchCount(0);
     setActiveFindMatchIndex(null);
+    setFindNextRequestToken(0);
+    setFindPreviousRequestToken(0);
   }, []);
 
   useEffect(() => {
@@ -298,18 +316,46 @@ export const App = (): ReactElement => {
       const canOpenFind = Boolean(selectedDocId) && !documentLoading && !documentError;
 
       if (!isFindShortcut || !canOpenFind || isEditableEventTarget(event.target)) {
+        if (!findOpen) {
+          return;
+        }
+      } else {
+        event.preventDefault();
+        openFind();
         return;
       }
 
-      event.preventDefault();
-      openFind();
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeFind();
+        return;
+      }
+
+      if (event.key === 'Enter' && findQuery.trim().length > 0) {
+        event.preventDefault();
+        if (event.shiftKey) {
+          requestFindPrevious();
+        } else {
+          requestFindNext();
+        }
+      }
     };
 
     window.addEventListener('keydown', onWindowKeyDown);
     return () => {
       window.removeEventListener('keydown', onWindowKeyDown);
     };
-  }, [documentError, documentLoading, openFind, selectedDocId]);
+  }, [
+    closeFind,
+    documentError,
+    documentLoading,
+    findOpen,
+    findQuery,
+    openFind,
+    requestFindNext,
+    requestFindPrevious,
+    selectedDocId,
+  ]);
 
   const onToggleNode = useCallback((nodeKey: string): void => {
     setExpandedNodeKeys((current) => {
@@ -350,8 +396,12 @@ export const App = (): ReactElement => {
           findMatchCount={findMatchCount}
           activeFindMatchIndex={activeFindMatchIndex}
           findInputFocusToken={findInputFocusToken}
+          findNextRequestToken={findNextRequestToken}
+          findPreviousRequestToken={findPreviousRequestToken}
           onFindQueryChange={setFindQuery}
           onFindClose={closeFind}
+          onFindRequestNext={requestFindNext}
+          onFindRequestPrevious={requestFindPrevious}
           onFindMatchCountChange={setFindMatchCount}
           onActiveFindMatchIndexChange={setActiveFindMatchIndex}
         />

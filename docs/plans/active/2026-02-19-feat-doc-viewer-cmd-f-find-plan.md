@@ -41,10 +41,10 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
    - [x] Exit criteria: Pressing shortcut reliably opens the find UI and focuses the query input without affecting unrelated controls.
 
 3. **Implement in-document matching + active-match navigation**
-   - [ ] Action: Add match discovery/highlighting over the reader content with case-insensitive text matching for markdown body and frontmatter metadata rows.
-   - [ ] Action: Implement next/previous navigation and active-match scroll-into-view behavior.
-   - [ ] Deliverables: Visible match highlighting in body/metadata, current-match indicator, and deterministic next/previous traversal.
-   - [ ] Exit criteria: Query updates refresh match set correctly; navigation cycles through matches predictably.
+   - [x] Action: Add match discovery/highlighting over the reader content with case-insensitive text matching for markdown body and frontmatter metadata rows.
+   - [x] Action: Implement next/previous navigation and active-match scroll-into-view behavior.
+   - [x] Deliverables: Visible match highlighting in body/metadata, current-match indicator, and deterministic next/previous traversal.
+   - [x] Exit criteria: Query updates refresh match set correctly; navigation cycles through matches predictably.
 
 4. **Add compact find UI in reader surface**
    - [ ] Action: Add a minimal find bar in the reader header/panel with query input, match counter, prev/next controls, and close control.
@@ -115,3 +115,4 @@ When the user presses Cmd+F in the docs viewer, an in-document find flow opens f
 - 2026-02-19: Scope decision updated by user: in-document find must include markdown body and frontmatter-derived metadata (not body-only).
 - 2026-02-19: Step 1 complete. Interaction contract locked for shortcut, key navigation, search scope (body + metadata), empty/no-match behavior, and doc-switch reset semantics.
 - 2026-02-19: Step 2 complete. Added app-level find state and keyboard shortcut boundary in `apps/app/src/App.tsx`, plus viewer-prop wiring and input focus handling in `apps/app/src/components/DocViewerPanel.tsx`.
+- 2026-02-19: Step 3 complete. Added DOM-order, case-insensitive highlight matching across metadata + markdown body, plus next/previous active-match traversal and scroll-into-view behavior in `DocViewerPanel`.

@@ -10,7 +10,7 @@ import { App } from './App';
 
 vi.mock('@tauri-apps/api/core', () => ({
   invoke: vi.fn(),
-  isTauri: vi.fn(() => false),
+  isTauri: vi.fn(() => true),
 }));
 vi.mock('@tauri-apps/api/event', () => ({
   listen: vi.fn(),
@@ -86,7 +86,7 @@ const documents: Record<string, DocDocument> = {
 };
 
 const setupSuccessfulInvokeMock = (): void => {
-  mockIsTauri.mockReturnValue(false);
+  mockIsTauri.mockReturnValue(true);
   mockListen.mockResolvedValue(() => {});
 
   mockInvoke.mockImplementation(async (command, args) => {

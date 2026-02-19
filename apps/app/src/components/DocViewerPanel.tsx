@@ -4,6 +4,130 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { eyebrowClass, headerRowClass, markdownContentClass, messageTextClass, panelSurfaceClass } from '../ui-classes';
 
+const FIND_MATCH_SELECTOR = 'mark[data-doc-find-match="true"]';
+const FIND_MATCH_ACTIVE_CLASS = 'bg-[#f4b944]';
+const FIND_MATCH_BASE_CLASS = 'rounded-[2px] bg-[#efe08b] px-[1px] text-inherit';
+
+const clearFindHighlights = (rootElement: HTMLElement): void => {
+  const highlightedMatches = rootElement.querySelectorAll<HTMLElement>(FIND_MATCH_SELECTOR);
+  highlightedMatches.forEach((highlightedMatch) => {
+    const parentElement = highlightedMatch.parentNode;
+    if (!parentElement) {
+      return;
+    }
+
+    const replacementTextNode = document.createTextNode(highlightedMatch.textContent ?? '');
+    parentElement.replaceChild(replacementTextNode, highlightedMatch);
+    parentElement.normalize();
+  });
+};
+
+const collectHighlightableTextNodes = (rootElement: HTMLElement): Text[] => {
+  const textNodes: Text[] = [];
+  const walker = document.createTreeWalker(
+    rootElement,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: (candidateNode: Node): number => {
+        if (!(candidateNode instanceof Text)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        const parentElement = candidateNode.parentElement;
+        if (!parentElement) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        if (parentElement.closest(FIND_MATCH_SELECTOR)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        if ((candidateNode.nodeValue ?? '').trim().length === 0) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    },
+  );
+
+  while (walker.nextNode()) {
+    const currentNode = walker.currentNode;
+    if (currentNode instanceof Text) {
+      textNodes.push(currentNode);
+    }
+  }
+
+  return textNodes;
+};
+
+const highlightMatches = (rootElement: HTMLElement, query: string): HTMLElement[] => {
+  const normalizedQuery = query.toLocaleLowerCase();
+  if (normalizedQuery.length === 0) {
+    return [];
+  }
+
+  const textNodes = collectHighlightableTextNodes(rootElement);
+  const highlightedMatches: HTMLElement[] = [];
+
+  textNodes.forEach((textNode) => {
+    const originalText = textNode.nodeValue ?? '';
+    const normalizedText = originalText.toLocaleLowerCase();
+    let nextSearchIndex = normalizedText.indexOf(normalizedQuery);
+    if (nextSearchIndex < 0) {
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    let consumedIndex = 0;
+
+    while (nextSearchIndex >= 0) {
+      if (nextSearchIndex > consumedIndex) {
+        fragment.appendChild(
+          document.createTextNode(originalText.slice(consumedIndex, nextSearchIndex)),
+        );
+      }
+
+      const highlightedMatch = document.createElement('mark');
+      highlightedMatch.dataset.docFindMatch = 'true';
+      highlightedMatch.className = FIND_MATCH_BASE_CLASS;
+      highlightedMatch.textContent = originalText.slice(
+        nextSearchIndex,
+        nextSearchIndex + query.length,
+      );
+      fragment.appendChild(highlightedMatch);
+      highlightedMatches.push(highlightedMatch);
+
+      consumedIndex = nextSearchIndex + query.length;
+      nextSearchIndex = normalizedText.indexOf(normalizedQuery, consumedIndex);
+    }
+
+    if (consumedIndex < originalText.length) {
+      fragment.appendChild(document.createTextNode(originalText.slice(consumedIndex)));
+    }
+
+    textNode.replaceWith(fragment);
+  });
+
+  return highlightedMatches;
+};
+
+const setActiveMatch = (
+  highlightedMatches: HTMLElement[],
+  activeMatchIndex: number,
+): void => {
+  highlightedMatches.forEach((highlightedMatch, matchIndex) => {
+    if (matchIndex === activeMatchIndex) {
+      highlightedMatch.dataset.docFindMatchActive = 'true';
+      highlightedMatch.classList.add(FIND_MATCH_ACTIVE_CLASS);
+      highlightedMatch.scrollIntoView?.({ block: 'center', inline: 'nearest' });
+    } else {
+      highlightedMatch.dataset.docFindMatchActive = 'false';
+      highlightedMatch.classList.remove(FIND_MATCH_ACTIVE_CLASS);
+    }
+  });
+};
+
 type DocViewerPanelProps = {
   selectedDoc: DocDocument | null;
   documentLoading: boolean;
@@ -14,8 +138,12 @@ type DocViewerPanelProps = {
   findMatchCount: number;
   activeFindMatchIndex: number | null;
   findInputFocusToken: number;
+  findNextRequestToken: number;
+  findPreviousRequestToken: number;
   onFindQueryChange: (value: string) => void;
   onFindClose: () => void;
+  onFindRequestNext: () => void;
+  onFindRequestPrevious: () => void;
   onFindMatchCountChange: (value: number) => void;
   onActiveFindMatchIndexChange: (value: number | null) => void;
 };
@@ -45,12 +173,18 @@ export const DocViewerPanel = ({
   findMatchCount,
   activeFindMatchIndex,
   findInputFocusToken,
+  findNextRequestToken,
+  findPreviousRequestToken,
   onFindQueryChange,
   onFindClose,
+  onFindRequestNext,
+  onFindRequestPrevious,
   onFindMatchCountChange,
   onActiveFindMatchIndexChange,
 }: DocViewerPanelProps): ReactElement => {
   const findInputRef = useRef<HTMLInputElement | null>(null);
+  const readerArticleRef = useRef<HTMLElement | null>(null);
+  const highlightedMatchesRef = useRef<HTMLElement[]>([]);
   const docMetadataRows = selectedDoc ? metadataRows(selectedDoc) : [];
   const showDocPanelStatus = documentLoading || Boolean(documentError) || Boolean(selectedDoc);
 
@@ -69,12 +203,40 @@ export const DocViewerPanel = ({
   }, [findInputFocusToken, findOpen]);
 
   useEffect(() => {
-    if (!findOpen || !selectedDoc || findQuery.trim().length > 0) {
+    const readerArticle = readerArticleRef.current;
+    if (!readerArticle) {
       return;
     }
 
-    onFindMatchCountChange(0);
-    onActiveFindMatchIndexChange(null);
+    const resetFindState = (): void => {
+      clearFindHighlights(readerArticle);
+      highlightedMatchesRef.current = [];
+      onFindMatchCountChange(0);
+      onActiveFindMatchIndexChange(null);
+    };
+
+    if (!findOpen || !selectedDoc) {
+      resetFindState();
+      return;
+    }
+
+    if (findQuery.trim().length === 0) {
+      resetFindState();
+      return;
+    }
+
+    clearFindHighlights(readerArticle);
+    const highlightedMatches = highlightMatches(readerArticle, findQuery);
+    highlightedMatchesRef.current = highlightedMatches;
+    onFindMatchCountChange(highlightedMatches.length);
+
+    if (highlightedMatches.length === 0) {
+      onActiveFindMatchIndexChange(null);
+      return;
+    }
+
+    setActiveMatch(highlightedMatches, 0);
+    onActiveFindMatchIndexChange(0);
   }, [
     findOpen,
     findQuery,
@@ -82,6 +244,34 @@ export const DocViewerPanel = ({
     onFindMatchCountChange,
     selectedDoc,
   ]);
+
+  useEffect(() => {
+    if (findNextRequestToken === 0 || highlightedMatchesRef.current.length === 0) {
+      return;
+    }
+
+    const currentIndex = activeFindMatchIndex ?? -1;
+    const nextIndex =
+      (currentIndex + 1 + highlightedMatchesRef.current.length) %
+      highlightedMatchesRef.current.length;
+
+    setActiveMatch(highlightedMatchesRef.current, nextIndex);
+    onActiveFindMatchIndexChange(nextIndex);
+  }, [activeFindMatchIndex, findNextRequestToken, onActiveFindMatchIndexChange]);
+
+  useEffect(() => {
+    if (findPreviousRequestToken === 0 || highlightedMatchesRef.current.length === 0) {
+      return;
+    }
+
+    const currentIndex = activeFindMatchIndex ?? 0;
+    const previousIndex =
+      (currentIndex - 1 + highlightedMatchesRef.current.length) %
+      highlightedMatchesRef.current.length;
+
+    setActiveMatch(highlightedMatchesRef.current, previousIndex);
+    onActiveFindMatchIndexChange(previousIndex);
+  }, [activeFindMatchIndex, findPreviousRequestToken, onActiveFindMatchIndexChange]);
 
   return (
     <section
@@ -117,6 +307,21 @@ export const DocViewerPanel = ({
             onChange={(event) => onFindQueryChange(event.target.value)}
             aria-label="Find in document"
             data-testid="viewer-find-input"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                if (event.shiftKey) {
+                  onFindRequestPrevious();
+                } else {
+                  onFindRequestNext();
+                }
+              }
+
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                onFindClose();
+              }
+            }}
           />
           <button
             type="button"
@@ -147,7 +352,10 @@ export const DocViewerPanel = ({
 
       {!documentLoading && !documentError && selectedDoc ? (
         <div className="min-w-0">
-          <article className="mx-auto w-full max-w-[832px] rounded-coda-lg border border-[#d6d6d1] bg-[#fcfcfbf2] px-5 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10">
+          <article
+            ref={readerArticleRef}
+            className="mx-auto w-full max-w-[832px] rounded-coda-lg border border-[#d6d6d1] bg-[#fcfcfbf2] px-5 py-5 md:px-8 md:py-8 lg:px-10 lg:py-10"
+          >
             <header>
               <h3 className="mb-4 text-[1.55rem] font-semibold tracking-[-0.02em]">{selectedDoc.displayTitle}</h3>
               {docMetadataRows.length > 0 ? (
